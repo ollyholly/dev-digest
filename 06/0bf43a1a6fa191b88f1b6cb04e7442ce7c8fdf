@@ -1,0 +1,27 @@
+CLAUDE.md
+  s_c92624abe7a719::t_1f5ce532cd7d12 1-63
+client/CLAUDE.md
+  s_c92624abe7a719::t_b2af195a7bfbe3 1-50
+e2e/CLAUDE.md
+  s_c92624abe7a719::t_f963cc62dca554 1-50
+reviewer-core/CLAUDE.md
+  s_c92624abe7a719::t_baebedd3e21112 1-53
+server/CLAUDE.md
+  s_c92624abe7a719::t_9ea9cd41aa47e6 1-64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "060bf43a1a6fa191b88f1b6cb04e7442ce7c8fdf",
+  "prompts": {},
+  "sessions": {
+    "s_c92624abe7a719": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2739b577-64a4-427f-9848-a094cc69c259",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
