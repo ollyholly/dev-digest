@@ -1,0 +1,37 @@
+AGENTS.md
+  s_c92624abe7a719::t_2e653f2be115d0 1-63
+CLAUDE.md
+  s_c92624abe7a719::t_0d9caca175879c 1
+client/AGENTS.md
+  s_c92624abe7a719::t_8266156da8c798 1-50
+client/CLAUDE.md
+  s_c92624abe7a719::t_9949fe4fa49715 1
+e2e/AGENTS.md
+  s_c92624abe7a719::t_d6ffd0c598898f 1-50
+e2e/CLAUDE.md
+  s_c92624abe7a719::t_9c02bdb6547726 1
+reviewer-core/AGENTS.md
+  s_c92624abe7a719::t_a41e374f39a814 1-53
+reviewer-core/CLAUDE.md
+  s_c92624abe7a719::t_497cf2b071a6c3 1
+server/AGENTS.md
+  s_c92624abe7a719::t_35bf81cb8cc090 1-64
+server/CLAUDE.md
+  s_c92624abe7a719::t_b3670feca5d31c 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "bcbf1924ee36fc6df6542665dac3fe6bbecba4c8",
+  "prompts": {},
+  "sessions": {
+    "s_c92624abe7a719": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2739b577-64a4-427f-9848-a094cc69c259",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
