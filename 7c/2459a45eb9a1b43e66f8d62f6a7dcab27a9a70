@@ -1,0 +1,23 @@
+docs/ONBOARDING.md
+  s_3debbe46bd290f::t_6e65536044d466 1-326
+client/package.json
+  s_3debbe46bd290f::t_d3d6ffe0a142b2 38-39
+server/package.json
+  s_3debbe46bd290f::t_f851a3341a90c0 49-50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "7c2459a45eb9a1b43e66f8d62f6a7dcab27a9a70",
+  "prompts": {},
+  "sessions": {
+    "s_3debbe46bd290f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5c67eea3-7334-4cc1-a8f1-4665185a35ad",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
