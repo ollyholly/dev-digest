@@ -12,13 +12,18 @@ before you finish.
 
 ## Module scope
 
-- `client/INSIGHTS.md`
-- `server/INSIGHTS.md`
-- `reviewer-core/INSIGHTS.md`
-- `e2e/INSIGHTS.md`
+Write to the file of the package the work actually touched:
 
-`repo-intel` lives inside `server/` — its insights go in `server/INSIGHTS.md`,
-not a file of its own.
+| Work touched | File |
+|---|---|
+| client (`@devdigest/web`) | `client/INSIGHTS.md` |
+| server (`@devdigest/api`, incl. repo-intel) | `server/INSIGHTS.md` |
+| reviewer-core (`@devdigest/reviewer-core`) | `reviewer-core/INSIGHTS.md` |
+| e2e (`@devdigest/e2e`) | `e2e/INSIGHTS.md` |
+| spans several packages | write the relevant part to each file |
+| pure root config / CI only | usually not a module insight — skip it |
+
+Never write insights into this `SKILL.md` itself.
 
 ## Read trigger
 
@@ -41,6 +46,23 @@ padding the file.
 **Before writing, re-read the target section.** If the insight (or a close
 paraphrase) is already there, don't duplicate it — optionally bump its date
 if this session reconfirmed it.
+
+## Workflow
+
+1. **Gate check.** Did the session produce something substantial — a
+   problem solved, a decision made, a non-obvious discovery? If not, write
+   nothing and stop.
+2. **Read first.** Open the touched module's `INSIGHTS.md` before drafting
+   anything.
+3. **Draft ≤5 candidates**, ranked by signal (corrections and gotchas
+   highest, nice-to-know patterns lowest). Each candidate = the exact
+   proposed line + its target section + `file:line` evidence.
+4. **Dedup.** Drop any candidate already covered by an existing entry. If
+   reality contradicts an old entry, add a new dated note that supersedes
+   it — never edit the old one.
+5. **Append** the survivors. If nothing substantial survives the gate and
+   dedup steps, write nothing.
+6. **Summary.** One line: what was written, to which file, what was skipped.
 
 ## Entry template
 
@@ -78,9 +100,28 @@ what to do without re-deriving anything.
 Generic advice is the failure mode — "use async carefully" is true everywhere
 and therefore useful nowhere.
 
+## Non-destructive write contract (hard rule)
+
+This skill is append-only and must never clobber existing content:
+
+- **Re-read the target `INSIGHTS.md` immediately before writing** — its
+  state may have changed since the session started.
+- **Insert with an anchored `Edit`** that adds the new bullet under the
+  correct `##` heading. Never use the `Write` tool on an existing
+  `INSIGHTS.md` — `Write` replaces the whole file and would destroy every
+  prior entry.
+- **Preserve verbatim** the `# <module> — Insights` header, every section
+  heading, and every entry already in the file. New content is only ever
+  *added*.
+- Idempotent: if an equivalent entry already exists, skip it (no duplicate,
+  no rewrite).
+
 ## Keeping the files lean
 
-- Roughly **5 entries per section**. Past that, signal drops.
+- Roughly **30 entries per file** before splitting into domain-specific
+  files (e.g. `server/docs/INSIGHTS-repo-intel.md`). Past that, signal drops.
+- Pruning is **maintenance, not a per-session task** — do it out of band
+  (e.g. monthly), not as part of a normal write.
 - When an entry becomes stable reference material, **promote it into
   `<module>/docs/` and delete it here.** That's what keeps these files short.
 - An entry that no longer holds is worse than no entry. Correct it with a new
