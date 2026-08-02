@@ -1,0 +1,43 @@
+.cursor/commands/engineering-insights.md
+  s_33ff04abe177bb::t_e74449f3d40b3a 1
+client/INSIGHTS.md
+  s_6dd419f67ba9d0::t_53d7ce46275e98 1-17
+e2e/INSIGHTS.md
+  s_6dd419f67ba9d0::t_69efb522c4050b 1-17
+reviewer-core/INSIGHTS.md
+  s_6dd419f67ba9d0::t_41d52389567f66 1-17
+server/INSIGHTS.md
+  s_6dd419f67ba9d0::t_d974b29e10000e 1-17
+.claude/commands/engineering-insights.md
+  s_6dd419f67ba9d0::t_e41a3fe9b21260 1-14
+.claude/skills/engineering-insights/SKILL.md
+  s_6dd419f67ba9d0::t_0f37734802e189 1-109
+AGENTS.md
+  s_6dd419f67ba9d0::t_21298025ce10e3 53-62
+.claude/skills/README.md
+  s_33ff04abe177bb::t_10aa392483335e 3-11,27,38-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "e829f5784d9d85a2b046393e598be6523f48d496",
+  "prompts": {},
+  "sessions": {
+    "s_33ff04abe177bb": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "bd079371-6b36-4c95-919b-a50c76ad79d5",
+        "model": "default"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    },
+    "s_6dd419f67ba9d0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ba142eba-d078-4936-b4ad-0c7658c38bd9",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
