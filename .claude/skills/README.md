@@ -1,6 +1,14 @@
 # Skills
 
-Reusable AI skills that provide specialized knowledge and workflows. Canonical location is `.claude/skills/` with a symlink at `.cursor/skills/ → ../.claude/skills` for Cursor compatibility. Shared with the team via version control.
+Reusable AI skills that provide specialized knowledge and workflows.
+Canonical location is `.claude/skills/` (shared with Claude Code). Cursor
+loads that directory natively — no `.cursor/skills/` symlink needed. Shared
+with the team via version control.
+
+Slash commands live in `.claude/commands/`. Cursor does **not** read that
+path, so each command is also exposed via a symlink under
+`.cursor/commands/` (e.g. `engineering-insights.md` →
+`../../.claude/commands/engineering-insights.md`).
 
 ## Catalog
 
@@ -16,6 +24,7 @@ Reusable AI skills that provide specialized knowledge and workflows. Canonical l
 | [typescript-expert](typescript-expert/SKILL.md) | Full-stack | Type-level programming, performance, tooling, migrations |
 | [security](security/SKILL.md) | Full-stack | OWASP Top 10:2025, auth, injection, uploads, secrets |
 | [mermaid-diagram](mermaid-diagram/SKILL.md) | Shared | Mermaid diagrams in markdown (flowcharts, sequence, ERD, …) |
+| [engineering-insights](engineering-insights/SKILL.md) | Shared | Read/record module-scoped `INSIGHTS.md` learnings each session |
 
 ## What Are Skills?
 
@@ -26,8 +35,8 @@ Skills are modular packages that extend the AI agent with specialized knowledge 
 | Type | Scope | Loaded | Purpose |
 |------|-------|--------|---------|
 | **Rules** (`.mdc`) | Project conventions | Always or by file pattern | Persistent guardrails |
-| **Commands** (`.md`) | User actions | On `/command` invocation | Slash commands |
-| **Skills** (`.md`) | Domain knowledge | On-demand by agent | Specialized knowledge |
+| **Commands** (`.md`) | User actions | On `/command` invocation | Slash commands (`.claude/commands/` + `.cursor/commands/` symlink for Cursor) |
+| **Skills** (`.md`) | Domain knowledge | On-demand by agent | Specialized knowledge (`.claude/skills/`; Cursor reads natively) |
 | **Agents** (`.md`) | Workflows | Via Task tool | Subagent orchestration |
 
 ## Creating New Skills

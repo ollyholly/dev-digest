@@ -50,6 +50,16 @@ Prereqs: Node ≥ 22, pnpm ≥ 10, Docker (Postgres only).
 - **`reviewer-core` is consumed as TypeScript source**, not a build artifact —
   its `build` script is just `tsc --noEmit`.
 
+## Session Protocol
+
+- **Before your first response**, read the `INSIGHTS.md` of whichever
+  module(s) the request concerns (`client/`, `server/`, `reviewer-core/`,
+  `e2e/`) and treat its contents as high-confidence guidance unless told
+  otherwise. See [`.claude/skills/engineering-insights/SKILL.md`](.claude/skills/engineering-insights/SKILL.md).
+- **At the end of a substantive session**, record any new, non-obvious
+  finding to that module's `INSIGHTS.md` — append-only, skip if already
+  present, skip entirely if nothing new was learned.
+
 ## Do-not-touch / gotchas
 
 - Never `docker compose down -v` to "reset" — it deletes the `devdigest_pgdata`
