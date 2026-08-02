@@ -1,0 +1,19 @@
+.claude/skills/engineering-insights/SKILL.md
+  s_6dd419f67ba9d0::t_8e1fb125b6fd2c 15,17-26,50-66,103-118,121-124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "7af21d82e6501ad547b684d6a5fdae46473e0aff",
+  "prompts": {},
+  "sessions": {
+    "s_6dd419f67ba9d0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ba142eba-d078-4936-b4ad-0c7658c38bd9",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
