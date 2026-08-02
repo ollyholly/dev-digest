@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, integer, jsonb, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, integer, doublePrecision, jsonb, timestamp } from 'drizzle-orm/pg-core';
 import { workspaces } from './core';
 import { agents } from './agents';
 import { pullRequests } from './pulls';
@@ -18,6 +18,10 @@ export const agentRuns = pgTable('agent_runs', {
   durationMs: integer('duration_ms'),
   tokensIn: integer('tokens_in'),
   tokensOut: integer('tokens_out'),
+  /** USD cost attributed at run time (provider usage.cost or price-book estimate). */
+  costUsd: doublePrecision('cost_usd'),
+  /** PR head SHA this run reviewed — used to group the latest review "wave". */
+  headSha: text('head_sha'),
   status: text('status'),
   /** Failure reason when status='failed' (LLM/API error, timeout, quota, …). */
   error: text('error'),

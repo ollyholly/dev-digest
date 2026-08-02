@@ -3,9 +3,10 @@ import type { PrStatus } from '@devdigest/shared';
 /**
  * PR-list rollup helpers (pure — no DB / `this`, so they unit-test cleanly).
  *
- * The Pull Requests list shows, per PR: the latest review's SCORE, a FINDINGS
- * severity breakdown, and a review STATUS. The DB `status` column holds
- * GitHub's merge state (open/merged/closed); the review status
+ * The Pull Requests list shows, per PR: the latest review's SCORE, a review
+ * STATUS, and a COST rollup (wave sum of completed-run `cost_usd` for
+ * `lastReviewedSha`, falling back to all completed runs). The DB `status`
+ * column holds GitHub's merge state (open/merged/closed); the review status
  * (needs_review / reviewed / stale) is DERIVED here for OPEN PRs from the
  * commit a review last ran against (`lastReviewedSha`) vs the PR head, plus age.
  */
@@ -52,4 +53,40 @@ export function deriveReviewStatus(args: {
   const staleMs = (args.staleDays ?? STALE_DAYS) * 86_400_000;
   if (updatedAt && now - updatedAt.getTime() > staleMs) return 'stale';
   return 'reviewed';
+}
+
+/** One agent_runs row's fields needed to roll up PR-list COST. */
+export interface RunCostRow {
+  headSha: string | null;
+  costUsd: number | null;
+  status: string | null;
+}
+
+/**
+ * PR-list COST: sum of completed-run `cost_usd` for the latest review wave
+ * (`head_sha === lastReviewedSha`). If that wave is empty (never reviewed, or
+ * legacy rows without head_sha), fall back to summing all completed runs.
+ * Returns null when no cost data exists — UI shows "—", never "$0.00".
+ */
+export function rollupPrCost(args: {
+  lastReviewedSha: string | null;
+  runs: RunCostRow[];
+}): number | null {
+  const done = args.runs.filter((r) => r.status === 'done');
+  if (done.length === 0) return null;
+
+  const wave =
+    args.lastReviewedSha != null
+      ? done.filter((r) => r.headSha === args.lastReviewedSha)
+      : [];
+  const scoped = wave.length > 0 ? wave : done;
+
+  let sum = 0;
+  let any = false;
+  for (const r of scoped) {
+    if (r.costUsd == null) continue;
+    sum += r.costUsd;
+    any = true;
+  }
+  return any ? sum : null;
 }

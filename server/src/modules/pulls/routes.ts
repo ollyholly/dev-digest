@@ -7,7 +7,7 @@ import * as t from '../../db/schema.js';
 import { getContext } from '../_shared/context.js';
 import { IdParams } from '../_shared/schemas.js';
 import { AppError, NotFoundError } from '../../platform/errors.js';
-import { deriveReviewStatus } from './status.js';
+import { deriveReviewStatus, rollupPrCost } from './status.js';
 
 /**
  * F1 — pulls module. PR import via Octokit (list + per-PR detail).
@@ -129,6 +129,30 @@ export default async function pullsRoutes(appBase: FastifyInstance) {
       }
     }
 
+    // COST column: wave sum (runs for lastReviewedSha) with fallback to all
+    // completed runs. Persisted cost_usd only — never recomputed from tokens.
+    const runsByPr = new Map<
+      string,
+      { headSha: string | null; costUsd: number | null; status: string | null }[]
+    >();
+    if (prIds.length > 0) {
+      const runRows = await container.db
+        .select({
+          prId: t.agentRuns.prId,
+          headSha: t.agentRuns.headSha,
+          costUsd: t.agentRuns.costUsd,
+          status: t.agentRuns.status,
+        })
+        .from(t.agentRuns)
+        .where(inArray(t.agentRuns.prId, prIds));
+      for (const run of runRows) {
+        if (!run.prId) continue;
+        const list = runsByPr.get(run.prId) ?? [];
+        list.push({ headSha: run.headSha, costUsd: run.costUsd, status: run.status });
+        runsByPr.set(run.prId, list);
+      }
+    }
+
     const now = Date.now();
     return rows.map((r) => {
       const review = latestReviewByPr.get(r.id);
@@ -153,6 +177,10 @@ export default async function pullsRoutes(appBase: FastifyInstance) {
         opened_at: r.openedAt?.toISOString() ?? null,
         updated_at: r.updatedAt?.toISOString() ?? null,
         score: review ? review.score : null,
+        cost_usd: rollupPrCost({
+          lastReviewedSha: r.lastReviewedSha,
+          runs: runsByPr.get(r.id) ?? [],
+        }),
       };
     });
   });
