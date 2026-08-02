@@ -1,0 +1,77 @@
+client/src/app/repos/[repoId]/pulls/[number]/_components/RunTraceDrawer/RunTraceDrawer.test.tsx
+  s_a199a734a0b22d::t_0a8a055ab01653 10-17,53-54
+client/src/vendor/shared/contracts/platform.ts
+  s_a199a734a0b22d::t_0be1a3ca911513 173-174
+client/src/vendor/shared/contracts/trace.ts
+  s_a199a734a0b22d::t_98c7e3d60a0eea 44,46-47,65-66,107-108
+server/src/db/migrations/0010_open_mercury.sql
+  s_a199a734a0b22d::t_a1335f0d8a21a7 1-2
+server/src/db/migrations/meta/0010_snapshot.json
+  s_a199a734a0b22d::t_8b521d0b42712b 1-3449
+server/src/db/migrations/meta/_journal.json
+  s_a199a734a0b22d::t_87b05f0d633a6a 74-80
+server/src/modules/reviews/run-executor.ts
+  s_a199a734a0b22d::t_ea41fc5ccdb00b 213,248,269,426-433
+client/INSIGHTS.md
+  s_a199a734a0b22d::t_517ced80d99915 15-16
+client/messages/en/prReview.json
+  s_a199a734a0b22d::t_971cf19db75f84 95
+client/messages/en/runs.json
+  s_a199a734a0b22d::t_7a60abb30b153f 42
+client/src/app/repos/[repoId]/pulls/[number]/_components/RunHistory/RunHistory.test.tsx
+  s_a199a734a0b22d::t_7ccc5adbdebbe6 28,76-81
+client/src/app/repos/[repoId]/pulls/[number]/_components/RunHistory/RunHistory.tsx
+  s_a199a734a0b22d::t_6c0326ce78a448 7,201-209
+client/src/app/repos/[repoId]/pulls/[number]/_components/RunTraceDrawer/_components/TraceBody/TraceBody.tsx
+  s_a199a734a0b22d::t_9b6cb5f48c354d 9,67-70
+client/src/app/repos/[repoId]/pulls/_components/PRRow/PRRow.tsx
+  s_a199a734a0b22d::t_bd58e78e178928 8,62-64
+client/src/app/repos/[repoId]/pulls/constants.ts
+  s_a199a734a0b22d::t_b19b895be154eb 27,48
+client/src/app/repos/[repoId]/pulls/styles.ts
+  s_a199a734a0b22d::t_b3b43dc561cd8c 43-47
+client/src/components/run-cost-badge/RunCostBadge.test.tsx
+  s_a199a734a0b22d::t_f1da5231774de7 1-33
+client/src/components/run-cost-badge/RunCostBadge.tsx
+  s_a199a734a0b22d::t_7f96e21ae1e010 1-53
+client/src/components/run-cost-badge/helpers.ts
+  s_a199a734a0b22d::t_b3a45a818948ed 1-18
+client/src/components/run-cost-badge/index.ts
+  s_a199a734a0b22d::t_130e3353f6b167 1-3
+server/INSIGHTS.md
+  s_a199a734a0b22d::t_b7ea815d7193bb 15-16
+server/src/db/schema/runs.ts
+  s_a199a734a0b22d::t_77553730693d43 1,21-24
+server/src/modules/pulls/routes.ts
+  s_a199a734a0b22d::t_d7da112c1888b6 10,132-155,180-183
+server/src/modules/pulls/status.ts
+  s_a199a734a0b22d::t_164dd7708e93b2 6-9,57-92
+server/src/modules/reviews/repository.ts
+  s_a199a734a0b22d::t_51f6d853c63b52 147,159
+server/src/modules/reviews/repository/run.repo.ts
+  s_a199a734a0b22d::t_71c5918ff011d2 62,125-126,137,153-154,172
+server/src/modules/reviews/service.ts
+  s_a199a734a0b22d::t_e68ca9d19eed13 126
+server/src/vendor/shared/contracts/platform.ts
+  s_a199a734a0b22d::t_678650a4acc55a 173-174
+server/src/vendor/shared/contracts/trace.ts
+  s_a199a734a0b22d::t_51b728b9cc3168 65-66,107-108
+server/test/pulls-status.test.ts
+  s_a199a734a0b22d::t_2b2b6738101947 9-14,74-103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "20fde9d85726fb6d7423e291650944f15a649d6d",
+  "prompts": {},
+  "sessions": {
+    "s_a199a734a0b22d": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "c7440da3-0233-43b2-80f9-899bb081ba5e",
+        "model": "default"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
