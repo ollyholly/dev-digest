@@ -1,0 +1,95 @@
+client/src/vendor/shared/contracts/observability.ts
+  s_5af115555fe235::t_8a9ecd5db4824a 2,111
+client/src/vendor/shared/contracts/platform.ts
+  s_5af115555fe235::t_e388c7a7b9a3fa 2,176-177
+client/src/vendor/shared/contracts/productionize.ts
+  s_5af115555fe235::t_a16f123998c492 2,36,156
+server/src/db/migrations/0011_complete_violations.sql
+  s_5af115555fe235::t_79874c330d1dba 1
+server/src/db/migrations/meta/0011_snapshot.json
+  s_5af115555fe235::t_4c2182fbc10190 1-3465
+server/src/db/migrations/meta/_journal.json
+  s_5af115555fe235::t_8c3f1f79939daf 81-87
+client/INSIGHTS.md
+  s_5af115555fe235::t_63a961854f027a 16,21-22
+client/messages/en/prReview.json
+  s_5af115555fe235::t_34b4397b56b1ce 32-48,110
+client/src/app/repos/[repoId]/pulls/[number]/_components/FindingsPanel/FindingsPanel.tsx
+  s_5af115555fe235::t_2b2edcde963e06 1-2,8,10,13,21-22,28-29,36-44,64-70
+client/src/app/repos/[repoId]/pulls/[number]/_components/FindingsPanel/helpers.test.ts
+  s_5af115555fe235::t_c3c82f018f8183 1-85
+client/src/app/repos/[repoId]/pulls/[number]/_components/FindingsPanel/helpers.ts
+  s_5af115555fe235::t_8d909429cdf0a1 1,4-40,43-46,51-59
+client/src/app/repos/[repoId]/pulls/[number]/_components/FindingsTab/FindingsTab.tsx
+  s_5af115555fe235::t_84bcea374c5fa8 9-15,30-31,48-49,84-93,154,188-189
+client/src/app/repos/[repoId]/pulls/[number]/_components/ReviewRunAccordion/ReviewRunAccordion.tsx
+  s_5af115555fe235::t_afa5f11abf815d 2-3,7,9-14,16,39-40,51-52,54,66,69,108-123,180-181
+client/src/app/repos/[repoId]/pulls/[number]/_components/RunHistory/RunHistory.tsx
+  s_5af115555fe235::t_f5b721051bb41c 6,8-13,91-135,139,146-147,202-210,250
+client/src/app/repos/[repoId]/pulls/[number]/_components/SeverityFilterBar/SeverityFilterBar.tsx
+  s_5af115555fe235::t_e53e4194204bbe 1-97
+client/src/app/repos/[repoId]/pulls/[number]/_components/SeverityFilterBar/index.ts
+  s_5af115555fe235::t_bfad44afbf81c8 1
+client/src/app/repos/[repoId]/pulls/[number]/page.tsx
+  s_5af115555fe235::t_39e847bd5ff58e 24-28,66-69,77-82,164-165
+client/src/app/repos/[repoId]/pulls/_components/FindingsCell/FindingsCell.tsx
+  s_5af115555fe235::t_2a60774def358a 1-65
+client/src/app/repos/[repoId]/pulls/_components/FindingsCell/index.ts
+  s_5af115555fe235::t_cb7a73a3faa788 1
+client/src/app/repos/[repoId]/pulls/_components/PRRow/PRRow.tsx
+  s_5af115555fe235::t_96e181cb944f40 13,58-60
+client/src/app/repos/[repoId]/pulls/constants.ts
+  s_5af115555fe235::t_b1bcc53b2eff91 27,47
+client/src/app/repos/[repoId]/pulls/styles.ts
+  s_5af115555fe235::t_84eb8a63020fbe 43-47
+client/src/components/findings-hover-card/FindingPopoverItem.tsx
+  s_5af115555fe235::t_b2aab61a72bdba 1-81
+client/src/components/findings-hover-card/FindingsHoverCard.tsx
+  s_5af115555fe235::t_1a3e4fac0bf19a 1-184
+client/src/components/findings-hover-card/SeverityBadges.tsx
+  s_5af115555fe235::t_b838972798546c 1-33
+client/src/components/findings-hover-card/constants.ts
+  s_5af115555fe235::t_1953842482eaa0 1-17
+client/src/components/findings-hover-card/helpers.test.ts
+  s_5af115555fe235::t_786f4100c610b5 1-68
+client/src/components/findings-hover-card/helpers.ts
+  s_5af115555fe235::t_3e4ce781999451 1-66
+client/src/components/findings-hover-card/index.ts
+  s_5af115555fe235::t_b6f62db485b4fe 1-10
+client/src/vendor/shared/contracts/findings.ts
+  s_5af115555fe235::t_188e102b115701 14-21
+server/INSIGHTS.md
+  s_5af115555fe235::t_9cd64f9b9b6d14 16
+server/src/db/schema/reviews.ts
+  s_5af115555fe235::t_e4765b1527c828 2-11,37-61
+server/src/modules/pulls/routes.ts
+  s_5af115555fe235::t_78023ef72dba7a 10,116,119-120,129,134-153,206
+server/src/modules/pulls/status.ts
+  s_5af115555fe235::t_442731866acee7 1,7-9,20,22-24
+server/src/vendor/shared/contracts/findings.ts
+  s_5af115555fe235::t_0fc0f7b2fc087b 14-21
+server/src/vendor/shared/contracts/observability.ts
+  s_5af115555fe235::t_f40eb58b09db1f 2,111
+server/src/vendor/shared/contracts/platform.ts
+  s_5af115555fe235::t_5d056a62a31eef 2,176-177
+server/src/vendor/shared/contracts/productionize.ts
+  s_5af115555fe235::t_fac26c3cc5cf9b 2,156
+server/test/pulls-status.test.ts
+  s_5af115555fe235::t_453f681a017c29 67,71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "db608dd8a0b3bc6d57bac7c237f5021da295727a",
+  "prompts": {},
+  "sessions": {
+    "s_5af115555fe235": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "949ab018-c3b0-47e7-af70-205398c632b9",
+        "model": "default"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
