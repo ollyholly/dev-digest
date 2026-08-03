@@ -1,0 +1,37 @@
+client/messages/en/prReview.json
+  s_5af115555fe235::t_3b21e96540fed2 87-90
+client/src/app/repos/[repoId]/pulls/_components/FilterBar/FilterBar.tsx
+  s_5af115555fe235::t_a7cf1a5feaa943 1,7,17-19,29-31,36-43,45,57
+client/src/app/repos/[repoId]/pulls/constants.ts
+  s_5af115555fe235::t_2151d7ee506d3a 52-64
+client/src/app/repos/[repoId]/pulls/helpers.test.ts
+  s_5af115555fe235::t_12a7154f6c7af9 1-42
+client/src/app/repos/[repoId]/pulls/helpers.ts
+  s_5af115555fe235::t_ea9ccf88904041 22-63
+client/src/app/repos/[repoId]/pulls/page.tsx
+  s_5af115555fe235::t_35dee8c4ecb65b 1-2,19-20,38-48,51-57,61-63,101-103
+client/src/lib/hooks/core.ts
+  s_5af115555fe235::t_207b28530e8a39 102-114,116-117
+server/src/modules/pulls/query.ts
+  s_5af115555fe235::t_6de85bf2d9e6c6 1-69
+server/src/modules/pulls/routes.ts
+  s_5af115555fe235::t_aadadf61b7a7b1 11-12,28-40,42,172,201-206
+server/test/pulls-query.test.ts
+  s_5af115555fe235::t_e400ccc59d57d9 1-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "89ab61563bb97ac8ee0f5df7a9ef3957ce4b3258",
+  "prompts": {},
+  "sessions": {
+    "s_5af115555fe235": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "949ab018-c3b0-47e7-af70-205398c632b9",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
