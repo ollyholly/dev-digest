@@ -1,0 +1,39 @@
+server/test/auto-review.test.ts
+  s_5af115555fe235::t_5a2f1c8f5120d4 1-9
+client/src/app/repos/[repoId]/pulls/page.tsx
+  s_5af115555fe235::t_f9dd39e48da05e 16,23,38-40,88-90
+client/src/app/settings/[section]/_components/SettingsView/SettingsView.tsx
+  s_5af115555fe235::t_16521e9821c4ed 14-20,48-49
+client/src/app/settings/[section]/_components/SettingsView/_components/SettingsAutoReviews/SettingsAutoReviews.tsx
+  s_5af115555fe235::t_c6049da7f144d4 1-107
+client/src/app/settings/[section]/_components/SettingsView/_components/SettingsAutoReviews/constants.ts
+  s_5af115555fe235::t_365bb452c73a8f 1-14
+client/src/app/settings/[section]/_components/SettingsView/_components/SettingsAutoReviews/index.ts
+  s_5af115555fe235::t_7838ae7130d9c6 1
+client/src/app/settings/[section]/_components/SettingsView/_components/SettingsAutoReviews/styles.ts
+  s_5af115555fe235::t_450c5212e0b66f 1-16
+client/src/app/settings/[section]/_components/SettingsView/constants.ts
+  s_5af115555fe235::t_e231910fa9af32 7
+client/src/vendor/ui/nav.ts
+  s_5af115555fe235::t_27647f752e01bb 42
+server/src/modules/polling/auto-review.ts
+  s_5af115555fe235::t_21d268424062d9 1-98
+server/src/modules/polling/routes.ts
+  s_5af115555fe235::t_c71387369355f7 4,9,12-13,16,22-38,84-90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "8efc77f4869c7ac0d45cd6d02ae34a736ee4c6ed",
+  "prompts": {},
+  "sessions": {
+    "s_5af115555fe235": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "949ab018-c3b0-47e7-af70-205398c632b9",
+        "model": "default"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
