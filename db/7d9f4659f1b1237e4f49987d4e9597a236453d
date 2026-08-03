@@ -1,0 +1,23 @@
+client/src/components/findings-hover-card/FindingPopoverItem.tsx
+  s_5af115555fe235::t_7f29b46b88a8ee 31-36,50-51,55-66,69
+client/src/app/repos/[repoId]/pulls/[number]/_components/FindingCard/styles.ts
+  s_5af115555fe235::t_d4c26375767d72 7-8,10-12,14-16
+client/src/components/findings-hover-card/FindingsHoverCard.tsx
+  s_5af115555fe235::t_378481e3c5c2b3 135,141-144
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "db7d9f4659f1b1237e4f49987d4e9597a236453d",
+  "prompts": {},
+  "sessions": {
+    "s_5af115555fe235": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "949ab018-c3b0-47e7-af70-205398c632b9",
+        "model": "default"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
