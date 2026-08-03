@@ -6,7 +6,12 @@
  * + age, so it gets unit coverage independent of the route's queries.
  */
 import { describe, it, expect } from 'vitest';
-import { deriveReviewStatus, rollupSeverities, STALE_DAYS } from '../src/modules/pulls/status.js';
+import {
+  deriveReviewStatus,
+  rollupPrCost,
+  rollupSeverities,
+  STALE_DAYS,
+} from '../src/modules/pulls/status.js';
 
 const DAY = 86_400_000;
 const now = Date.UTC(2026, 5, 11);
@@ -64,5 +69,35 @@ describe('rollupSeverities', () => {
 
   it('is all-zero for no findings', () => {
     expect(rollupSeverities([])).toEqual({ critical: 0, warning: 0, suggestion: 0 });
+  });
+});
+
+describe('rollupPrCost', () => {
+  const runs = [
+    { headSha: 'abc', costUsd: 0.01, status: 'done' },
+    { headSha: 'abc', costUsd: 0.004, status: 'done' },
+    { headSha: 'old', costUsd: 0.05, status: 'done' },
+    { headSha: 'abc', costUsd: 0.99, status: 'failed' },
+    { headSha: null, costUsd: 0.02, status: 'done' },
+  ];
+
+  it('sums completed runs for lastReviewedSha (wave), ignoring failed and other SHAs', () => {
+    expect(rollupPrCost({ lastReviewedSha: 'abc', runs })).toBeCloseTo(0.014, 9);
+  });
+
+  it('falls back to all completed runs when no wave matches (or never reviewed)', () => {
+    // Wave for 'zzz' is empty → sum every done run with a cost.
+    expect(rollupPrCost({ lastReviewedSha: 'zzz', runs })).toBeCloseTo(0.01 + 0.004 + 0.05 + 0.02, 9);
+    expect(rollupPrCost({ lastReviewedSha: null, runs })).toBeCloseTo(0.01 + 0.004 + 0.05 + 0.02, 9);
+  });
+
+  it('returns null when there is no cost data (never $0.00)', () => {
+    expect(rollupPrCost({ lastReviewedSha: 'abc', runs: [] })).toBeNull();
+    expect(
+      rollupPrCost({
+        lastReviewedSha: 'abc',
+        runs: [{ headSha: 'abc', costUsd: null, status: 'done' }],
+      }),
+    ).toBeNull();
   });
 });
