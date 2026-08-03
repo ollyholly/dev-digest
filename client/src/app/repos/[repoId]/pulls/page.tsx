@@ -1,5 +1,5 @@
-/* PR list — /repos/:repoId/pulls. Ported from screen_dashboard.jsx; fetches
-   GET /repos/:id/pulls (F1). Filters/sort live in query (?status&sort). */
+/* PR list — /repos/:repoId/pulls. Filters/sort partially in query (?status&sort);
+   author stays in React state only (not URL). */
 "use client";
 
 import React from "react";
@@ -16,7 +16,8 @@ import { RepoNotFound } from "@/components/repo-not-found";
 import { usePulls, useRefreshRepo } from "@/lib/hooks";
 import { useActiveRepo, useRepoNotFound } from "@/lib/repo-context";
 import { ApiError } from "@/lib/api";
-import { COLUMN_KEYS, SKELETON_ROWS } from "./constants";
+import { AUTHOR_ALL, COLUMN_KEYS, SKELETON_ROWS } from "./constants";
+import { clientFilterSort, uniqueAuthors } from "./helpers";
 import { s } from "./styles";
 import { PRRow } from "./_components/PRRow";
 import { FilterBar } from "./_components/FilterBar";
@@ -32,35 +33,39 @@ export default function PullsPage() {
   const router = useRouter();
   const { activeRepo } = useActiveRepo();
   const repoNotFound = useRepoNotFound(repoId);
-  const { data: pulls, isLoading, isError, error, refetch } = usePulls(repoId);
+
+  const status = search.get("status") ?? "needs_review";
+  const sort = search.get("sort") ?? "newest";
+  // Author is React-only — refresh / share loses it.
+  const [author, setAuthor] = React.useState(AUTHOR_ALL);
+  const [query, setQuery] = React.useState("");
+
+  const { data: pulls, isLoading, isError, error, refetch } = usePulls(repoId, {
+    author,
+    sort,
+  });
   const refresh = useRefreshRepo();
 
-  // Default to "needs review" — the most actionable filter on open.
-  const status = search.get("status") ?? "needs_review";
   const setStatus = (k: string) => {
     const sp = new URLSearchParams(search.toString());
-    sp.set("status", k); // always explicit so "all" sticks over the needs_review default
+    sp.set("status", k);
+    router.replace(`/repos/${repoId}/pulls?${sp.toString()}`);
+  };
+  const setSort = (v: string) => {
+    const sp = new URLSearchParams(search.toString());
+    if (v === "newest") sp.delete("sort");
+    else sp.set("sort", v);
     router.replace(`/repos/${repoId}/pulls?${sp.toString()}`);
   };
 
-  const [query, setQuery] = React.useState("");
-  const [sort, setSort] = React.useState("newest");
+  // Server already filtered by author/sort; client filters again (double filter).
+  const filtered = clientFilterSort(pulls ?? [], { author, status, query, sort });
+  const authors = uniqueAuthors(pulls ?? []);
 
-  const q = query.trim().toLowerCase();
-  const filtered = (pulls ?? [])
-    .filter((p) => status === "all" || p.status === status)
-    .filter((p) => !q || p.title.toLowerCase().includes(q) || String(p.number).includes(q))
-    .slice()
-    .sort((a, b) => {
-      const ta = Date.parse(a.updated_at ?? "") || 0;
-      const tb = Date.parse(b.updated_at ?? "") || 0;
-      return sort === "oldest" ? ta - tb : tb - ta;
-    });
   const repoName = activeRepo?.full_name ?? repoId;
   const openCount = (pulls ?? []).filter((p) => OPEN_STATUSES.has(p.status)).length;
   const needsReviewCount = (pulls ?? []).filter((p) => p.status === "needs_review").length;
 
-  // Stale/unknown :repoId → friendly empty state instead of a 404 error.
   if (repoNotFound) {
     return (
       <AppShell crumb={[{ label: repoName, mono: true }, { label: t("list.breadcrumb") }]}>
@@ -93,6 +98,9 @@ export default function PullsPage() {
           onQuery={setQuery}
           sort={sort}
           onSort={setSort}
+          author={author}
+          onAuthor={setAuthor}
+          authors={authors}
           onRefresh={() => refresh.mutate(repoId)}
           refreshing={refresh.isPending}
         />

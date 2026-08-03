@@ -49,6 +49,19 @@ export const COLUMN_KEYS: string[] = [
   "updated",
 ];
 
+/** Sort options for the PR list (values sent to GET /repos/:id/pulls?sort=). */
+export const SORT_OPTIONS: { value: string; labelKey: string }[] = [
+  { value: "newest", labelKey: "newest" },
+  { value: "oldest", labelKey: "oldest" },
+  { value: "score", labelKey: "score" },
+  { value: "score_asc", labelKey: "scoreAsc" },
+  { value: "cost", labelKey: "cost" },
+  { value: "author", labelKey: "author" },
+];
+
+/** Sentinel for the author dropdown meaning "no author filter". */
+export const AUTHOR_ALL = "all";
+
 /** Number of skeleton rows shown while loading. */
 export const SKELETON_ROWS = 4;
 
