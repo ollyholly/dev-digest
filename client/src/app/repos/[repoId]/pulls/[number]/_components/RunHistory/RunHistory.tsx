@@ -3,8 +3,14 @@
 import React from "react";
 import { useTranslations } from "next-intl";
 import { Badge, Icon, CircularScore, type IconName } from "@devdigest/ui";
-import type { RunSummary, PrCommit } from "@devdigest/shared";
+import type { FindingRecord, RunSummary, PrCommit } from "@devdigest/shared";
 import { RunCostBadge } from "@/components/run-cost-badge";
+import {
+  FindingsHoverCard,
+  SeverityBadges,
+  countFindingsBySeverity,
+  hasAnyFindings,
+} from "@/components/findings-hover-card";
 
 /**
  * PR timeline — every agent run interleaved with the PR's commits, newest-first
@@ -61,8 +67,6 @@ const iconBtnStyle: React.CSSProperties = {
   flexShrink: 0,
 };
 
-// Commits are markers, not actions — lighter (dashed, transparent) so they read
-// as separators between the runs they sit chronologically between.
 const commitRowStyle: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
@@ -78,25 +82,70 @@ type TimelineItem =
   | { kind: "run"; ts: number; run: RunSummary }
   | { kind: "commit"; ts: number; commit: PrCommit };
 
-/** Epoch ms for sorting; unparseable / missing timestamps sort last. */
 function tsOf(s: string | null | undefined): number {
   if (!s) return 0;
   const n = Date.parse(s);
   return Number.isNaN(n) ? 0 : n;
 }
 
+function SettledFindingsMeta({
+  run,
+  findings,
+}: {
+  run: RunSummary;
+  /** undefined = no join available → plain-text findings_count fallback. */
+  findings: FindingRecord[] | undefined;
+}) {
+  const t = useTranslations("prReview");
+  const tf = useTranslations("prReview.findings");
+
+  if (findings === undefined) {
+    return (
+      <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
+        {t("runStatus.findings", { count: run.findings_count ?? 0 })}
+        {(run.blockers ?? 0) > 0 ? t("runStatus.blockers", { count: run.blockers ?? 0 }) : ""}
+      </div>
+    );
+  }
+
+  const counts = countFindingsBySeverity(findings);
+  const total = counts.CRITICAL + counts.WARNING + counts.SUGGESTION;
+
+  return (
+    <div
+      style={{
+        fontSize: 12,
+        color: "var(--text-muted)",
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 6,
+      }}
+    >
+      {hasAnyFindings(counts) ? (
+        <FindingsHoverCard findings={findings} aria-label={tf("summary", { count: total })}>
+          <SeverityBadges counts={counts} />
+        </FindingsHoverCard>
+      ) : (
+        <SeverityBadges counts={counts} />
+      )}
+      {(run.blockers ?? 0) > 0 ? tf("blockers", { count: run.blockers ?? 0 }) : null}
+    </div>
+  );
+}
+
 export function RunHistory({
   runs,
   commits = [],
+  findingsByRun,
   onOpenTrace,
   onGoToReview,
   onDelete,
 }: {
   runs: RunSummary[];
   commits?: PrCommit[];
-  /** Open the trace + log drawer for a run (the logs icon). */
+  /** Optional client join of review findings by run_id. Absence → plain-text fallback. */
+  findingsByRun?: Map<string, FindingRecord[]>;
   onOpenTrace: (runId: string) => void;
-  /** Jump to this run's inline review accordion below (clicking the agent name). */
   onGoToReview?: (runId: string) => void;
   onDelete?: (runId: string) => void;
 }) {
@@ -150,6 +199,15 @@ export function RunHistory({
         const r = item.run;
         const o = outcomeOf(r);
         const settled = r.status === "done";
+        // Map absent → undefined (plain text). Map present without entry → undefined
+        // (review deleted; keep denormalized findings_count). Map with entry → array.
+        const findingsProp =
+          findingsByRun == null
+            ? undefined
+            : findingsByRun.has(r.run_id)
+              ? (findingsByRun.get(r.run_id) ?? [])
+              : undefined;
+
         return (
           <div key={`run:${r.run_id}`} style={rowStyle}>
             <Badge color={o.color} bg={o.bg} icon={o.icon}>
@@ -189,12 +247,7 @@ export function RunHistory({
                   {r.error}
                 </div>
               )}
-              {settled && (
-                <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
-                  {t("runStatus.findings", { count: r.findings_count ?? 0 })}
-                  {(r.blockers ?? 0) > 0 ? t("runStatus.blockers", { count: r.blockers ?? 0 }) : ""}
-                </div>
-              )}
+              {settled && <SettledFindingsMeta run={r} findings={findingsProp} />}
             </div>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 2, fontSize: 11, color: "var(--text-muted)", flexShrink: 0 }}>
               {r.ran_at && <span>{new Date(r.ran_at).toLocaleTimeString()}</span>}

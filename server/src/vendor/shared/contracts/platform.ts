@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SeverityCounts } from './findings.js';
 import { Provider } from './knowledge.js';
 
 /**
@@ -172,6 +173,8 @@ export const PrMeta = z.object({
   score: z.number().int().nullish(),
   // Wave (or all-runs) cost rollup for the PR list COST column; null → "—".
   cost_usd: z.number().nullish(),
+  // All-reviews severity tally (list endpoint only; null/absent until reviewed).
+  findings_by_severity: SeverityCounts.nullish(),
 });
 export type PrMeta = z.infer<typeof PrMeta>;
 

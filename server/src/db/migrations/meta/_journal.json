@@ -78,6 +78,13 @@
       "when": 1785705156222,
       "tag": "0010_open_mercury",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1785784982041,
+      "tag": "0011_complete_violations",
+      "breakpoints": true
     }
   ]
 }

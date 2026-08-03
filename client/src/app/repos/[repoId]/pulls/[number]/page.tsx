@@ -21,7 +21,11 @@ import { usePrReviews, useCancelRun, usePrActiveRuns, usePrRuns, useDeleteRun } 
 import { useActiveRepo, useRepoNotFound } from "../../../../../lib/repo-context";
 import { ApiError } from "../../../../../lib/api";
 import { githubPrUrl } from "../../../../../lib/github-urls";
-import type { FindingRecord } from "@devdigest/shared";
+import type { FindingRecord, Severity } from "@devdigest/shared";
+import {
+  parseSeverityParam,
+  serializeSeverityParam,
+} from "./_components/FindingsPanel/helpers";
 
 export default function PRDetailPage() {
   const params = useParams<{ repoId: string; number: string }>();
@@ -59,6 +63,10 @@ export default function PRDetailPage() {
 
   const tab = search.get("tab") ?? "overview";
   const traceRunId = search.get("trace");
+  const selectedSeverities = React.useMemo(
+    () => parseSeverityParam(search.get("severity")),
+    [search],
+  );
   const setParam = (key: string, val: string | null) => {
     const sp = new URLSearchParams(search.toString());
     if (val == null) sp.delete(key);
@@ -66,6 +74,12 @@ export default function PRDetailPage() {
     router.replace(`/repos/${repoId}/pulls/${number}${sp.toString() ? `?${sp.toString()}` : ""}`);
   };
   const setTab = (t: string) => setParam("tab", t);
+  const onSeverityChange = React.useCallback(
+    (next: Severity[]) => setParam("severity", serializeSeverityParam(next)),
+    // setParam closes over search/router; intentional per-render binding.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [search, router, repoId, number],
+  );
 
   // Reviews come newest-first; each is its own run (grouped into accordions).
   const runs = reviews ?? [];
@@ -147,6 +161,8 @@ export default function PRDetailPage() {
             prCommits={pr.commits}
             repoFullName={repoFullName}
             headSha={pr.head_sha}
+            selectedSeverities={selectedSeverities}
+            onSeverityChange={onSeverityChange}
             cancelMutation={cancel}
             onOpenTrace={(id) => setParam("trace", id)}
             onDelete={(id) => {

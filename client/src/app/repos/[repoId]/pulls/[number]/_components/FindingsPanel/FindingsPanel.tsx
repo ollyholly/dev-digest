@@ -1,15 +1,16 @@
-/* FindingsPanel — hide-low-confidence + j/k navigation + FindingCard list,
-   wiring the accept/dismiss action hook (A2). */
+/* FindingsPanel — severity filter + hide-low-confidence + j/k navigation +
+   FindingCard list, wiring the accept/dismiss action hook (A2). */
 "use client";
 
 import React from "react";
 import { useTranslations } from "next-intl";
 import { Toggle, EmptyState } from "@devdigest/ui";
-import type { FindingRecord } from "@devdigest/shared";
+import type { FindingRecord, Severity } from "@devdigest/shared";
 import { FindingCard } from "../FindingCard";
+import { SeverityFilterBar } from "../SeverityFilterBar";
 import { useFindingAction } from "../../../../../../../lib/hooks/reviews";
 import { KEY_TO_ACTION } from "./constants";
-import { visibleFindings } from "./helpers";
+import { confidenceFiltered, countBySeverity, visibleFindings } from "./helpers";
 import { s } from "./styles";
 
 export function FindingsPanel({
@@ -17,18 +18,30 @@ export function FindingsPanel({
   prId,
   repoFullName,
   headSha,
+  selectedSeverities = [],
+  onSeverityChange,
 }: {
   findings: FindingRecord[];
   prId: string;
   repoFullName?: string | null;
   headSha?: string | null;
+  selectedSeverities?: Severity[];
+  onSeverityChange?: (next: Severity[]) => void;
 }) {
   const t = useTranslations("prReview");
   const action = useFindingAction();
   const [hideLow, setHideLow] = React.useState(false);
   const [focusIdx, setFocusIdx] = React.useState(0);
 
-  const shown = React.useMemo(() => visibleFindings(findings, hideLow), [findings, hideLow]);
+  const confFiltered = React.useMemo(
+    () => confidenceFiltered(findings, hideLow),
+    [findings, hideLow],
+  );
+  const counts = React.useMemo(() => countBySeverity(confFiltered), [confFiltered]);
+  const shown = React.useMemo(
+    () => visibleFindings(findings, hideLow, selectedSeverities),
+    [findings, hideLow, selectedSeverities],
+  );
 
   // j/k navigation + a/d shortcuts on the focused finding (keyboard).
   React.useEffect(() => {
@@ -48,6 +61,13 @@ export function FindingsPanel({
   return (
     <div>
       <div style={s.toolbar}>
+        {onSeverityChange && (
+          <SeverityFilterBar
+            counts={counts}
+            selected={selectedSeverities}
+            onChange={onSeverityChange}
+          />
+        )}
         <div style={s.toggleGroup}>
           {t("panel.hideLowConfidence")}
           <Toggle on={hideLow} onChange={setHideLow} size={16} />
