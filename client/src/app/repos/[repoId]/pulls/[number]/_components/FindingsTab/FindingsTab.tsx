@@ -6,7 +6,13 @@ import { RunStatus } from "../RunStatus";
 import { RunHistory } from "../RunHistory/RunHistory";
 import { ReviewRunAccordion } from "../ReviewRunAccordion";
 import { s } from "./styles";
-import type { FindingRecord, ReviewRecord, RunSummary, PrCommit } from "@devdigest/shared";
+import type {
+  FindingRecord,
+  ReviewRecord,
+  RunSummary,
+  PrCommit,
+  Severity,
+} from "@devdigest/shared";
 import type { UseMutationResult } from "@tanstack/react-query";
 
 interface FindingsTabProps {
@@ -21,6 +27,8 @@ interface FindingsTabProps {
   /** owner/repo + head sha — used to deep-link a finding's file:line to GitHub. */
   repoFullName?: string | null;
   headSha?: string | null;
+  selectedSeverities?: Severity[];
+  onSeverityChange?: (next: Severity[]) => void;
   onOpenTrace: (id: string) => void;
   onDelete: (id: string) => void;
   onRunDone: () => void;
@@ -37,6 +45,8 @@ export function FindingsTab({
   cancelMutation,
   repoFullName,
   headSha,
+  selectedSeverities = [],
+  onSeverityChange,
   onOpenTrace,
   onDelete,
   onRunDone,
@@ -70,6 +80,16 @@ export function FindingsTab({
   const handleGoToReview = useCallback((runId: string) => {
     setTarget((p) => ({ runId, n: (p?.n ?? 0) + 1 }));
   }, []);
+
+  // Client join: review findings keyed by run_id (mirror of cost-by-run pattern).
+  const findingsByRun = React.useMemo(() => {
+    const map = new Map<string, FindingRecord[]>();
+    for (const r of runs) {
+      if (!r.run_id) continue;
+      map.set(r.run_id, r.findings);
+    }
+    return map;
+  }, [runs]);
 
   return (
     <section>
@@ -131,6 +151,7 @@ export function FindingsTab({
           <RunHistory
             runs={prRuns ?? []}
             commits={prCommits}
+            findingsByRun={findingsByRun}
             onOpenTrace={handleOpenTrace}
             onGoToReview={handleGoToReview}
             onDelete={handleDelete}
@@ -164,6 +185,8 @@ export function FindingsTab({
             headSha={headSha}
             targetRunId={target?.runId ?? null}
             targetNonce={target?.n ?? 0}
+            selectedSeverities={selectedSeverities}
+            onSeverityChange={onSeverityChange}
           />
         ))
       )}

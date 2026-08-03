@@ -1,11 +1,12 @@
-import type { PrStatus } from '@devdigest/shared';
+import type { PrStatus, SeverityCounts } from '@devdigest/shared';
 
 /**
  * PR-list rollup helpers (pure — no DB / `this`, so they unit-test cleanly).
  *
  * The Pull Requests list shows, per PR: the latest review's SCORE, a review
- * STATUS, and a COST rollup (wave sum of completed-run `cost_usd` for
- * `lastReviewedSha`, falling back to all completed runs). The DB `status`
+ * STATUS, a COST rollup (wave sum of completed-run `cost_usd` for
+ * `lastReviewedSha`, falling back to all completed runs), and a FINDINGS
+ * severity breakdown across every review of the PR. The DB `status`
  * column holds GitHub's merge state (open/merged/closed); the review status
  * (needs_review / reviewed / stale) is DERIVED here for OPEN PRs from the
  * commit a review last ran against (`lastReviewedSha`) vs the PR head, plus age.
@@ -14,19 +15,13 @@ import type { PrStatus } from '@devdigest/shared';
 /** Open PRs whose current head was reviewed but untouched this long read "stale". */
 export const STALE_DAYS = 7;
 
-export interface SeverityCounts {
-  critical: number;
-  warning: number;
-  suggestion: number;
-}
-
 /** Tally finding severities (CRITICAL / WARNING / SUGGESTION) for one review. */
 export function rollupSeverities(rows: { severity: string }[]): SeverityCounts {
-  const c: SeverityCounts = { critical: 0, warning: 0, suggestion: 0 };
+  const c: SeverityCounts = { CRITICAL: 0, WARNING: 0, SUGGESTION: 0 };
   for (const r of rows) {
-    if (r.severity === 'CRITICAL') c.critical += 1;
-    else if (r.severity === 'WARNING') c.warning += 1;
-    else if (r.severity === 'SUGGESTION') c.suggestion += 1;
+    if (r.severity === 'CRITICAL') c.CRITICAL += 1;
+    else if (r.severity === 'WARNING') c.WARNING += 1;
+    else if (r.severity === 'SUGGESTION') c.SUGGESTION += 1;
   }
   return c;
 }

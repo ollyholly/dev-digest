@@ -1,14 +1,19 @@
 /* ReviewRunAccordion — one collapsible review RUN (a single agent's pass over
-   the PR). Header shows agent + verdict + counts + score + when it ran; the
-   body holds that run's VerdictBanner summary and its own FindingsPanel. A PR
-   can have many runs (different agents / re-runs over time) — each is separate
-   and collapsible so older runs don't bury the latest. */
+   the PR). Header shows agent + verdict + severity badges + blockers + score;
+   the body holds that run's VerdictBanner summary and its own FindingsPanel. */
 "use client";
 
 import React from "react";
+import { useTranslations } from "next-intl";
 import { Icon, Badge } from "@devdigest/ui";
-import type { ReviewRecord, Verdict } from "@devdigest/shared";
+import type { ReviewRecord, Severity, Verdict } from "@devdigest/shared";
+import {
+  FindingsHoverCard,
+  SeverityBadges,
+  hasAnyFindings,
+} from "@/components/findings-hover-card";
 import { FindingsPanel } from "../FindingsPanel";
+import { countBySeverity } from "../FindingsPanel/helpers";
 import { VerdictBanner } from "../VerdictBanner";
 import { useDeleteReview } from "../../../../../../../lib/hooks/reviews";
 
@@ -31,6 +36,8 @@ export function ReviewRunAccordion({
   headSha,
   targetRunId = null,
   targetNonce = 0,
+  selectedSeverities = [],
+  onSeverityChange,
 }: {
   review: ReviewRecord;
   prId: string;
@@ -41,7 +48,10 @@ export function ReviewRunAccordion({
    *  (driven from the Timeline: clicking an agent name navigates here). */
   targetRunId?: string | null;
   targetNonce?: number;
+  selectedSeverities?: Severity[];
+  onSeverityChange?: (next: Severity[]) => void;
 }) {
+  const t = useTranslations("prReview.findings");
   const [open, setOpen] = React.useState(defaultOpen);
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   React.useEffect(() => {
@@ -53,8 +63,10 @@ export function ReviewRunAccordion({
   }, [targetRunId, targetNonce, review.run_id]);
   const del = useDeleteReview(prId);
   const findings = review.findings;
+  const counts = React.useMemo(() => countBySeverity(findings), [findings]);
   const blockers = findings.filter((f) => f.severity === "CRITICAL" && !f.dismissed_at).length;
   const verdictColor = review.verdict ? VERDICT_COLOR[review.verdict] ?? "var(--text-muted)" : "var(--text-muted)";
+  const total = counts.CRITICAL + counts.WARNING + counts.SUGGESTION;
 
   return (
     <div
@@ -93,9 +105,22 @@ export function ReviewRunAccordion({
             {review.verdict.replace("_", " ")}
           </Badge>
         )}
-        <span style={{ fontSize: 12.5, color: "var(--text-muted)" }}>
-          {findings.length} finding{findings.length === 1 ? "" : "s"}
-          {blockers > 0 ? ` · ${blockers} blocker${blockers === 1 ? "" : "s"}` : ""}
+        <span
+          style={{ fontSize: 12.5, color: "var(--text-muted)", display: "inline-flex", alignItems: "center", gap: 6 }}
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
+          {hasAnyFindings(counts) ? (
+            <FindingsHoverCard
+              findings={findings}
+              aria-label={t("summary", { count: total })}
+            >
+              <SeverityBadges counts={counts} />
+            </FindingsHoverCard>
+          ) : (
+            <SeverityBadges counts={counts} />
+          )}
+          {blockers > 0 ? t("blockers", { count: blockers }) : null}
         </span>
         <span style={{ flex: 1 }} />
         {review.score != null && (
@@ -152,6 +177,8 @@ export function ReviewRunAccordion({
             prId={prId}
             repoFullName={repoFullName}
             headSha={headSha}
+            selectedSeverities={selectedSeverities}
+            onSeverityChange={onSeverityChange}
           />
         </div>
       )}
