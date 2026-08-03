@@ -132,12 +132,16 @@ export function FindingsHoverCard({
             position: "fixed",
             zIndex: 80,
             width: CARD_WIDTH,
+            maxWidth: "min(360px, calc(100vw - 16px))",
             maxHeight: CARD_MAX_HEIGHT,
             left: pos.left,
             ...(pos.flipUp
               ? { bottom: window.innerHeight - pos.top, top: "auto" }
               : { top: pos.top }),
-            overflow: "auto",
+            // Vertical only — horizontal scroll + the light scrollbar-corner
+            // square come from long file:line paths overflowing the card.
+            overflowX: "hidden",
+            overflowY: "auto",
             borderRadius: 10,
             border: "1px solid var(--border)",
             background: "var(--bg-elevated)",

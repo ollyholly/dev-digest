@@ -28,6 +28,12 @@ export function FindingPopoverItem({ finding }: { finding: FindingRecord }) {
               fontWeight: 600,
               color: "var(--text-primary)",
               lineHeight: 1.35,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              wordBreak: "break-word",
             }}
           >
             {finding.title}
@@ -41,13 +47,26 @@ export function FindingPopoverItem({ finding }: { finding: FindingRecord }) {
               marginTop: 4,
               fontSize: 11.5,
               color: "var(--text-muted)",
+              minWidth: 0,
+              maxWidth: "100%",
             }}
           >
             <CategoryTag category={finding.category as Category} />
-            <span className="mono" style={{ color: "var(--accent)" }}>
+            <span
+              className="mono"
+              title={fileLineLabel(finding)}
+              style={{
+                color: "var(--accent)",
+                minWidth: 0,
+                maxWidth: "100%",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
               {fileLineLabel(finding)}
             </span>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
               <span
                 style={{
                   width: 6,
