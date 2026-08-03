@@ -8,6 +8,8 @@ import { getContext } from '../_shared/context.js';
 import { IdParams } from '../_shared/schemas.js';
 import { AppError, NotFoundError } from '../../platform/errors.js';
 import { deriveReviewStatus, rollupPrCost } from './status.js';
+import { applyPullQuery } from './query.js';
+import { z } from 'zod';
 
 /**
  * F1 — pulls module. PR import via Octokit (list + per-PR detail).
@@ -23,8 +25,21 @@ export default async function pullsRoutes(appBase: FastifyInstance) {
   const app = appBase.withTypeProvider<ZodTypeProvider>();
   const { container } = app;
 
-  app.get('/repos/:id/pulls', { schema: { params: IdParams } }, async (req): Promise<PrMeta[]> => {
+  app.get(
+    '/repos/:id/pulls',
+    {
+      schema: {
+        params: IdParams,
+        querystring: z.object({
+          author: z.string().optional(),
+          status: z.string().optional(),
+          sort: z.string().optional(),
+        }),
+      },
+    },
+    async (req): Promise<PrMeta[]> => {
     const { workspaceId } = await getContext(container, req);
+    const q = req.query as { author?: string; status?: string; sort?: string };
     const [repo] = await container.db
       .select()
       .from(t.repos)
@@ -154,7 +169,7 @@ export default async function pullsRoutes(appBase: FastifyInstance) {
     }
 
     const now = Date.now();
-    return rows.map((r) => {
+    const mapped: PrMeta[] = rows.map((r) => {
       const review = latestReviewByPr.get(r.id);
       return {
         id: r.id,
@@ -182,6 +197,12 @@ export default async function pullsRoutes(appBase: FastifyInstance) {
           runs: runsByPr.get(r.id) ?? [],
         }),
       };
+    });
+
+    return applyPullQuery(mapped, {
+      author: q.author,
+      status: q.status,
+      sort: q.sort,
     });
   });
 

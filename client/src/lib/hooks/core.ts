@@ -99,13 +99,23 @@ export function useDeleteRepo() {
 }
 
 // ---- Pull requests (F1: GET /repos/:id/pulls, GET /pulls/:id) ----
-export function usePulls(repoId: string | null | undefined) {
+export function usePulls(
+  repoId: string | null | undefined,
+  opts?: { author?: string; sort?: string; status?: string },
+) {
+  const author = opts?.author && opts.author !== "all" ? opts.author : undefined;
+  const sort = opts?.sort && opts.sort !== "newest" ? opts.sort : undefined;
+  // status intentionally omitted from the query string — client still filters
+  // locally, so the server may return a wider set than the UI shows.
+  const qs = new URLSearchParams();
+  if (author) qs.set("author", author);
+  if (sort) qs.set("sort", sort);
+  const suffix = qs.toString() ? `?${qs.toString()}` : "";
+
   return useQuery({
-    queryKey: ["pulls", repoId],
-    queryFn: () => api.get<PrMeta[]>(`/repos/${repoId}/pulls`),
+    queryKey: ["pulls", repoId, author ?? null, sort ?? null],
+    queryFn: () => api.get<PrMeta[]>(`/repos/${repoId}/pulls${suffix}`),
     enabled: !!repoId,
-    // Auto-refresh PR statuses: re-sync from GitHub every 60s while the page is
-    // open, and whenever the window regains focus.
     refetchInterval: 60_000,
     refetchOnWindowFocus: true,
   });

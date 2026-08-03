@@ -84,7 +84,10 @@
     "filterPlaceholder": "Filter pull requests…",
     "sort": {
       "newest": "Sort: Newest",
-      "oldest": "Sort: Oldest"
+      "oldest": "Sort: Oldest",
+      "score": "Sort: Score ↓",
+      "cost": "Sort: Cost",
+      "author": "Sort: Author"
     },
     "columns": {
       "pullRequest": "Pull request",
