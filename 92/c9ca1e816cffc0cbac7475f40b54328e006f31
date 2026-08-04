@@ -1,0 +1,47 @@
+AGENTS.md
+  s_40f78a4e281e82::t_b46db52c3bd04f 26-30,79-84
+client/AGENTS.md
+  s_40f78a4e281e82::t_9886996faccbf2 31-34,55-56
+client/docs/README.md
+  s_40f78a4e281e82::t_a814d59af8cb50 1-15
+client/specs/README.md
+  s_40f78a4e281e82::t_5ee2135eb9cbb9 1-11
+client/specs/_TEMPLATE.md
+  s_40f78a4e281e82::t_1eb9f39dbeaec3 1-33
+e2e/AGENTS.md
+  s_40f78a4e281e82::t_52be49b8e97b28 27,34-38,56-57
+e2e/docs/README.md
+  s_40f78a4e281e82::t_bd5232acf27358 1-18
+reviewer-core/AGENTS.md
+  s_40f78a4e281e82::t_f37000d817c6a0 30-33,58-59
+reviewer-core/docs/README.md
+  s_40f78a4e281e82::t_45e58ef44889c1 1-16
+reviewer-core/specs/README.md
+  s_40f78a4e281e82::t_dc8d5c6fc22c6c 1-11
+reviewer-core/specs/_TEMPLATE.md
+  s_40f78a4e281e82::t_b1a33737e5b66b 1-33
+server/AGENTS.md
+  s_40f78a4e281e82::t_90c519d575322c 38-41,69-72
+server/docs/README.md
+  s_40f78a4e281e82::t_a2a48a8aab86ac 1-16
+server/specs/README.md
+  s_40f78a4e281e82::t_6ffc5d1c0dae0f 1-11
+server/specs/_TEMPLATE.md
+  s_40f78a4e281e82::t_48c65bed1ea18d 1-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "92c9ca1e816cffc0cbac7475f40b54328e006f31",
+  "prompts": {},
+  "sessions": {
+    "s_40f78a4e281e82": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "df1753ca-e3f4-4c8f-9630-232f5ab7bd0c",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
