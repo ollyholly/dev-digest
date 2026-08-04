@@ -33,7 +33,7 @@ components live as flat files at the root.
 | **Command palette** | `command-palette/` | `CommandPalette` (Cmd+K), `ShortcutsHelp` (`?`) |
 | **Icons** | `icons.tsx` | `Icon` registry + `IconName` type (single source; not split) |
 | **Nav** | `nav.ts` | `NAV`, `SETTINGS_SECTIONS`, `SHORTCUTS`, `resolveHref()` — route/shortcut config |
-| **Standalone** | `LiveLogStream.tsx`, `ExportWizardSteps.tsx`, `AutoTriggerStatus.tsx` | cross-feature components without a natural layer |
+| **Standalone** | `LiveLogStream.tsx`, `ExportWizardSteps.tsx` | cross-feature components without a natural layer |
 
 ## Tokens & theming
 
@@ -49,6 +49,50 @@ Severity/category semantics are centralized in `primitives/tokens.ts`:
 
 Use `SeverityBadge` / `CategoryTag` rather than reading the maps directly when
 you just need the rendered chip.
+
+## Accepted domain-specific exceptions
+
+`@devdigest/ui` is meant to be domain-agnostic, but a few pieces intentionally
+encode DevDigest's review vocabulary rather than pure design tokens. These are
+deliberate, not oversights — moving them would either fragment a
+widely-reused badge across many call sites or break internal coupling inside
+this package itself:
+
+- **`primitives/tokens.ts` (`Severity`/`Category`, `SEV`/`CAT`) and
+  `primitives/Badge.tsx` (`SeverityBadge`/`CategoryTag`)** — these bake in the
+  finding severity/category taxonomy. Kept here because `SeverityBadge` /
+  `CategoryTag` are consumed from ~10 call sites across `app/` and
+  `components/` (`FindingCard`, `FindingPopoverItem`, `SeverityBadges`, the
+  showcase, …) as *the* canonical rendering of a severity/category chip;
+  splitting the render primitive from its token map across a package
+  boundary would just relocate the coupling, not remove it. `Severity` here
+  is intentionally a superset (`CRITICAL | WARNING | SUGGESTION | INFO`) of
+  `@devdigest/shared`'s `Severity` (`CRITICAL | WARNING | SUGGESTION`) — see
+  the "Severity superset" note below.
+- **`nav.ts` (`NAV`, `SETTINGS_SECTIONS`, `SHORTCUTS`, product copy like
+  "Accept finding")** — `shell/Sidebar.tsx`, `shell/NavItem.tsx`, and
+  `command-palette/ShortcutsHelp.tsx` read this config directly, so it isn't
+  just consumed by the app — the design system's own shell components are
+  built around it. Treat `nav.ts` as this app's single navigation config
+  living inside the shell it configures, not a generic primitive; do not add
+  a second nav config elsewhere.
+
+Domain-specific code that had **no** such internal coupling was moved out:
+`AutoTriggerStatus` ("Auto-review" product copy + a `Settings` deep-link) now
+lives at `src/components/auto-trigger-status/` since nothing inside
+`@devdigest/ui` depended on it.
+
+### Severity superset (by design, not a bug)
+
+`primitives/tokens.ts`'s `Severity` includes `INFO` on top of
+`@devdigest/shared`'s `CRITICAL | WARNING | SUGGESTION`. This is deliberate:
+`INFO` is a **UI-only** severity level (used e.g. for informational chips in
+the showcase / design system) that the review pipeline never emits over the
+API. Code that receives a real `Severity` from `@devdigest/shared` and passes
+it into a UI component consuming this wider type is safe — the UI type is a
+superset, so every valid API value is also a valid UI value. Do not remove
+`INFO` to "match" the API contract; it is only unreachable in the other
+direction (UI code must not assume every UI `Severity` came from the API).
 
 ## Showcase
 

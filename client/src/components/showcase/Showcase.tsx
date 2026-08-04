@@ -41,8 +41,8 @@ import {
   MetricCard,
   LiveLogStream,
   ExportWizardSteps,
-  AutoTriggerStatus,
 } from "@devdigest/ui";
+import { AutoTriggerStatus } from "@/components/auto-trigger-status";
 import { s } from "./styles";
 import { SEVERITIES, CATEGORIES, MODEL_OPTIONS } from "./constants";
 

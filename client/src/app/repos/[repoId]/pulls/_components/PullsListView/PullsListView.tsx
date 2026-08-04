@@ -4,7 +4,8 @@
 
 import React from "react";
 import { useTranslations } from "next-intl";
-import { Skeleton, EmptyState, ErrorState, AutoTriggerStatus } from "@devdigest/ui";
+import { Skeleton, EmptyState, ErrorState } from "@devdigest/ui";
+import { AutoTriggerStatus } from "@/components/auto-trigger-status";
 import { ApiError } from "@/lib/api";
 import type { PrMeta } from "./constants";
 import { COLUMN_KEYS, SKELETON_ROWS } from "./constants";

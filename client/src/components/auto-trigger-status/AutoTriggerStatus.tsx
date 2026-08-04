@@ -1,5 +1,9 @@
 /* AutoTriggerStatus — pill showing whether automatic reviews are ON/OFF, with a
-   pulsing dot and an optional polling-interval detail. Ported from components2.jsx. */
+   pulsing dot and an optional polling-interval detail. Ported from components2.jsx.
+   Lives outside @devdigest/ui: "Auto-review" is DevDigest product vocabulary
+   and the Settings deep-link is app-specific, not a generic design-system idea. */
+"use client";
+
 import React from "react";
 
 export function AutoTriggerStatus({
@@ -12,6 +16,7 @@ export function AutoTriggerStatus({
   return (
     <button
       title="Settings → Automatic Reviews"
+      aria-label="Automatic reviews status — open Settings → Automatic Reviews"
       style={{
         display: "inline-flex",
         alignItems: "center",
