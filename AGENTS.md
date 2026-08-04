@@ -61,6 +61,10 @@ Prereqs: Node ≥ 22, pnpm ≥ 10, Docker (Postgres only).
   module(s) the request concerns (`client/`, `server/`, `reviewer-core/`,
   `e2e/`) and treat its contents as high-confidence guidance unless told
   otherwise. See [`.claude/skills/engineering-insights/SKILL.md`](.claude/skills/engineering-insights/SKILL.md).
+- **Before opening a PR** (`gh pr create` / push-for-PR), run
+  [`pr-self-review`](.claude/skills/pr-self-review/SKILL.md); refuse to open
+  the PR if it reports any critical finding (unless the user explicitly
+  overrides).
 - **At the end of a substantive session**, record any new, non-obvious
   finding to that module's `INSIGHTS.md` — append-only, skip if already
   present, skip entirely if nothing new was learned.
