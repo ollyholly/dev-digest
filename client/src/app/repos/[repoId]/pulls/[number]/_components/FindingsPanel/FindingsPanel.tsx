@@ -16,15 +16,11 @@ import { s } from "./styles";
 export function FindingsPanel({
   findings,
   prId,
-  repoFullName,
-  headSha,
   selectedSeverities = [],
   onSeverityChange,
 }: {
   findings: FindingRecord[];
   prId: string;
-  repoFullName?: string | null;
-  headSha?: string | null;
   selectedSeverities?: Severity[];
   onSeverityChange?: (next: Severity[]) => void;
 }) {
@@ -85,8 +81,6 @@ export function FindingsPanel({
               focused={i === focusIdx}
               defaultExpanded={i === 0}
               pending={action.isPending}
-              repoFullName={repoFullName}
-              headSha={headSha}
               onAction={(act) => action.mutate({ findingId: f.id, action: act, prId })}
             />
           ))

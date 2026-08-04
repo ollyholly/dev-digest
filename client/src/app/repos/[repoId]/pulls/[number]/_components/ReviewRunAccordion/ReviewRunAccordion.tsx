@@ -28,38 +28,42 @@ function formatWhen(iso: string): string {
   return Number.isNaN(d.getTime()) ? iso : d.toLocaleString();
 }
 
+export interface ScrollTarget {
+  runId: string;
+  nonce: number;
+}
+
+export interface SeverityFilter {
+  selected: Severity[];
+  onChange?: (next: Severity[]) => void;
+}
+
 export function ReviewRunAccordion({
   review,
   prId,
   defaultOpen = false,
-  repoFullName,
-  headSha,
-  targetRunId = null,
-  targetNonce = 0,
-  selectedSeverities = [],
-  onSeverityChange,
+  scrollTarget = null,
+  severityFilter,
 }: {
   review: ReviewRecord;
   prId: string;
   defaultOpen?: boolean;
-  repoFullName?: string | null;
-  headSha?: string | null;
-  /** When this matches review.run_id, the accordion opens and scrolls into view
-   *  (driven from the Timeline: clicking an agent name navigates here). */
-  targetRunId?: string | null;
-  targetNonce?: number;
-  selectedSeverities?: Severity[];
-  onSeverityChange?: (next: Severity[]) => void;
+  /** When scrollTarget.runId matches review.run_id, the accordion opens and
+   *  scrolls into view (driven from the Timeline: clicking an agent name
+   *  navigates here). scrollTarget.nonce re-triggers the scroll even when
+   *  the same run is targeted twice in a row. */
+  scrollTarget?: ScrollTarget | null;
+  severityFilter?: SeverityFilter;
 }) {
   const t = useTranslations("prReview.findings");
   const [open, setOpen] = React.useState(defaultOpen);
   const rootRef = React.useRef<HTMLDivElement | null>(null);
   React.useEffect(() => {
-    if (review.run_id && review.run_id === targetRunId) {
+    if (review.run_id && review.run_id === scrollTarget?.runId) {
       setOpen(true);
       rootRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [targetRunId, targetNonce, review.run_id]);
+  }, [scrollTarget?.runId, scrollTarget?.nonce, review.run_id]);
   const del = useDeleteReview(prId);
   const findings = review.findings;
   const counts = React.useMemo(() => countBySeverity(findings), [findings]);
@@ -174,10 +178,8 @@ export function ReviewRunAccordion({
           <FindingsPanel
             findings={findings}
             prId={prId}
-            repoFullName={repoFullName}
-            headSha={headSha}
-            selectedSeverities={selectedSeverities}
-            onSeverityChange={onSeverityChange}
+            selectedSeverities={severityFilter?.selected ?? []}
+            onSeverityChange={severityFilter?.onChange}
           />
         </div>
       )}

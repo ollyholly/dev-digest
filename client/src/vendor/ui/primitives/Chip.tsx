@@ -8,6 +8,7 @@ export function Chip({
   icon,
   count,
   color,
+  ...rest
 }: {
   children?: React.ReactNode;
   active?: boolean;
@@ -15,14 +16,21 @@ export function Chip({
   icon?: IconName;
   count?: number;
   color?: string;
-}) {
+} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onClick" | "color">) {
   const I = icon ? Icon[icon] : null;
   const [h, setH] = React.useState(false);
   return (
     <button
+      type="button"
+      // Chips are commonly used as toggle filters; default aria-pressed to
+      // `active` (when provided) so callers don't have to re-fork this
+      // primitive just to get accessible toggle semantics. Callers can still
+      // override via an explicit aria-pressed in ...rest.
+      aria-pressed={active}
       onClick={onClick}
       onMouseEnter={() => setH(true)}
       onMouseLeave={() => setH(false)}
+      {...rest}
       style={{
         display: "inline-flex",
         alignItems: "center",

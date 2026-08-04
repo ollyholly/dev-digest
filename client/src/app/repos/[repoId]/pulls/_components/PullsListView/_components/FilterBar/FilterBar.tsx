@@ -7,24 +7,36 @@ import { Chip, Button, TextInput, SelectInput } from "@devdigest/ui";
 import { STATUS_FILTERS } from "../../constants";
 import { s } from "../../styles";
 
-export function FilterBar({
-  active,
-  onActive,
-  query,
-  onQuery,
-  sort,
-  onSort,
-  onRefresh,
-  refreshing,
-}: {
+export interface FilterBarStatusFilter {
   active: string;
-  onActive: (k: string) => void;
+  onChange: (k: string) => void;
+}
+
+export interface FilterBarSearch {
   query: string;
-  onQuery: (v: string) => void;
-  sort: string;
-  onSort: (v: string) => void;
-  onRefresh: () => void;
-  refreshing: boolean;
+  onChange: (v: string) => void;
+}
+
+export interface FilterBarSort {
+  value: string;
+  onChange: (v: string) => void;
+}
+
+export interface FilterBarRefresh {
+  onClick: () => void;
+  pending: boolean;
+}
+
+export function FilterBar({
+  statusFilter,
+  search,
+  sort,
+  refresh,
+}: {
+  statusFilter: FilterBarStatusFilter;
+  search: FilterBarSearch;
+  sort: FilterBarSort;
+  refresh: FilterBarRefresh;
 }) {
   const t = useTranslations("prReview");
   const sortOptions = [
@@ -35,24 +47,33 @@ export function FilterBar({
     <div style={s.filterBar}>
       <div style={s.filterChips}>
         <div style={{ width: 240 }}>
-          <TextInput value={query} onChange={onQuery} placeholder={t("list.filterPlaceholder")} />
+          <TextInput
+            value={search.query}
+            onChange={search.onChange}
+            placeholder={t("list.filterPlaceholder")}
+            aria-label={t("list.filterPlaceholder")}
+          />
         </div>
         {STATUS_FILTERS.map(({ key, labelKey }) => (
-          <Chip key={key} active={active === key} onClick={() => onActive(key)}>
+          <Chip
+            key={key}
+            active={statusFilter.active === key}
+            onClick={() => statusFilter.onChange(key)}
+          >
             {t(`list.filter.${labelKey}`)}
           </Chip>
         ))}
       </div>
       <div style={s.filterActions}>
-        <SelectInput value={sort} onChange={onSort} options={sortOptions} mono={false} />
+        <SelectInput value={sort.value} onChange={sort.onChange} options={sortOptions} mono={false} />
         <Button
           kind="secondary"
           size="sm"
           icon="RefreshCw"
-          onClick={onRefresh}
-          disabled={refreshing}
+          onClick={refresh.onClick}
+          disabled={refresh.pending}
         >
-          {refreshing ? t("list.refreshing") : t("list.refresh")}
+          {refresh.pending ? t("list.refreshing") : t("list.refresh")}
         </Button>
       </div>
     </div>

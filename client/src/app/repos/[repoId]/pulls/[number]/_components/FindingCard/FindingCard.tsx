@@ -21,6 +21,7 @@ import type { FindingRecord, FindingActionKind } from "@devdigest/shared";
 import { SEV_COLOR, SEV_COLOR_FALLBACK } from "./constants";
 import { lineLabel } from "./helpers";
 import { githubBlobUrl } from "../../../../../../../lib/github-urls";
+import { useGithubLink } from "../PrDetailView/GithubLinkContext";
 import { s } from "./styles";
 
 export function FindingCard({
@@ -29,18 +30,15 @@ export function FindingCard({
   defaultExpanded,
   onAction,
   pending,
-  repoFullName,
-  headSha,
 }: {
   f: FindingRecord;
   focused?: boolean;
   defaultExpanded?: boolean;
   onAction?: (action: FindingActionKind, reply?: string) => void;
   pending?: boolean;
-  repoFullName?: string | null;
-  headSha?: string | null;
 }) {
   const t = useTranslations("prReview");
+  const { repoFullName, headSha } = useGithubLink();
   const [expanded, setExpanded] = React.useState(defaultExpanded ?? false);
   const sevColor = SEV_COLOR[f.severity] ?? SEV_COLOR_FALLBACK;
   const fileHref =

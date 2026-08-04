@@ -57,14 +57,10 @@ export function PullsListView({
 
       <div style={s.tableCard}>
         <FilterBar
-          active={status}
-          onActive={setStatus}
-          query={query}
-          onQuery={setQuery}
-          sort={sort}
-          onSort={setSort}
-          onRefresh={onRefresh}
-          refreshing={refreshing}
+          statusFilter={{ active: status, onChange: setStatus }}
+          search={{ query, onChange: setQuery }}
+          sort={{ value: sort, onChange: setSort }}
+          refresh={{ onClick: onRefresh, pending: refreshing }}
         />
         <div style={s.headRow}>
           {COLUMN_KEYS.map((key, i) => (
