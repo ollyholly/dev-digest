@@ -104,7 +104,7 @@ export function FindingsHoverCard({
   return (
     <span
       ref={anchorRef}
-      role="group"
+      role="button"
       tabIndex={0}
       aria-label={label}
       aria-expanded={open}

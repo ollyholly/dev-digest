@@ -6,6 +6,7 @@ import { RunStatus } from "../RunStatus";
 import { RunHistory } from "../RunHistory/RunHistory";
 import { ReviewRunAccordion } from "../ReviewRunAccordion";
 import { s } from "./styles";
+import type { useCancelRun } from "@/lib/hooks/reviews";
 import type {
   FindingRecord,
   ReviewRecord,
@@ -13,7 +14,6 @@ import type {
   PrCommit,
   Severity,
 } from "@devdigest/shared";
-import type { UseMutationResult } from "@tanstack/react-query";
 
 interface FindingsTabProps {
   prId: string | null;
@@ -23,7 +23,7 @@ interface FindingsTabProps {
   runs: ReviewRecord[];
   prRuns: RunSummary[] | undefined;
   prCommits: PrCommit[];
-  cancelMutation: UseMutationResult<any, any, string, any>;
+  cancelMutation: ReturnType<typeof useCancelRun>;
   /** owner/repo + head sha — used to deep-link a finding's file:line to GitHub. */
   repoFullName?: string | null;
   headSha?: string | null;

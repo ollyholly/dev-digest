@@ -82,10 +82,10 @@ export default function PRDetailPage() {
   );
 
   // Reviews come newest-first; each is its own run (grouped into accordions).
-  const runs = reviews ?? [];
+  const runs = React.useMemo(() => reviews ?? [], [reviews]);
   const allFindings: FindingRecord[] = React.useMemo(
     () => runs.flatMap((r) => r.findings),
-    [reviews],
+    [runs],
   );
   const lethalTrifecta = allFindings.filter((f) => f.kind === "lethal_trifecta");
   const findingsCount = allFindings.length;
