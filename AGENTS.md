@@ -23,6 +23,11 @@ CLAUDE.md before assuming a shared-package convention applies.
 Only **Postgres** runs in Docker (`docker-compose.yml`). API and web run on
 the host via `pnpm dev`.
 
+Each of `client/`, `server/`, and `reviewer-core/` owns package-local
+`docs/` (reference) and `specs/` (planning contracts). `e2e/specs/` is
+**flow tests only** — planning specs for product changes live in the
+sibling packages; see [`e2e/docs/`](e2e/docs/README.md).
+
 ## Build / run / test
 
 ```sh
@@ -71,3 +76,9 @@ Prereqs: Node ≥ 22, pnpm ≥ 10, Docker (Postgres only).
 - DB schema already has tables for unbuilt features (`skills`, `eval`, `ci`,
   `knowledge`, `context`, `ops`, …) — empty until a future lesson fills them.
   Don't "clean up" what looks like dead schema.
+- **Lockfiles** (`**/pnpm-lock.yaml`, `**/package-lock.json`,
+  `skills-lock.json`) — never hand-edit; only update via the package manager
+  (`pnpm install` / `npm install`) when dependencies intentionally change.
+- **Migrations** (`server/src/db/migrations/**`) — never edit committed
+  migration SQL; schema changes go through Drizzle generate → a **new**
+  migration file.
