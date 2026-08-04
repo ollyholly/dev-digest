@@ -10,7 +10,8 @@ import {
   HOVER_OPEN_DELAY_MS,
 } from "./constants";
 import { FindingPopoverItem } from "./FindingPopoverItem";
-import { popoverPosition, sortBySeverity } from "./helpers";
+import { sortBySeverity } from "./helpers";
+import { useHoverCard } from "./useHoverCard";
 
 /**
  * Anchor + delayed hover/focus card listing findings. Callers own where
@@ -30,69 +31,8 @@ export function FindingsHoverCard({
   "aria-label"?: string;
 }) {
   const t = useTranslations("prReview.findings");
-  const anchorRef = React.useRef<HTMLSpanElement>(null);
-  const [open, setOpen] = React.useState(false);
-  const [pos, setPos] = React.useState<{ top: number; left: number; flipUp: boolean } | null>(
-    null,
-  );
-  const openTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-  const closeTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const clearTimers = React.useCallback(() => {
-    if (openTimer.current) clearTimeout(openTimer.current);
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-    openTimer.current = null;
-    closeTimer.current = null;
-  }, []);
-
-  const place = React.useCallback(() => {
-    const el = anchorRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    setPos(
-      popoverPosition(
-        { top: rect.top, left: rect.left, bottom: rect.bottom, right: rect.right, width: rect.width },
-        { width: window.innerWidth, height: window.innerHeight },
-      ),
-    );
-  }, []);
-
-  const setOpenState = React.useCallback(
-    (next: boolean) => {
-      setOpen(next);
-      onOpenChange?.(next);
-      if (next) place();
-    },
-    [onOpenChange, place],
-  );
-
-  const scheduleOpen = React.useCallback(() => {
-    clearTimers();
-    openTimer.current = setTimeout(() => setOpenState(true), HOVER_OPEN_DELAY_MS);
-  }, [clearTimers, setOpenState]);
-
-  const scheduleClose = React.useCallback(() => {
-    clearTimers();
-    closeTimer.current = setTimeout(() => setOpenState(false), 120);
-  }, [clearTimers, setOpenState]);
-
-  React.useEffect(() => () => clearTimers(), [clearTimers]);
-
-  React.useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpenState(false);
-    };
-    const onScroll = () => place();
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("scroll", onScroll, true);
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("scroll", onScroll, true);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, [open, place, setOpenState]);
+  const { anchorRef, open, pos, setOpenState, scheduleOpen, scheduleClose } =
+    useHoverCard(onOpenChange);
 
   const sorted = React.useMemo(
     () => (findings ? sortBySeverity(findings) : []),
@@ -108,9 +48,9 @@ export function FindingsHoverCard({
       tabIndex={0}
       aria-label={label}
       aria-expanded={open}
-      onMouseEnter={scheduleOpen}
+      onMouseEnter={() => scheduleOpen(HOVER_OPEN_DELAY_MS)}
       onMouseLeave={scheduleClose}
-      onFocus={scheduleOpen}
+      onFocus={() => scheduleOpen(HOVER_OPEN_DELAY_MS)}
       onBlur={scheduleClose}
       onClick={(e) => {
         // Keep the row from navigating when interacting with the cell/card.
@@ -124,7 +64,7 @@ export function FindingsHoverCard({
         <div
           role="dialog"
           aria-label={t("popover.heading", { count: sorted.length })}
-          onMouseEnter={scheduleOpen}
+          onMouseEnter={() => scheduleOpen(HOVER_OPEN_DELAY_MS)}
           onMouseLeave={scheduleClose}
           onClick={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
