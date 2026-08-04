@@ -42,9 +42,11 @@ export {
   type ReviewInput,
   type ReviewOutcome,
   type ReviewEvent,
-  type ReviewStrategy,
   type ReviewMode,
 } from './review/run.js';
+// ReviewStrategy is @devdigest/shared's canonical definition (re-exported here
+// so consumers of the engine don't need a second import for it).
+export type { ReviewStrategy } from '@devdigest/shared';
 
 // Output: grounded Review → GitHubReviewPayload (body + inline comments + event).
 export {

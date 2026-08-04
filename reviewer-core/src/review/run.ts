@@ -3,6 +3,7 @@ import type {
   LLMProvider,
   PromptAssembly,
   Review,
+  ReviewStrategy,
   RunEventKind,
   UnifiedDiff,
 } from '@devdigest/shared';
@@ -31,7 +32,6 @@ export const DEFAULT_MAP_THRESHOLD_LINES = 400;
 /** Default structured-output reprompt retries (matches REVIEW_MAX_RETRIES). */
 export const DEFAULT_REVIEW_MAX_RETRIES = 2;
 
-export type ReviewStrategy = 'auto' | 'single-pass' | 'map-reduce';
 export type ReviewMode = 'single-pass' | 'map-reduce';
 
 /** Progress event emitted during a review (server → SSE bus, runner → log). */
