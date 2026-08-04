@@ -13,13 +13,14 @@ import {
 } from "@devdigest/ui";
 import { AppShell } from "@/components/app-shell";
 import { RepoNotFound } from "@/components/repo-not-found";
-import { usePulls, useRefreshRepo } from "@/lib/hooks";
+import { usePulls, useRefreshRepo, useSettings } from "@/lib/hooks";
 import { useActiveRepo, useRepoNotFound } from "@/lib/repo-context";
 import { ApiError } from "@/lib/api";
 import { COLUMN_KEYS, SKELETON_ROWS } from "./constants";
 import { s } from "./styles";
 import { PRRow } from "./_components/PRRow";
 import { FilterBar } from "./_components/FilterBar";
+import Link from "next/link";
 
 /** Open PRs carry a derived review status; everything else is merged/closed. */
 const OPEN_STATUSES = new Set(["needs_review", "reviewed", "stale"]);
@@ -34,6 +35,9 @@ export default function PullsPage() {
   const repoNotFound = useRepoNotFound(repoId);
   const { data: pulls, isLoading, isError, error, refetch } = usePulls(repoId);
   const refresh = useRefreshRepo();
+  const { data: settings } = useSettings();
+  const autoOn = Boolean(settings?.automatic_reviews);
+  const pollDetail = `polling ${settings?.polling_interval_min ?? 5}m`;
 
   // Default to "needs review" — the most actionable filter on open.
   const status = search.get("status") ?? "needs_review";
@@ -81,7 +85,9 @@ export default function PullsPage() {
           </p>
         </div>
         <div style={s.headerActions}>
-          <AutoTriggerStatus on={false} />
+          <Link href="/settings/auto-reviews" style={{ textDecoration: "none" }}>
+            <AutoTriggerStatus on={autoOn} detail={pollDetail} />
+          </Link>
         </div>
       </div>
 

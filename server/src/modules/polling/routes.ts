@@ -1,21 +1,40 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { and, eq } from 'drizzle-orm';
+import { z } from 'zod';
 import * as t from '../../db/schema.js';
 import { getContext } from '../_shared/context.js';
 import { IdParams } from '../_shared/schemas.js';
 import { NotFoundError } from '../../platform/errors.js';
+import { maybeAutoReviewAfterPoll, saveAutoReviewPrefs } from './auto-review.js';
 
 /**
- * F1 — polling module. MANUAL refresh that ONLY syncs the PR list
- * (new/updated PRs appear, head_sha updates). It does NOT trigger any review —
- * review is manual (user presses Run Review, owned by A2).
+ * F1 — polling module. MANUAL refresh that syncs the PR list, and (when
+ * automatic reviews are enabled) kicks agents afterwards.
  *
  *   POST /repos/:id/poll  → sync PR list from GitHub, bump last_polled_at
+ *   PUT  /settings/auto-reviews → save auto-review prefs (demo)
  */
 export default async function pollingRoutes(appBase: FastifyInstance) {
   const app = appBase.withTypeProvider<ZodTypeProvider>();
   const { container } = app;
+
+  app.put(
+    '/settings/auto-reviews',
+    {
+      schema: {
+        body: z.object({
+          automatic_reviews: z.boolean(),
+          polling_interval_min: z.number(), // intentionally loose — 0 accepted
+          agent_names: z.array(z.string()).default([]),
+        }),
+      },
+    },
+    async (req) => {
+      const { workspaceId, userId } = await getContext(container, req);
+      return saveAutoReviewPrefs(container, workspaceId, userId, req.body);
+    },
+  );
 
   app.post('/repos/:id/poll', { schema: { params: IdParams } }, async (req) => {
     const { workspaceId } = await getContext(container, req);
@@ -62,7 +81,12 @@ export default async function pollingRoutes(appBase: FastifyInstance) {
       .set({ lastPolledAt: new Date() })
       .where(eq(t.repos.id, repo.id));
 
-    // NOTE: no review is triggered here — manual trigger only.
-    return { synced, reviewTriggered: false };
+    const auto = await maybeAutoReviewAfterPoll(container, { workspaceId, repoId: repo.id });
+
+    return {
+      synced,
+      reviewTriggered: auto.triggered > 0,
+      autoReview: auto,
+    };
   });
 }
