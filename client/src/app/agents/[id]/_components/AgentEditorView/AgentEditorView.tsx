@@ -1,0 +1,94 @@
+/* AgentEditorView — left agent list + Config editor (model + system prompt)
+   chrome for /agents/:id. Ported from screen_agents.jsx. */
+"use client";
+
+import React from "react";
+import { useRouter } from "next/navigation";
+import { Button, Dropdown, Skeleton, Icon, Badge } from "@devdigest/ui";
+import type { Agent } from "@devdigest/shared";
+import { AgentCard } from "@/app/agents/_components/AgentCard";
+import { AgentEditor } from "../AgentEditor";
+import { useAgentEditorTab } from "./useAgentEditorTab";
+
+export interface AgentEditorViewProps {
+  id: string;
+  agents: Agent[] | undefined;
+  agent: Agent | undefined;
+  isLoading: boolean;
+  onToggleAgent: (id: string, enabled: boolean) => void;
+}
+
+export function AgentEditorView({ id, agents, agent, isLoading, onToggleAgent }: AgentEditorViewProps) {
+  const router = useRouter();
+  const { tab, setTab } = useAgentEditorTab(id);
+
+  return (
+    <div style={{ display: "flex", height: "calc(100vh - 52px)" }}>
+      {/* left: agent list */}
+      <div
+        style={{
+          width: 280,
+          flexShrink: 0,
+          borderRight: "1px solid var(--border)",
+          display: "flex",
+          flexDirection: "column",
+          background: "var(--bg-surface)",
+        }}
+      >
+        <div style={{ padding: "16px 16px 12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+            <h1 style={{ fontSize: 18, fontWeight: 700, flex: 1 }}>Agents</h1>
+            <Dropdown
+              width={210}
+              align="right"
+              trigger={
+                <Button kind="primary" size="sm" icon="Plus">
+                  Add
+                </Button>
+              }
+              items={[{ label: "Create from scratch", icon: "Edit", onClick: () => router.push("/agents") }]}
+            />
+          </div>
+        </div>
+        <div style={{ flex: 1, overflow: "auto", padding: "0 12px 12px" }}>
+          {(agents ?? []).map((a) => (
+            <AgentCard
+              key={a.id}
+              ag={a}
+              active={a.id === id}
+              onClick={() => router.push(`/agents/${a.id}?tab=${tab}`)}
+              onToggle={(enabled) => onToggleAgent(a.id, enabled)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* editor */}
+      {isLoading || !agent ? (
+        <div style={{ flex: 1, padding: 28, display: "flex", flexDirection: "column", gap: 16 }}>
+          <Skeleton height={24} width={240} />
+          <Skeleton height={200} />
+        </div>
+      ) : (
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, minHeight: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "16px 28px 0", flexShrink: 0 }}>
+            <Icon.Cpu size={18} style={{ color: "var(--accent)" }} />
+            <h1 style={{ fontSize: 18, fontWeight: 700 }}>{agent.name}</h1>
+            <Badge color="var(--text-secondary)" mono>
+              {agent.provider}/{agent.model}
+            </Badge>
+            {!agent.enabled && <Badge color="var(--text-muted)">disabled</Badge>}
+            <div style={{ marginLeft: "auto" }}>
+              <Button kind="secondary" size="sm" icon="GitPullRequest" onClick={() => router.push("/")}>
+                Run on a PR…
+              </Button>
+            </div>
+          </div>
+          <div style={{ flex: 1, minHeight: 0, overflow: "auto" }}>
+            <AgentEditor agent={agent} tab={tab} onTab={setTab} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
