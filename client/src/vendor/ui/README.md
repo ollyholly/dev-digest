@@ -96,8 +96,9 @@ direction (UI code must not assume every UI `Severity` came from the API).
 
 ## Showcase
 
-Every component is rendered (in both themes) by the **`/showcase`** route
-(`src/components/showcase/Showcase.tsx`). The smoke test
+Every component is rendered (in both themes) by the **`Gallery`** component
+at `src/dev/showcase/Showcase.tsx` — dev tooling, not a mounted product
+route (there is no `/showcase` page). The smoke test
 (`src/test/smoke.test.tsx`) mounts that gallery, so a broken export or render
 fails CI. When you add or change a component, add it to the showcase.
 

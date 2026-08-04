@@ -1,6 +1,9 @@
 /* Showcase.tsx — renders every design-system component for visual verification.
-   Used by the /showcase route (both themes) and by the smoke tests.
-   Dev-only page: labels are intentionally not internationalized. */
+   Dev tooling only: lives under src/dev/ (not src/components/) because it is
+   not product UI — its only consumer is the smoke test (src/test/smoke.test.tsx),
+   which mounts it to catch a broken @devdigest/ui export/render in CI. There is
+   currently no mounted /showcase route. Labels are intentionally not
+   internationalized. */
 "use client";
 
 import React from "react";
