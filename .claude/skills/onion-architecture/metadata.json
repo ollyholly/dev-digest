@@ -1,0 +1,22 @@
+{
+  "name": "onion-architecture",
+  "version": "1.0.0",
+  "title": "Onion Architecture (Backend)",
+  "description": "DevDigest server layering: route → service → ports/domain via Container; adapters only at the edge",
+  "focus": "backend-architecture-and-dependency-direction",
+  "outOfScope": ["fastify-plugin-apis", "drizzle-sql-idioms", "zod-rule-catalog", "performance"],
+  "references": [
+    "https://jeffreypalermo.com/2008/07/the-onion-architecture-part-1/",
+    "https://herbertograca.com/2017/09/21/onion-architecture/",
+    "https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/",
+    "https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html",
+    "https://blog.ndepend.com/onion-architecture-layers/",
+    "https://designpatternsinaction.com/enterprise/onion-architecture",
+    "https://tms-outsource.com/blog/posts/onion-architecture/",
+    "https://dev.to/remojansen/implementing-the-onion-architecture-in-nodejs-with-typescript-and-inversifyjs-10ad",
+    "https://github.com/marcoturi/fastify-boilerplate/",
+    "https://github.com/Mamunahmedbd/fastify-boilerplate",
+    "https://www.paulserban.eu/blog/post/drizzle-orm-best-practices-principles-patterns-and-real-world-case-studies/",
+    "https://blog.sentry.io/atomic-repositories-in-clean-architecture-and-typescript/"
+  ]
+}
