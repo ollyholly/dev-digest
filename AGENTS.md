@@ -69,5 +69,41 @@ Prereqs: Node ≥ 22, pnpm ≥ 10, Docker (Postgres only).
   `pnpm exec vitest run ...` rather than relying on committed test scripts.
   Don't assume adding an npm script there changes CI behavior.
 - DB schema already has tables for unbuilt features (`skills`, `eval`, `ci`,
-  `knowledge`, `context`, `ops`, …) — empty until a future lesson fills them.
-  Don't "clean up" what looks like dead schema.
+ `knowledge`, `context`, `ops`, …) — empty until a future lesson fills them.
+ Don't "clean up" what looks like dead schema.
+
+## Cursor Cloud specific instructions
+
+Dependencies are refreshed automatically on VM startup by the update script
+(`pnpm install` in `server/` + `client/`, `npm ci` in `reviewer-core/` +
+`e2e/`). Standard build/run/test commands live in [`README.md`](README.md),
+[`TESTING.md`](TESTING.md), and each package's docs — use those. Only the
+non-obvious, cloud-specific caveats are below.
+
+- **Docker has no systemd here.** Postgres runs in Docker, but this VM has no
+ init system, so the daemon is not auto-started. Start it once per session with
+ `sudo dockerd` inside a background tmux session; the socket is world-usable, so
+ plain `docker` / `docker compose` then work without `sudo`.
+- **Bring the stack up** with `./scripts/dev.sh` (Postgres → migrate → seed →
+ API `:3001` + web `:3000`). It runs in the foreground, so launch it in tmux.
+ `./scripts/dev.sh --db-only` does just Postgres + migrate + seed; then run
+ `pnpm dev` in `server/` and `client/` in their own tmux panes if you want them
+ separated. Seeded data (repo `acme/payments-api`, PR #482 with a review +
+ findings, three built-in agents) lives in the `devdigest_pgdata` Docker volume
+ and survives daemon restarts, so migrate/seed are usually already applied.
+- **Do not reinstall deps while the API dev server is running.** `server`'s
+ `tsx watch` also watches `reviewer-core/node_modules` (it imports
+ `reviewer-core` as TS source). `pnpm install` / `npm ci` wipes that tree and
+ the API crashes mid-restart with `ERR_MODULE_NOT_FOUND`. Reinstall first, then
+ start `pnpm dev`.
+- **`pnpm install` is noisy but harmless.** With `node-linker=hoisted` it
+ reports removing/re-adding ~130 packages on every run and prints "Ignored build
+ scripts" (esbuild/sharp/…). The resulting tree is fully functional
+ (typecheck/tests/servers all pass) — no need to run `pnpm approve-builds`.
+- **No API keys are needed to boot, run tests, or exercise the UI.** LLM
+ (OpenAI/Anthropic/OpenRouter) and GitHub keys are only required to import real
+ PRs or run an actual review. The seeded diff/findings/agents cover the UI
+ without any keys.
+- **Server integration tests need Docker** (`*.it.test.ts` start their own
+ testcontainers Postgres). Run the split as `pnpm exec vitest run --exclude
+ '**/*.it.test.ts'` (unit) and `pnpm exec vitest run .it.test` (integration).
