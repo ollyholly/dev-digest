@@ -65,6 +65,16 @@ jobs:
 
       - run: pnpm typecheck
 
+      # Inlined (not `pnpm lint`): server/package.json is skip-worktree
+      # locally, so the committed script may not match a contributor's local
+      # copy — call eslint directly so CI doesn't depend on it.
+      - run: pnpm exec eslint .
+
+      # Mechanically enforces the onion-architecture skill's layering rules
+      # (routes -> service -> repository/adapters). Inlined for the same
+      # reason as eslint above.
+      - run: pnpm exec depcruise --config .dependency-cruiser.cjs src
+
   unit:
     name: tests
     runs-on: ubuntu-latest
