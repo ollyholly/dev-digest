@@ -1,0 +1,33 @@
+.claude/skills/onion-architecture/README.md
+  s_edb5a1eb69cbd6::t_b0722c934be424 1-88
+.claude/skills/onion-architecture/SKILL.md
+  s_edb5a1eb69cbd6::t_9f265de2414523 1-73
+.claude/skills/onion-architecture/metadata.json
+  s_edb5a1eb69cbd6::t_b81936159d31b3 1-22
+.claude/skills/onion-architecture/references/adapters-and-container.md
+  s_edb5a1eb69cbd6::t_5ce057d2d64a45 1-57
+.claude/skills/onion-architecture/references/anti-patterns.md
+  s_edb5a1eb69cbd6::t_f2f0dcb1954734 1-77
+.claude/skills/onion-architecture/references/layers-and-dependency-rule.md
+  s_edb5a1eb69cbd6::t_26c7a9aebe945f 1-60
+.claude/skills/onion-architecture/references/persistence-drizzle.md
+  s_edb5a1eb69cbd6::t_70e1ed9e6f98ef 1-45
+.claude/skills/onion-architecture/references/request-flow.md
+  s_edb5a1eb69cbd6::t_3db5a9e91a5b7d 1-70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "f3230198ec7a8a58bce4b629aa4ce844c8c26597",
+  "prompts": {},
+  "sessions": {
+    "s_edb5a1eb69cbd6": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "a69725a5-50eb-4ed5-9310-9005c2e9fd76",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
