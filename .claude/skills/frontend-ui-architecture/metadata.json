@@ -1,0 +1,30 @@
+{
+  "name": "frontend-ui-architecture",
+  "version": "1.0.0",
+  "title": "Frontend UI Architecture",
+  "description": "DevDigest client architecture: where components, hooks, utils, constants, and business logic live",
+  "focus": "architecture-and-organization",
+  "outOfScope": ["performance", "visual-design", "accessibility-details", "rsc-async-api-quirks"],
+  "references": [
+    "https://nextjs.org/docs/app/getting-started/project-structure",
+    "https://react.dev/learn/thinking-in-react",
+    "https://react.dev/learn/reusing-logic-with-custom-hooks",
+    "https://react.dev/learn/sharing-state-between-components",
+    "https://react.dev/learn/extracting-state-logic-into-a-reducer",
+    "https://feature-sliced.design/docs/get-started/overview",
+    "https://github.com/alan2207/bulletproof-react/blob/master/docs/project-structure.md",
+    "https://www.freecodecamp.org/news/reusable-architecture-for-large-nextjs-applications/",
+    "https://dev.to/krunal_groovy/the-nextjs-15-app-router-project-structure-that-scales-with-examples-47ha",
+    "https://dev.to/yukionishi1129/building-a-production-ready-nextjs-app-router-architecture-a-complete-playbook-3f3h",
+    "https://github.com/YukiOnishi1129/next-app-router-architecture/tree/main/docs",
+    "https://blog.webdevsimplified.com/2022-07/react-folder-structure/",
+    "https://paulund.co.uk/notebook/react/structuring-large-react-apps",
+    "https://devcraftly.com/react/project-structure-best-practices/",
+    "https://www.codewithseb.com/blog/modular-feature-design-react-plug-and-play",
+    "https://www.robinwieruch.de/react-folder-structure/",
+    "https://www.joshwcomeau.com/react/file-structure/",
+    "https://kentcdodds.com/blog/colocation",
+    "https://profy.dev/article/react-folder-structure",
+    "https://makerkit.dev/blog/tutorials/nextjs-app-router-project-structure"
+  ]
+}
