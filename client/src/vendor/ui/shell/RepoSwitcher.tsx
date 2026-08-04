@@ -7,6 +7,7 @@ export function RepoSwitcher({ ctx }: { ctx: ShellContext }) {
   const active = ctx.activeRepo;
   const items: DropdownItemDef[] = [
     ...(ctx.repos ?? []).map((r) => ({
+      id: r.id,
       label: r.full_name,
       icon: "GitBranch" as const,
       onClick: () => ctx.onSelectRepo?.(r.id),

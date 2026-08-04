@@ -98,13 +98,14 @@ export function Dropdown({
             animation: "ddpop .12s ease",
           }}
         >
-          {items.map((it, i) =>
-            it.divider ? (
-              <div key={i} style={{ height: 1, background: "var(--border)", margin: "6px 0" }} />
+          {items.map((it, i) => {
+            const key = it.id ?? `${it.divider ? "divider" : it.label ?? "item"}-${i}`;
+            return it.divider ? (
+              <div key={key} style={{ height: 1, background: "var(--border)", margin: "6px 0" }} />
             ) : (
-              <DropdownItem key={i} it={it} onClose={() => setOpen(false)} />
-            )
-          )}
+              <DropdownItem key={key} it={it} onClose={() => setOpen(false)} />
+            );
+          })}
         </div>
       )}
     </div>

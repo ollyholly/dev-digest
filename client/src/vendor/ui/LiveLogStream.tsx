@@ -29,14 +29,20 @@ export function LiveLogStream({
   elapsedLabel?: string;
 }) {
   const [filter, setFilter] = React.useState("");
+  // Track each line's original position so its key stays stable as the log
+  // grows and the filter narrows `shown` — an array-index key would remap
+  // unrelated lines onto the same DOM node across filter/append updates.
+  const numbered = log.map((l, i) => ({ l, i }));
   const shown = filter.trim()
-    ? log.filter((l) => l.m.toLowerCase().includes(filter.toLowerCase()) || l.k.includes(filter.toLowerCase()))
-    : log;
+    ? numbered.filter(
+        ({ l }) => l.m.toLowerCase().includes(filter.toLowerCase()) || l.k.includes(filter.toLowerCase()),
+      )
+    : numbered;
 
   // Copy the (filtered) log to the clipboard, with brief visual confirmation.
   const [copied, setCopied] = React.useState(false);
   const copyLog = () => {
-    const text = shown.map((l) => `[${l.t}] [${l.k}] ${l.m}`).join("\n");
+    const text = shown.map(({ l }) => `[${l.t}] [${l.k}] ${l.m}`).join("\n");
     void navigator.clipboard?.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
@@ -107,7 +113,7 @@ export function LiveLogStream({
         </div>
       </div>
       <div style={{ height, overflow: "auto", padding: "12px 14px", display: "flex", flexDirection: "column", gap: 4 }}>
-        {shown.map((l, i) => (
+        {shown.map(({ l, i }) => (
           <div
             key={i}
             className="mono"
