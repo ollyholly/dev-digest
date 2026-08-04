@@ -1,0 +1,63 @@
+AGENTS.md
+  s_41c5d99b3386cd::t_afd3b1d9d14665 26-30,77-84,95-97,99-104,106-109,111-113,115-117,119-120
+.claude/skills/frontend-ui-architecture/README.md
+  s_41c5d99b3386cd::t_148b75d80637f6 1-94
+.claude/skills/frontend-ui-architecture/SKILL.md
+  s_41c5d99b3386cd::t_c24421ecc3d5d9 1-72
+.claude/skills/frontend-ui-architecture/metadata.json
+  s_41c5d99b3386cd::t_1d8317641a4e36 1-30
+.claude/skills/frontend-ui-architecture/references/anti-patterns.md
+  s_41c5d99b3386cd::t_fb5c092bfb8417 1-82
+.claude/skills/frontend-ui-architecture/references/data-fetching-layer.md
+  s_41c5d99b3386cd::t_7087b901e898a5 1-66
+.claude/skills/frontend-ui-architecture/references/import-boundaries.md
+  s_41c5d99b3386cd::t_3136ab0d2d75f3 1-66
+.claude/skills/frontend-ui-architecture/references/layers-and-folders.md
+  s_41c5d99b3386cd::t_4441edda57ea54 1-71
+.claude/skills/frontend-ui-architecture/references/placement-decision-table.md
+  s_41c5d99b3386cd::t_f274608e718792 1-87
+client/AGENTS.md
+  s_41c5d99b3386cd::t_9b9a6ba73a58bb 31-34,55-56
+client/docs/README.md
+  s_41c5d99b3386cd::t_528a784d31bb87 1-15
+client/specs/README.md
+  s_41c5d99b3386cd::t_68402f80721d6e 1-11
+client/specs/_TEMPLATE.md
+  s_41c5d99b3386cd::t_94e6031ae9b0ea 1-33
+e2e/AGENTS.md
+  s_41c5d99b3386cd::t_27a1b3322aa960 27,34-38,56-57
+e2e/docs/README.md
+  s_41c5d99b3386cd::t_2fc224439cd0bb 1-18
+reviewer-core/AGENTS.md
+  s_41c5d99b3386cd::t_2486b76858798d 30-33,58-59
+reviewer-core/docs/README.md
+  s_41c5d99b3386cd::t_fccaa2510c96d6 1-16
+reviewer-core/specs/README.md
+  s_41c5d99b3386cd::t_6520466e38e3ec 1-11
+reviewer-core/specs/_TEMPLATE.md
+  s_41c5d99b3386cd::t_b1dcbaff68c173 1-33
+server/AGENTS.md
+  s_41c5d99b3386cd::t_b529a8f91b72cc 38-41,69-72
+server/docs/README.md
+  s_41c5d99b3386cd::t_90c6e186ce6d8b 1-16
+server/specs/README.md
+  s_41c5d99b3386cd::t_6a03609d6dfc8b 1-11
+server/specs/_TEMPLATE.md
+  s_41c5d99b3386cd::t_dabcb6f676144e 1-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "331f2d474822a9504ab815ca45dd35682ae685a1",
+  "prompts": {},
+  "sessions": {
+    "s_41c5d99b3386cd": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "616f69be-659b-46d0-aba2-fb9f28e9d934",
+        "model": "cursor-grok-4.5-high"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
