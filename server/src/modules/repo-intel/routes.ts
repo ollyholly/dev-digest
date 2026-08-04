@@ -15,17 +15,16 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { getContext } from '../_shared/context.js';
 import { IdParams } from '../_shared/schemas.js';
 import { RepoIntelService } from './service.js';
-import { RESYNC_JOB_KIND } from './constants.js';
 import type { IndexState } from './types.js';
 
 export default async function repoIntelRoutes(appBase: FastifyInstance) {
   const app = appBase.withTypeProvider<ZodTypeProvider>();
   const { container } = app;
-  // Register the INDEX/REFRESH handlers exactly once at module load. Using a
-  // local service here (instead of `container.repoIntel`) is fine — the
-  // JobRunner stores the handler closure, not the service instance, and the
-  // lazy `container.repoIntel` getter constructs its own service for read
-  // calls. Both share the same DB, so behaviour is identical.
+  // One service instance for this module, mirroring `repos/routes.ts`: it
+  // registers the INDEX/REFRESH/RESYNC job handlers once at module load AND
+  // serves every read/write route below — no second `container.repoIntel`
+  // instance is constructed, so there's exactly one `RepoIntelService` doing
+  // this module's work.
   const service = new RepoIntelService(container);
   service.registerIndexJobHandlers();
 
@@ -36,7 +35,7 @@ export default async function repoIntelRoutes(appBase: FastifyInstance) {
       // Resolve tenancy so the request is workspace-scoped even though the
       // facade itself is tenant-agnostic (consistent with blast routes).
       await getContext(container, req);
-      return container.repoIntel.getIndexState(req.params.id);
+      return service.getIndexState(req.params.id);
     },
   );
 
@@ -45,22 +44,14 @@ export default async function repoIntelRoutes(appBase: FastifyInstance) {
     { schema: { params: IdParams } },
     async (req, reply) => {
       const { workspaceId } = await getContext(container, req);
+      const result = await service.resync(workspaceId, req.params.id);
       // 202 even when enqueue fails (no handler / DB hiccup) so the UI can
       // still poll /index-state without an inline error path. The actual
       // outcome shows up in `repo_index_state` once the worker runs.
-      let jobId: string | null = null;
-      try {
-        const job = await container.jobs.enqueue(workspaceId, RESYNC_JOB_KIND, {
-          repoId: req.params.id,
-        });
-        jobId = job.id;
-      } catch {
-        // swallow — degraded path
-      }
       reply.code(202);
-      return jobId
-        ? { status: 'accepted', jobId }
-        : { status: 'accepted', degraded: true, reason: 'no_handler' };
+      return 'jobId' in result
+        ? { status: 'accepted', jobId: result.jobId }
+        : { status: 'accepted', degraded: true, reason: result.reason };
     },
   );
 }

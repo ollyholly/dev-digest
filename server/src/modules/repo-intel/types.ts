@@ -9,8 +9,8 @@
  * Adapted to real code:
  *   - `repos.id` is a `uuid`, so every `repoId` here is a `string`.
  *   - facade-level rows (SymbolRow / SignatureRow / RefRow) mirror the read model.
- *   - adapter-level extraction types live with the astgrep adapter and stay
- *     compatible with `adapters/codeindex/extract.ts` (ExtractedSymbol/Reference).
+ *   - parsing-level extraction types live with the astgrep parser and stay
+ *     compatible with `lib/parsing/extract.ts` (ExtractedSymbol/Reference).
  *
  * DEGRADED CONTRACT (lead decision — resolves the read-model vs degraded-contract ambiguity):
  *   - Object-returning methods carry an inline `degraded?: boolean` (+ optional
@@ -127,6 +127,17 @@ export interface RepoMapResult {
   cached: boolean;
   degraded?: boolean;
   reason?: DegradedReason;
+}
+
+/**
+ * Token counter port for the repo-map budget search (T3). Defined here (not
+ * `adapters/tokenizer/`) so the concrete adapter depends inward on this
+ * module's contract instead of the pipeline depending outward on the
+ * adapter — onion-architecture rule 2. `Container.tokenizer` wires the real
+ * `TiktokenTokenizer`; tests inject a mock via `ContainerOverrides.tokenizer`.
+ */
+export interface Tokenizer {
+  count(text: string): number;
 }
 
 /**
