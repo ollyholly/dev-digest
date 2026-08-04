@@ -27,6 +27,10 @@ default; `reduce()` map-reduce and `toReview()` exist for later lessons).
 Public API is exported from `src/index.ts`. Contracts (`Review`, `Finding`,
 `Verdict`) come from `@devdigest/shared`.
 
+**Knowledge:** [`docs/`](docs/README.md) (read when promoting durable
+reference) · [`specs/`](specs/README.md) (read/write when planning a
+pipeline / grounding change).
+
 ## Non-default conventions
 
 - **Consumed as raw TypeScript source, not a build artifact.** The server
@@ -51,3 +55,5 @@ Public API is exported from `src/index.ts`. Contracts (`Review`, `Finding`,
 - Uses **npm** (package-lock.json), unlike server/client which use pnpm —
   don't "fix" this to pnpm without checking the CI workflow
   (`reviewer-core.yml`) and the server's install step for it first.
+- **`package-lock.json`** — never hand-edit; only update via `npm install`
+  when dependencies intentionally change.

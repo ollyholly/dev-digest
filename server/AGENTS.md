@@ -35,6 +35,10 @@ filesystem autoload. Modules: `settings`, `repos`, `pulls`, `polling`,
 ast-grep, secrets) sit behind a DI container (`src/platform/container.ts`) so
 tests swap in `src/adapters/mocks.ts` — no network/keys in unit tests.
 
+**Knowledge:** [`docs/`](docs/README.md) (read when promoting durable
+reference) · [`specs/`](specs/README.md) (read/write when planning a
+multi-file API or schema change).
+
 ## Non-default conventions
 
 - Routes validate via zod `params`/`body` schemas — never hand-roll
@@ -62,3 +66,7 @@ tests swap in `src/adapters/mocks.ts` — no network/keys in unit tests.
   `knowledge`, `context`, `ops`) — unused by design, not dead code.
 - `server/clones/**` is runtime data (git-ignored, imported repo checkouts) —
   never touch from tests.
+- **`src/db/migrations/**`** — never edit committed migration SQL; schema
+  changes go through Drizzle generate → a **new** migration file.
+- **`pnpm-lock.yaml`** — never hand-edit; only update via `pnpm install` when
+  dependencies intentionally change.
