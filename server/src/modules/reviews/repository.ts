@@ -1,6 +1,6 @@
 import type { Db } from '../../db/client.js';
 import * as t from '../../db/schema.js';
-import type { Finding, Intent, RunSummary, RunTrace } from '@devdigest/shared';
+import type { ActiveRun, Finding, Intent, RunSummary, RunTrace } from '@devdigest/shared';
 
 /**
  * A2 — review data-access. The ONLY layer touching the DB for the review
@@ -70,10 +70,7 @@ export class ReviewRepository {
 
   /** In-flight runs for a PR (status='running') — the server-side source of
    *  truth for "which agents are running now". Joined with the agent name. */
-  activeRunsForPull(
-    workspaceId: string,
-    prId: string,
-  ): Promise<{ run_id: string; agent_id: string | null; agent_name: string | null; ran_at: string | null }[]> {
+  activeRunsForPull(workspaceId: string, prId: string): Promise<ActiveRun[]> {
     return runRepo.activeRunsForPull(this.db, workspaceId, prId);
   }
 

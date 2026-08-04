@@ -2,10 +2,10 @@
  * Shared contract types re-exported from @devdigest/shared (single source of
  * truth). F2 imports these rather than redefining them.
  *
- * F1 (@devdigest/shared) currently exports all the platform/findings/brief/
- * knowledge/trace contracts we need for the scaffolding screens, so there are
- * NO local placeholders required at this time. If a feature agent's contract is
- * not yet exported, add a placeholder below marked
+ * @devdigest/shared currently exports all the platform/findings/brief/
+ * knowledge/trace contracts the client needs, so there are no local
+ * placeholders here. If a feature's contract is not yet exported from
+ * @devdigest/shared, add a placeholder marked
  * `// TODO: reconcile with @devdigest/shared`.
  */
 export type {
@@ -33,16 +33,3 @@ export type {
 
 export type { Review, Finding, Severity, Verdict } from "@devdigest/shared";
 export type { PrBrief, SmartDiff } from "@devdigest/shared";
-
-/** UI-only view model for a PR list row (derives display fields from PrMeta). */
-export interface PrRowView {
-  number: number;
-  title: string;
-  author: string;
-  size: "S" | "M" | "L";
-  sizeLines: string;
-  score: number;
-  findings: { CRITICAL: number; WARNING: number; SUGGESTION: number };
-  status: "needs_review" | "reviewed" | "stale";
-  updated: string;
-}

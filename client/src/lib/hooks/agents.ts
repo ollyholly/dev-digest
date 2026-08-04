@@ -3,7 +3,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
-import type { Agent, ModelInfo, Provider, ReviewStrategy } from "@devdigest/shared";
+import type { Agent, ModelInfo, Provider } from "@devdigest/shared";
 
 export function useAgents() {
   return useQuery({
@@ -20,16 +20,12 @@ export function useAgent(id: string | null | undefined) {
   });
 }
 
-export interface CreateAgentInput {
-  name: string;
-  description?: string;
-  provider: Provider;
-  model: string;
-  system_prompt: string;
-  output_schema?: unknown;
-  strategy?: ReviewStrategy;
-  enabled?: boolean;
-}
+/** POST /agents body. Derived from the shared `Agent` contract (rather than
+    hand-duplicating its field types) so it can't silently drift; `version` is
+    server-assigned and `ci_fail_on`/`repo_intel` default server-side, so both
+    are omitted here rather than made optional. */
+export type CreateAgentInput = Pick<Agent, "name" | "provider" | "model" | "system_prompt"> &
+  Partial<Pick<Agent, "description" | "output_schema" | "strategy" | "enabled">>;
 
 export function useCreateAgent() {
   const qc = useQueryClient();
