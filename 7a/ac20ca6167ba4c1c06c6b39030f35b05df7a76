@@ -1,0 +1,33 @@
+.claude/skills/frontend-ui-architecture/README.md
+  s_edb5a1eb69cbd6::t_41479d2a8df9e8 1-94
+.claude/skills/frontend-ui-architecture/SKILL.md
+  s_edb5a1eb69cbd6::t_8425b492dc4d04 1-72
+.claude/skills/frontend-ui-architecture/metadata.json
+  s_edb5a1eb69cbd6::t_7ce375e67931fa 1-30
+.claude/skills/frontend-ui-architecture/references/anti-patterns.md
+  s_edb5a1eb69cbd6::t_a36043931dc0a0 1-82
+.claude/skills/frontend-ui-architecture/references/data-fetching-layer.md
+  s_edb5a1eb69cbd6::t_7ed4162a1b20f4 1-66
+.claude/skills/frontend-ui-architecture/references/import-boundaries.md
+  s_edb5a1eb69cbd6::t_a1a63a5a8d7df6 1-66
+.claude/skills/frontend-ui-architecture/references/layers-and-folders.md
+  s_edb5a1eb69cbd6::t_3ecdf4909650fe 1-71
+.claude/skills/frontend-ui-architecture/references/placement-decision-table.md
+  s_edb5a1eb69cbd6::t_ec8ebdfbe1239c 1-87
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "7aac20ca6167ba4c1c06c6b39030f35b05df7a76",
+  "prompts": {},
+  "sessions": {
+    "s_edb5a1eb69cbd6": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "a69725a5-50eb-4ed5-9310-9005c2e9fd76",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
