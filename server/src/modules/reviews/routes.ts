@@ -1,11 +1,17 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
 import { RunRequest } from '@devdigest/shared';
-import type { RunEvent } from '@devdigest/shared';
 import { getContext } from '../_shared/context.js';
 import { IdParams } from '../_shared/schemas.js';
 import { NotFoundError } from '../../platform/errors.js';
 import { ReviewService } from './service.js';
+
+/** A missing or empty JSON body arrives as `undefined`/`null` (no
+ * Content-Type, or `{}`) — both fields of RunRequest are optional, so treat
+ * either the same as `{}` before validating (mirrors the old manual
+ * `RunRequest.parse(req.body ?? {})`, but as a route-level schema). */
+const RunRequestBody = z.preprocess((v) => v ?? {}, RunRequest);
 
 /**
  * reviews module.
@@ -23,25 +29,23 @@ export default async function reviewsRoutes(appBase: FastifyInstance) {
 
   // ---- Run a review (manual trigger) -------------------------------
   // Tight per-route limit: each call can fan out to expensive LLM runs.
-  // Body stays a tolerant manual parse (both fields optional; empty body is OK).
   app.post(
     '/pulls/:id/review',
-    { schema: { params: IdParams }, config: { rateLimit: { max: 10, timeWindow: '1 minute' } } },
+    {
+      schema: { params: IdParams, body: RunRequestBody },
+      config: { rateLimit: { max: 10, timeWindow: '1 minute' } },
+    },
     async (req) => {
-    const { workspaceId } = await getContext(container, req);
-    const body = RunRequest.parse(req.body ?? {});
-    const targets = await service.resolveTargets(workspaceId, {
-      ...(body.agentId !== undefined ? { agentId: body.agentId } : {}),
-      ...(body.all !== undefined ? { all: body.all } : {}),
-    });
-    const { runs, reviews } = await service.runReview(
-      workspaceId,
-      req.params.id,
-      targets,
-      req.log,
-    );
-    return { pr_id: req.params.id, runs, reviews };
-  });
+      const { workspaceId } = await getContext(container, req);
+      const { runs, reviews } = await service.startReview(
+        workspaceId,
+        req.params.id,
+        req.body,
+        req.log,
+      );
+      return { pr_id: req.params.id, runs, reviews };
+    },
+  );
 
   // ---- SSE: live run events (replay buffer first, then live; ends on done) -
   // No rate limit: SSE is one long-lived connection, not burst traffic.
@@ -49,47 +53,18 @@ export default async function reviewsRoutes(appBase: FastifyInstance) {
     '/runs/:id/events',
     { schema: { params: IdParams }, config: { rateLimit: false } },
     async (req, reply) => {
-    await getContext(container, req);
-    const runId = req.params.id;
+      await getContext(container, req);
+      const runId = req.params.id;
 
-    reply.sse(
-      (async function* () {
-        // Bridge the in-memory RunBus to an async iterator the SSE plugin drains.
-        const queue: RunEvent[] = [];
-        let resolve: (() => void) | null = null;
-        let done = false;
-
-        const unsubscribe = container.runBus.subscribe(runId, (e) => {
-          queue.push(e);
-          resolve?.();
-        });
-        const offDone = container.runBus.onDone(runId, () => {
-          done = true;
-          resolve?.();
-        });
-
-        try {
-          while (true) {
-            if (queue.length === 0) {
-              if (done) break;
-              await new Promise<void>((r) => (resolve = r));
-              resolve = null;
-              continue;
-            }
-            const e = queue.shift()!;
-            yield {
-              id: String(e.seq),
-              event: e.kind,
-              data: JSON.stringify(e),
-            };
+      reply.sse(
+        (async function* () {
+          for await (const e of service.streamRunEvents(runId)) {
+            yield { id: String(e.seq), event: e.kind, data: JSON.stringify(e) };
           }
-        } finally {
-          unsubscribe();
-          offDone();
-        }
-      })(),
-    );
-  });
+        })(),
+      );
+    },
+  );
 
   // ---- Active (in-flight) runs for a PR (server source of truth) ----------
   app.get('/pulls/:id/runs/active', { schema: { params: IdParams } }, async (req) => {

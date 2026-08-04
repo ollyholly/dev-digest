@@ -1,8 +1,7 @@
 import type { Container } from '../../platform/container.js';
-import type { FindingActionKind, RunEventKind, RunTrace } from '@devdigest/shared';
+import type { FindingActionKind, RunEvent, RunEventKind, RunTrace } from '@devdigest/shared';
 import { AppError, NotFoundError } from '../../platform/errors.js';
 import type { AgentRow } from '../../db/rows.js';
-import { ReviewRepository } from './repository.js';
 import { type ReviewDto, type ReviewDtoFinding } from './helpers.js';
 import { ReviewRunExecutor, type Logger } from './run-executor.js';
 import { actOnFinding as actOnFindingImpl } from './findings.js';
@@ -26,12 +25,12 @@ export type { ReviewDto, ReviewDtoFinding } from './helpers.js';
  * run-executor; this class keeps the public method surface.
  */
 export class ReviewService {
-  private repo: ReviewRepository;
+  private repo: Container['reviewRepo'];
   private agents: Container['agentsRepo'];
   private executor: ReviewRunExecutor;
 
   constructor(private container: Container) {
-    this.repo = new ReviewRepository(container.db);
+    this.repo = container.reviewRepo;
     this.agents = container.agentsRepo;
     this.executor = new ReviewRunExecutor(container, this.repo, this.agents);
   }
@@ -41,9 +40,23 @@ export class ReviewService {
   // ===========================================================================
 
   /**
+   * Resolve targets, then run a review for each — the one use-case the route
+   * calls (`resolveTargets` + `runReview` used to be two separate calls).
+   */
+  async startReview(
+    workspaceId: string,
+    prId: string,
+    opts: { agentId?: string; all?: boolean },
+    logger?: Logger,
+  ): Promise<{ runs: { run_id: string; agent_id: string; agent_name: string }[]; reviews: ReviewDto[] }> {
+    const targets = await this.resolveTargets(workspaceId, opts);
+    return this.runReview(workspaceId, prId, targets, logger);
+  }
+
+  /**
    * Resolve which agents to run. `all` → all enabled agents; else a single agent.
    */
-  async resolveTargets(
+  private async resolveTargets(
     workspaceId: string,
     opts: { agentId?: string; all?: boolean },
   ): Promise<AgentRow[]> {
@@ -100,7 +113,7 @@ export class ReviewService {
    * before/while the run progresses. A partial failure in one agent does not
    * abort the others.
    */
-  async runReview(
+  private async runReview(
     workspaceId: string,
     prId: string,
     targets: AgentRow[],
@@ -140,6 +153,42 @@ export class ReviewService {
 
   private publish(runId: string, kind: RunEventKind, msg: string, data?: unknown) {
     return this.container.runBus.publish(runId, kind, msg, data);
+  }
+
+  /**
+   * Bridge the in-memory RunBus to an async iterator of RunEvents for one run
+   * (replay-buffered events first, then live, ending once the run completes).
+   * Keeps `container.runBus` out of routes.ts — the SSE route just formats
+   * whatever this yields.
+   */
+  async *streamRunEvents(runId: string): AsyncGenerator<RunEvent> {
+    const queue: RunEvent[] = [];
+    let resolve: (() => void) | null = null;
+    let done = false;
+
+    const unsubscribe = this.container.runBus.subscribe(runId, (e) => {
+      queue.push(e);
+      resolve?.();
+    });
+    const offDone = this.container.runBus.onDone(runId, () => {
+      done = true;
+      resolve?.();
+    });
+
+    try {
+      while (true) {
+        if (queue.length === 0) {
+          if (done) break;
+          await new Promise<void>((r) => (resolve = r));
+          resolve = null;
+          continue;
+        }
+        yield queue.shift()!;
+      }
+    } finally {
+      unsubscribe();
+      offDone();
+    }
   }
 
   // ===========================================================================
