@@ -28,6 +28,10 @@ server-state read/write goes through a hook in `src/lib/hooks/*`, which calls
 `http://localhost:3001`). Cross-cutting chrome (nav, breadcrumbs, shortcuts)
 lives in `src/components/app-shell`.
 
+**Knowledge:** [`docs/`](docs/README.md) (read when promoting durable
+reference) · [`specs/`](specs/README.md) (read/write when planning a
+multi-file UI feature).
+
 ## Non-default conventions
 
 - **No third-party component library.** UI primitives are an in-house kit
@@ -48,3 +52,5 @@ lives in `src/components/app-shell`.
 - i18n message bundles exist for several not-yet-built features (blast,
   brief, conformance, eval, memory, skills, ci, agentPerformance) — the
   catalog is ahead of the UI by design.
+- **`pnpm-lock.yaml`** — never hand-edit; only update via `pnpm install` when
+  dependencies intentionally change.

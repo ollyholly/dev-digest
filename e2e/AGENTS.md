@@ -24,12 +24,17 @@ npm i -g agent-browser && agent-browser install   # once
 
 ## Structure
 
-One JSON spec per flow: `specs/NN-name.flow.json`, each a list of
+One JSON **flow** per file: `specs/NN-name.flow.json`, each a list of
 `agent-browser` commands (`{cmd, label}`). `{BASE}` → `E2E_BASE_URL`. A
 non-zero command exit fails the step — `wait --text` / `wait --url` **are**
 the assertions. Locators are deterministic only (`--url`, `--text`,
 `find role|text|label`) — the AI `chat` command is never used, so runs stay
 stable and key-free.
+
+`specs/*.flow.json` are browser flows only — **not** product/planning specs.
+Those live under `client/specs/`, `server/specs/`, and `reviewer-core/specs/`.
+See [`docs/`](docs/README.md) (read when clarifying runner vs planning
+artifacts).
 
 ## Non-default conventions
 
@@ -48,3 +53,5 @@ stable and key-free.
   never touches your dev stack.
 - Failure screenshots go to `e2e/test-results/` (git-ignored, uploaded as a CI
   artifact) — don't commit them.
+- **`package-lock.json`** — never hand-edit; only update via `npm install`
+  when dependencies intentionally change.
