@@ -1,0 +1,207 @@
+client/INSIGHTS.md
+  s_833f415a6404b1::t_5976a9286436bd 17-19
+client/src/app/skills/[id]/_components/SkillEditor/_components/ConfigTab/ConfigTab.tsx
+  s_e080ddcde2dba0::t_0e59e5ced96c65 1-90
+client/src/app/skills/[id]/_components/SkillEditor/_components/ConfigTab/index.ts
+  s_e080ddcde2dba0::t_a32d5764610a37 1
+client/src/app/skills/[id]/_components/SkillEditor/_components/EvalsTab/index.ts
+  s_e080ddcde2dba0::t_29013d7835df17 1
+client/src/app/skills/[id]/_components/SkillEditor/index.ts
+  s_e080ddcde2dba0::t_1dee0daa90fa9c 1
+client/src/vendor/shared/contracts/knowledge.ts
+  s_e080ddcde2dba0::t_570672e90589c5 143-153
+docs/agent-prompts/api-contract-reviewer.md
+  s_e080ddcde2dba0::t_4e839b03b7bfb0 1-98
+docs/agent-prompts/test-quality-reviewer.md
+  s_e080ddcde2dba0::t_34aabf07975b95 1-93
+server/src/adapters/community/static-list.ts
+  s_e080ddcde2dba0::t_4cc4f39d3245fa 1-55
+server/src/adapters/community/types.ts
+  s_e080ddcde2dba0::t_981dad7a6c0cc2 1-13
+server/src/db/rows.ts
+  s_e080ddcde2dba0::t_5ffe9084e32bf7 17-18
+server/src/modules/index.ts
+  s_e080ddcde2dba0::t_fe943f19fb0ce1 8,32
+server/src/modules/reviews/run-executor.ts
+  s_e080ddcde2dba0::t_be36b2715bfaa4 186-192,205-207
+server/src/modules/skills/constants.ts
+  s_e080ddcde2dba0::t_8db310dcbc0bc0 1-10
+server/src/modules/skills/helpers.ts
+  s_e080ddcde2dba0::t_322f6844f0fc91 1-63
+server/src/modules/skills/repository.ts
+  s_e080ddcde2dba0::t_e8c815b5153e4d 1-140
+server/src/vendor/shared/contracts/knowledge.ts
+  s_e080ddcde2dba0::t_2742f9e89b3f6c 143-153
+client/messages/en/skills.json
+  s_e080ddcde2dba0::t_0fe908a5acdf0b 22-27,34,38-44,47-83
+client/src/app/agents/[id]/_components/AgentEditor/AgentEditor.tsx
+  s_a4e8afbd5cfbce::t_bff97b6527c239 1-3,11,24
+client/src/app/agents/[id]/_components/AgentEditor/_components/SkillsTab/SkillsTab.test.tsx
+  s_e080ddcde2dba0::t_611d97cca46d8f 1-168
+client/src/app/agents/[id]/_components/AgentEditor/_components/SkillsTab/SkillsTab.tsx
+  s_a4e8afbd5cfbce::t_3054b466d899b6 1-178
+client/src/app/agents/[id]/_components/AgentEditor/_components/SkillsTab/index.ts
+  s_a4e8afbd5cfbce::t_c41d22413ed978 1
+client/src/app/agents/[id]/_components/AgentEditor/_components/SkillsTab/styles.ts
+  s_a4e8afbd5cfbce::t_7d6f347cca02f8 1-58
+client/src/app/agents/[id]/_components/AgentEditor/constants.ts
+  s_a4e8afbd5cfbce::t_83883944d9f5b8 10-11,14
+client/src/app/agents/[id]/_components/AgentEditorView/useAgentEditorTab.ts
+  s_a4e8afbd5cfbce::t_b5c6107f83ac4a 3
+client/src/app/skills/[id]/_components/SkillEditor/SkillEditor.tsx
+  s_a4e8afbd5cfbce::t_cfa347f6b27ef1 1-34
+client/src/app/skills/[id]/_components/SkillEditor/_components/ConfigTab/ConfigTab.test.tsx
+  s_e080ddcde2dba0::t_dd2f3ca7daf8bd 1-84
+client/src/app/skills/[id]/_components/SkillEditor/_components/ConfigTab/constants.ts
+  s_ee23082ed334ac::t_c7b78102ad85b4 1-5
+client/src/app/skills/[id]/_components/SkillEditor/_components/ConfigTab/helpers.ts
+  s_e080ddcde2dba0::t_1b04f68a3e626f 1-17
+client/src/app/skills/[id]/_components/SkillEditor/_components/ConfigTab/styles.ts
+  s_a4e8afbd5cfbce::t_e0c2c69c8b7f75 1-48
+client/src/app/skills/[id]/_components/SkillEditor/_components/EvalsTab/EvalsTab.tsx
+  s_ee23082ed334ac::t_ac667239f0a0af 1-14
+client/src/app/skills/[id]/_components/SkillEditor/_components/PreviewTab/PreviewTab.tsx
+  s_ee23082ed334ac::t_3a2c878d6fa068 1-18
+client/src/app/skills/[id]/_components/SkillEditor/_components/PreviewTab/index.ts
+  s_ee23082ed334ac::t_d33b0c3cc36290 1
+client/src/app/skills/[id]/_components/SkillEditor/_components/PreviewTab/styles.ts
+  s_ee23082ed334ac::t_78212bdb3f5034 1-12
+client/src/app/skills/[id]/_components/SkillEditor/_components/StatsTab/StatsTab.test.tsx
+  s_e080ddcde2dba0::t_b2ed882c059cbd 1-69
+client/src/app/skills/[id]/_components/SkillEditor/_components/StatsTab/StatsTab.tsx
+  s_ee23082ed334ac::t_4d93d14da44136 1-71
+client/src/app/skills/[id]/_components/SkillEditor/_components/StatsTab/index.ts
+  s_ee23082ed334ac::t_cc8e6e7dce471e 1
+client/src/app/skills/[id]/_components/SkillEditor/_components/StatsTab/styles.ts
+  s_ee23082ed334ac::t_a953bd82e67815 1-35
+client/src/app/skills/[id]/_components/SkillEditor/_components/VersionsTab/VersionsTab.test.tsx
+  s_e080ddcde2dba0::t_4e7a809b43675e 1-70
+client/src/app/skills/[id]/_components/SkillEditor/_components/VersionsTab/VersionsTab.tsx
+  s_ee23082ed334ac::t_045894934a824e 1-46
+client/src/app/skills/[id]/_components/SkillEditor/_components/VersionsTab/index.ts
+  s_ee23082ed334ac::t_eeb1be8a75f91f 1
+client/src/app/skills/[id]/_components/SkillEditor/_components/VersionsTab/styles.ts
+  s_ee23082ed334ac::t_809d4780b3b821 1-17
+client/src/app/skills/[id]/_components/SkillEditor/constants.ts
+  s_a4e8afbd5cfbce::t_2764779de98ad6 1-18
+client/src/app/skills/[id]/_components/SkillEditor/styles.ts
+  s_a4e8afbd5cfbce::t_3a5fb20a9c39c7 1-8
+client/src/app/skills/[id]/_components/SkillEditorView/SkillEditorView.tsx
+  s_ee23082ed334ac::t_37c400f71c1a97 1-82
+client/src/app/skills/[id]/_components/SkillEditorView/index.ts
+  s_ee23082ed334ac::t_107cbccc928dff 1-2
+client/src/app/skills/[id]/_components/SkillEditorView/useSkillEditorTab.ts
+  s_ee23082ed334ac::t_6928eead38adb0 1-18
+client/src/app/skills/[id]/page.tsx
+  s_e080ddcde2dba0::t_ef83f07930044d 1-53
+client/src/app/skills/_components/SkillCard/SkillCard.test.tsx
+  s_e080ddcde2dba0::t_397cf4fed9d02d 1-76
+client/src/app/skills/_components/SkillCard/SkillCard.tsx
+  s_e080ddcde2dba0::t_77a0f3de56d1f7 1-116
+client/src/app/skills/_components/SkillCard/constants.ts
+  s_e080ddcde2dba0::t_b37974def01a3e 1-18
+client/src/app/skills/_components/SkillCard/index.ts
+  s_e080ddcde2dba0::t_251ce8b3081082 1-2
+client/src/app/skills/_components/SkillCard/styles.ts
+  s_e080ddcde2dba0::t_2c5ba1228f6f77 1-51
+client/src/app/skills/_components/SkillsListView/SkillsListView.tsx
+  s_e080ddcde2dba0::t_096a4410331bb7 1-102
+client/src/app/skills/_components/SkillsListView/_components/AddSkillDrawer/AddSkillDrawer.tsx
+  s_e080ddcde2dba0::t_7700ab16dbe6d2 1-39
+client/src/app/skills/_components/SkillsListView/_components/AddSkillDrawer/CommunityImportTab.tsx
+  s_e080ddcde2dba0::t_18c807ee634249 1-73
+client/src/app/skills/_components/SkillsListView/_components/AddSkillDrawer/FileImportTab.test.tsx
+  s_e080ddcde2dba0::t_58ebdd490b58bc 1-65
+client/src/app/skills/_components/SkillsListView/_components/AddSkillDrawer/FileImportTab.tsx
+  s_e080ddcde2dba0::t_830e944985e724 1-74
+client/src/app/skills/_components/SkillsListView/_components/AddSkillDrawer/UrlImportTab.tsx
+  s_e080ddcde2dba0::t_268522925a8664 1-62
+client/src/app/skills/_components/SkillsListView/_components/AddSkillDrawer/constants.ts
+  s_e080ddcde2dba0::t_49077fee34fcb4 1-5
+client/src/app/skills/_components/SkillsListView/_components/AddSkillDrawer/index.ts
+  s_e080ddcde2dba0::t_8c9522d230134a 1
+client/src/app/skills/_components/SkillsListView/_components/AddSkillDrawer/styles.ts
+  s_e080ddcde2dba0::t_3b66f21a559167 1-44
+client/src/app/skills/_components/SkillsListView/constants.ts
+  s_e080ddcde2dba0::t_d6c8ae3a18a565 1
+client/src/app/skills/_components/SkillsListView/helpers.ts
+  s_e080ddcde2dba0::t_6e89543da237e7 1-8
+client/src/app/skills/_components/SkillsListView/index.ts
+  s_e080ddcde2dba0::t_9292fb554ba2ac 1
+client/src/app/skills/_components/SkillsListView/styles.ts
+  s_e080ddcde2dba0::t_f100f052104630 1-31
+client/src/app/skills/page.tsx
+  s_e080ddcde2dba0::t_ccb90f8a6e8205 1-7
+client/src/lib/hooks/agents.ts
+  s_e080ddcde2dba0::t_72b0776dbc2378 6,88-109
+client/src/lib/hooks/skills.ts
+  s_e080ddcde2dba0::t_0f7ac16ceca0fc 1-114
+client/src/vendor/ui/nav.ts
+  s_e080ddcde2dba0::t_c9c607abae6fa7 26-31,61
+docs/agent-prompts/README.md
+  s_e080ddcde2dba0::t_9934897698d57d 12-15
+server/INSIGHTS.md
+  s_e080ddcde2dba0::t_ab84d6c25cc20b 19-20
+server/scripts/pr-self-review.ts
+  s_e080ddcde2dba0::t_94f1e8d1dcaa82 1-80
+server/src/db/seed-prompts.ts
+  s_a4e8afbd5cfbce::t_a0c3efc0428d44 293-485
+server/src/db/seed-skills.ts
+  s_a4e8afbd5cfbce::t_79c4f64936ef12 1-87
+server/src/db/seed.ts
+  s_e080ddcde2dba0::t_54bd8aca795ba2 9-10,12-22,34-37,39-40,229-250,260-342
+server/src/modules/agents/repository.ts
+  s_e080ddcde2dba0::t_a5f50e67bab597 206-216
+server/src/modules/skills/routes.ts
+  s_e080ddcde2dba0::t_56089a9a4023e1 1-152
+server/src/modules/skills/service.ts
+  s_e080ddcde2dba0::t_a977b4d679f8ef 1-206
+server/src/platform/container.ts
+  s_e080ddcde2dba0::t_6b8e2b4a01597f 27,35-36,59,83,91,112-120
+server/test/skills-in-review.it.test.ts
+  s_e080ddcde2dba0::t_945940614b30c0 1-199
+server/test/skills.it.test.ts
+  s_e080ddcde2dba0::t_04c2d5c80bb44a 1-244
+server/tsconfig.json
+  s_e080ddcde2dba0::t_d077ae6eceada0 28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "fbeeeb5c755ed7413181afef681981ab511040f9",
+  "prompts": {},
+  "sessions": {
+    "s_833f415a6404b1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7da48b45-7f70-46e4-bf8e-c477985fb327",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    },
+    "s_a4e8afbd5cfbce": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a664d731dbce12fc2",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    },
+    "s_e080ddcde2dba0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b18562f9-d5d6-4007-ab10-0e1937927638",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    },
+    "s_ee23082ed334ac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a58d86ee9e942d732",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
