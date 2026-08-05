@@ -1,0 +1,21 @@
+server/INSIGHTS.md
+  s_2ec4fc3de9aa25::t_ec8b36525d5b92 13-14
+server/test/agents-versions.it.test.ts
+  s_2ec4fc3de9aa25::t_86c2bffd8a6e2b 166
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "35c8ed7e7dc83da0e109e041cb908dff3f5d7df9",
+  "prompts": {},
+  "sessions": {
+    "s_2ec4fc3de9aa25": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "ff4c466c-69b1-4023-84f7-be065cb8452e",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
