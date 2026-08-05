@@ -1,0 +1,23 @@
+server/src/modules/conventions/prompt.ts
+  s_7445e3d078dd2e::t_9f667e143069dc 32-33,35-37,44-45
+server/src/modules/conventions/verify.ts
+  s_7445e3d078dd2e::t_2826eea7326702 94-98
+server/test/conventions-verify.test.ts
+  s_7445e3d078dd2e::t_1e5f45e99f5342 68-69,78-85,96
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "4f057f7664239e22ee6ef16341d757a91abc57d7",
+  "prompts": {},
+  "sessions": {
+    "s_7445e3d078dd2e": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "5880a0f0-f686-410d-ad83-e995e6eb0c6a",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
