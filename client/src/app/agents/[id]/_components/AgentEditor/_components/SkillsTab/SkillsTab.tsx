@@ -94,18 +94,25 @@ export function SkillsTab({ agent }: { agent: Agent }) {
       </div>
       <div style={s.hint}>{t("skills.orderHint")}</div>
       <div style={s.list}>
-        {visibleLinked.map((sk, i) => (
-          <SkillRow
-            key={sk.id}
-            skill={sk}
-            linked
-            onToggle={(checked) => toggle(sk.id, checked)}
-            onMoveUp={() => move(sk.id, -1)}
-            onMoveDown={() => move(sk.id, 1)}
-            canMoveUp={i > 0}
-            canMoveDown={i < visibleLinked.length - 1}
-          />
-        ))}
+        {visibleLinked.map((sk) => {
+          // Reorder position must be derived from the FULL linked order, not
+          // the filtered `visibleLinked` index — otherwise an active filter
+          // hides sibling rows and both the up/down enabled state and the
+          // swap target become wrong (see agent-editor SkillsTab reorder bug).
+          const fullIdx = linkedIds.indexOf(sk.id);
+          return (
+            <SkillRow
+              key={sk.id}
+              skill={sk}
+              linked
+              onToggle={(checked) => toggle(sk.id, checked)}
+              onMoveUp={() => move(sk.id, -1)}
+              onMoveDown={() => move(sk.id, 1)}
+              canMoveUp={fullIdx > 0}
+              canMoveDown={fullIdx < linkedIds.length - 1}
+            />
+          );
+        })}
         {visibleUnlinked.map((sk) => (
           <SkillRow key={sk.id} skill={sk} linked={false} onToggle={(checked) => toggle(sk.id, checked)} />
         ))}
@@ -131,6 +138,7 @@ function SkillRow({
   canMoveUp?: boolean;
   canMoveDown?: boolean;
 }) {
+  const t = useTranslations("agents");
   const color = TYPE_COLOR[skill.type];
   const TypeIcon = Icon[TYPE_ICON[skill.type]];
 
@@ -140,7 +148,7 @@ function SkillRow({
         on={linked}
         onChange={onToggle}
         size={14}
-        aria-label={`${linked ? "Detach" : "Attach"} skill "${skill.name}"`}
+        aria-label={t(linked ? "skills.detach" : "skills.attach", { name: skill.name })}
       />
       <div style={s.iconBox(color)}>
         <TypeIcon size={15} />
@@ -158,7 +166,7 @@ function SkillRow({
             style={s.reorderBtn(!canMoveUp)}
             disabled={!canMoveUp}
             onClick={onMoveUp}
-            aria-label={`Move "${skill.name}" up`}
+            aria-label={t("skills.moveUp", { name: skill.name })}
           >
             <Icon.ArrowUp size={14} />
           </button>
@@ -167,7 +175,7 @@ function SkillRow({
             style={s.reorderBtn(!canMoveDown)}
             disabled={!canMoveDown}
             onClick={onMoveDown}
-            aria-label={`Move "${skill.name}" down`}
+            aria-label={t("skills.moveDown", { name: skill.name })}
           >
             <Icon.ArrowDown size={14} />
           </button>

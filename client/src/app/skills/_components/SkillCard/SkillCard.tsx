@@ -19,12 +19,16 @@ export function SkillCard({
   skill,
   active,
   stats,
+  compact,
   onClick,
   onToggle,
 }: {
   skill: Skill;
   active?: boolean;
   stats?: SkillCardStats;
+  /** Slim row for narrow rails (e.g. the skill-detail page's left list) —
+   *  hides the description and badge row, keeping only icon/name/toggle/delete. */
+  compact?: boolean;
   onClick?: () => void;
   onToggle?: (enabled: boolean) => void;
 }) {
@@ -45,7 +49,7 @@ export function SkillCard({
           onClick?.();
         }
       }}
-      style={s.card(!!active, skill.enabled)}
+      style={s.card(!!active, skill.enabled, !!compact)}
     >
       <div style={s.headerRow}>
         <div style={{ ...s.iconBox, background: color + "1a", color }}>
@@ -60,18 +64,18 @@ export function SkillCard({
               on={skill.enabled}
               onChange={onToggle}
               size={14}
-              aria-label={`${skill.enabled ? "Disable" : "Enable"} skill "${skill.name}"`}
+              aria-label={t(skill.enabled ? "listItem.disable" : "listItem.enable", { name: skill.name })}
             />
           </div>
         )}
         <button
           onClick={(e) => {
             e.stopPropagation();
-            if (window.confirm(`Delete skill "${skill.name}"? This cannot be undone.`)) del.mutate(skill.id);
+            if (window.confirm(t("listItem.deleteConfirm", { name: skill.name }))) del.mutate(skill.id);
           }}
           disabled={del.isPending}
-          title="Delete skill"
-          aria-label="Delete skill"
+          title={t("listItem.delete")}
+          aria-label={t("listItem.delete")}
           style={{
             background: "none",
             border: "none",
@@ -84,22 +88,24 @@ export function SkillCard({
           <Icon.Trash size={14} style={del.isPending ? { animation: "ddspin 1s linear infinite" } : undefined} />
         </button>
       </div>
-      <div style={s.description}>{skill.description || "No description"}</div>
-      <div style={s.badgeRow}>
-        <Badge color={color} bg={color + "1a"}>
-          {t(`listItem.type.${skill.type}`)}
-        </Badge>
-        <span title={needsVetting ? t("listItem.vettingTitle") : undefined}>
-          <Badge
-            color={needsVetting ? "var(--warn)" : "var(--text-muted)"}
-            bg={needsVetting ? "var(--warn-bg)" : undefined}
-            icon={needsVetting ? "AlertTriangle" : undefined}
-          >
-            {t(`listItem.source.${skill.source}`)}
-            {needsVetting ? ` · ${t("listItem.needsVetting")}` : ""}
+      {!compact && <div style={s.description}>{skill.description || "No description"}</div>}
+      {!compact && (
+        <div style={s.badgeRow}>
+          <Badge color={color} bg={color + "1a"}>
+            {t(`listItem.type.${skill.type}`)}
           </Badge>
-        </span>
-      </div>
+          <span title={needsVetting ? t("listItem.vettingTitle") : undefined}>
+            <Badge
+              color={needsVetting ? "var(--warn)" : "var(--text-muted)"}
+              bg={needsVetting ? "var(--warn-bg)" : undefined}
+              icon={needsVetting ? "AlertTriangle" : undefined}
+            >
+              {t(`listItem.source.${skill.source}`)}
+              {needsVetting ? ` · ${t("listItem.needsVetting")}` : ""}
+            </Badge>
+          </span>
+        </div>
+      )}
       {stats && (
         <div style={s.statsRow}>
           <span>{t("page.card.agentsCount", { count: stats.agentsCount })}</span>

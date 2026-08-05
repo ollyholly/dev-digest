@@ -21,7 +21,7 @@
       "body": "Pick a skill on the left to preview its body."
     },
     "card": {
-      "agentsCount": "{count} agents",
+      "agentsCount": "{count, plural, one {# agent} other {# agents}}",
       "pull": "{pct}% pull",
       "accept": "{pct}% accept",
       "noStats": "—"
@@ -66,7 +66,7 @@
   },
   "stats": {
     "usedBy": "Used by",
-    "agentsCount": "{count} agents",
+    "agentsCount": "{count, plural, one {# agent} other {# agents}}",
     "pullFrequency": "Pull frequency",
     "acceptRate": "Accept rate",
     "findings30d": "Findings (30D)",
@@ -77,9 +77,10 @@
   },
   "versions": {
     "title": "Version history",
-    "count": "{count} versions",
+    "count": "{count, plural, one {# version} other {# versions}}",
     "current": "Current",
-    "hint": "Every save snapshots the body so evals stay reproducible against the exact text they scored."
+    "hint": "Every save snapshots the body so eval runs stay reproducible against the exact text they scored.",
+    "emptyTitle": "No version history yet"
   },
   "drawer": {
     "title": "Add a skill",
@@ -104,8 +105,8 @@
   },
   "url": {
     "label": "Skill URL",
-    "hint": "Fetched server-side, stored as untrusted, and left disabled until vetted.",
-    "placeholder": "https://example.com/skills/security.md",
+    "hint": "Fetched server-side from GitHub raw-content URLs only, stored as untrusted, and left disabled until vetted.",
+    "placeholder": "https://raw.githubusercontent.com/owner/repo/main/SKILL.md",
     "fetching": "Fetching…",
     "import": "Import from URL",
     "success": "Imported \"{name}\". Disabled until you vet + enable it."
@@ -125,6 +126,10 @@
   "listItem": {
     "needsVetting": "needs vetting",
     "vettingTitle": "Untrusted source — vet before enabling",
+    "enable": "Enable skill \"{name}\"",
+    "disable": "Disable skill \"{name}\"",
+    "delete": "Delete skill",
+    "deleteConfirm": "Delete skill \"{name}\"? This cannot be undone.",
     "type": {
       "rubric": "rubric",
       "convention": "convention",
@@ -139,6 +144,8 @@
     }
   },
   "preview": {
+    "title": "Preview",
+    "subtitle": "Rendered as the reviewing agent receives it.",
     "untrustedBadge": "untrusted source",
     "enabled": "Enabled",
     "disabled": "Disabled",

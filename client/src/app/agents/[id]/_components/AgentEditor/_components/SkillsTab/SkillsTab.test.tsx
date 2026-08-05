@@ -80,11 +80,12 @@ function renderWithIntl(ui: React.ReactElement) {
 }
 
 describe("SkillsTab (smoke)", () => {
-  it("shows a loading skeleton while skills/links are loading", () => {
+  it("shows a loading skeleton while skills/links are loading, not the list/empty state", () => {
     useSkillsMock = () => ({ data: undefined, isLoading: true });
     useAgentSkillsMock = () => ({ data: undefined, isLoading: true });
-    const { container } = renderWithIntl(<SkillsTab agent={AGENT} />);
-    expect(container.querySelector('[class*="skeleton" i]') || container).toBeTruthy();
+    renderWithIntl(<SkillsTab agent={AGENT} />);
+    expect(screen.queryByPlaceholderText("Filter skills…")).not.toBeInTheDocument();
+    expect(screen.queryByText("Go to Skills")).not.toBeInTheDocument();
   });
 
   it("shows an empty state with a CTA to /skills when the workspace has no skills", () => {
@@ -164,5 +165,68 @@ describe("SkillsTab (smoke)", () => {
     fireEvent.change(screen.getByPlaceholderText("Filter skills…"), { target: { value: "mocking" } });
     expect(screen.getByText("over-mocking")).toBeInTheDocument();
     expect(screen.queryByText("uncovered-branches")).not.toBeInTheDocument();
+  });
+
+  it("the first linked skill cannot move up", () => {
+    useSkillsMock = () => ({ data: [SKILL_A, SKILL_B], isLoading: false });
+    useAgentSkillsMock = () => ({
+      data: [
+        { agent_id: AGENT.id, skill_id: SKILL_A.id, order: 0 },
+        { agent_id: AGENT.id, skill_id: SKILL_B.id, order: 1 },
+      ],
+      isLoading: false,
+    });
+    renderWithIntl(<SkillsTab agent={AGENT} />);
+
+    expect(screen.getByRole("button", { name: 'Move "uncovered-branches" up' })).toBeDisabled();
+  });
+
+  it("the last linked skill cannot move down", () => {
+    useSkillsMock = () => ({ data: [SKILL_A, SKILL_B], isLoading: false });
+    useAgentSkillsMock = () => ({
+      data: [
+        { agent_id: AGENT.id, skill_id: SKILL_A.id, order: 0 },
+        { agent_id: AGENT.id, skill_id: SKILL_B.id, order: 1 },
+      ],
+      isLoading: false,
+    });
+    renderWithIntl(<SkillsTab agent={AGENT} />);
+
+    expect(screen.getByRole("button", { name: 'Move "missing-corner-cases" down' })).toBeDisabled();
+  });
+
+  it("with exactly one linked skill, both move buttons are disabled", () => {
+    useSkillsMock = () => ({ data: [SKILL_A, SKILL_B], isLoading: false });
+    useAgentSkillsMock = () => ({
+      data: [{ agent_id: AGENT.id, skill_id: SKILL_A.id, order: 0 }],
+      isLoading: false,
+    });
+    renderWithIntl(<SkillsTab agent={AGENT} />);
+
+    expect(screen.getByRole("button", { name: 'Move "uncovered-branches" up' })).toBeDisabled();
+    expect(screen.getByRole("button", { name: 'Move "uncovered-branches" down' })).toBeDisabled();
+  });
+
+  it("reorder position/enabled-state is derived from the FULL linked order, not the filtered view", () => {
+    // Regression test: with a filter active that hides SKILL_B (the middle
+    // linked skill), SKILL_C's "can move up" state and its swap target must
+    // still be computed against the full [A, B, C] order, not [A, C].
+    useSkillsMock = () => ({ data: [SKILL_A, SKILL_B, SKILL_C], isLoading: false });
+    useAgentSkillsMock = () => ({
+      data: [
+        { agent_id: AGENT.id, skill_id: SKILL_A.id, order: 0 },
+        { agent_id: AGENT.id, skill_id: SKILL_B.id, order: 1 },
+        { agent_id: AGENT.id, skill_id: SKILL_C.id, order: 2 },
+      ],
+      isLoading: false,
+    });
+    renderWithIntl(<SkillsTab agent={AGENT} />);
+
+    fireEvent.change(screen.getByPlaceholderText("Filter skills…"), { target: { value: "over-mocking" } });
+    // SKILL_C ("over-mocking") is the only visible linked row, but it is NOT
+    // first in the full order — moving it up must swap with SKILL_B, not be
+    // disabled.
+    fireEvent.click(screen.getByRole("button", { name: 'Move "over-mocking" up' }));
+    expect(setAgentSkillsMock).toHaveBeenCalledWith([SKILL_A.id, SKILL_C.id, SKILL_B.id]);
   });
 });
