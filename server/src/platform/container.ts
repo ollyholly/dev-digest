@@ -24,6 +24,7 @@ import { estimateCost } from '../adapters/llm/pricing.js';
 import { PriceBook } from './price-book.js';
 import { ConfigError } from './errors.js';
 import { AgentsRepository } from '../modules/agents/repository.js';
+import { SkillsRepository } from '../modules/skills/repository.js';
 import { ReviewRepository } from '../modules/reviews/repository.js';
 import { RepoRepository } from '../modules/repos/repository.js';
 import { PullsRepository } from '../modules/pulls/repository.js';
@@ -31,6 +32,8 @@ import type { RepoIntel, Tokenizer } from '../modules/repo-intel/types.js';
 import { RepoIntelService } from '../modules/repo-intel/service.js';
 import { type DepGraph, DepCruiseGraph } from '../adapters/depgraph/index.js';
 import { TiktokenTokenizer } from '../adapters/tokenizer/index.js';
+import type { CommunityCatalog } from '../adapters/community/types.js';
+import { StaticCommunityCatalog } from '../adapters/community/static-list.js';
 
 /**
  * DI container. One per app instance. Holds config, db, the JobRunner,
@@ -53,6 +56,7 @@ export interface ContainerOverrides {
   /** repo-intel T3 adapters — only the indexer pipeline reads these. */
   depgraph?: DepGraph;
   tokenizer?: Tokenizer;
+  communityCatalog?: CommunityCatalog;
 }
 
 export class Container {
@@ -76,6 +80,7 @@ export class Container {
   // this same getter (rather than a second local `new XRepository(db)`) so
   // there's exactly one construction pattern to follow, not two.
   private _agentsRepo?: AgentsRepository;
+  private _skillsRepo?: SkillsRepository;
   private _reviewRepo?: ReviewRepository;
   private _reposRepo?: RepoRepository;
   private _pullsRepo?: PullsRepository;
@@ -83,6 +88,7 @@ export class Container {
   private _depgraph?: DepGraph;
   private _tokenizer?: Tokenizer;
   private _priceBook?: PriceBook;
+  private _communityCatalog?: CommunityCatalog;
 
   constructor(config: AppConfig, db: Db, private overrides: ContainerOverrides = {}) {
     this.config = config;
@@ -101,6 +107,15 @@ export class Container {
 
   get agentsRepo(): AgentsRepository {
     return (this._agentsRepo ??= new AgentsRepository(this.db));
+  }
+
+  get skillsRepo(): SkillsRepository {
+    return (this._skillsRepo ??= new SkillsRepository(this.db));
+  }
+
+  get communityCatalog(): CommunityCatalog {
+    if (this.overrides.communityCatalog) return this.overrides.communityCatalog;
+    return (this._communityCatalog ??= new StaticCommunityCatalog());
   }
 
   get reviewRepo(): ReviewRepository {
