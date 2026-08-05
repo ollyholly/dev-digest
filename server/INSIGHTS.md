@@ -9,6 +9,7 @@
 ## Tool & Library Notes
 
 ## Recurring Errors & Fixes
+- 2026-08-05: Conventions extract can report Proposed>0 / Verified=0 when the model copies prompt sample labels into `evidence_path`. Older prompts used `source="kind:path"` (e.g. `code:src/foo.ts`); `verifyCandidate` looked up bare samples-map keys, so every candidate dropped and the UI empty-state + disabled Create skill followed. Fix: separate `source`/`kind` attributes in the prompt, and strip legacy `code:`/`config:` prefixes in `verify.ts` before normalize/lookup.
 
 - 2026-08-05: `AgentsService` ctor takes `Container` and reads `container.agentsRepo` — constructing with `{ db }` leaves `this.repo` undefined (`Cannot read properties of undefined (reading 'getById')`). Integration tests must pass `{ agentsRepo: new AgentsRepository(db) }` (see `test/agents-versions.it.test.ts`).
 
