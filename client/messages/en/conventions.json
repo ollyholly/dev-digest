@@ -2,14 +2,15 @@
   "page": {
     "crumbLab": "Skills Lab",
     "crumbConventions": "Conventions",
-    "headingPrefix": "Conventions in ",
-    "repoFallback": "repo",
+    "heading": "Conventions in {repo}",
     "subtitle": "Scan the cloned repo to surface house-rules — each backed by evidence you can turn into a Skill.",
     "scanning": "Scanning…",
     "rescan": "Re-scan",
     "runExtraction": "Run extraction",
+    "createSkill": "Create skill",
     "extractionFailed": "Extraction failed",
     "loadError": "Could not load conventions.",
+    "loadErrorBody": "The conventions scan could not be loaded. Try again.",
     "empty": {
       "title": "No conventions extracted yet",
       "body": "Scan the repo to surface house-rules — naming, error handling, structure — each backed by evidence you can turn into a Skill.",
@@ -17,10 +18,49 @@
     },
     "candidateCount": "{count, plural, one {# candidate} other {# candidates}} · grounded against sampled files"
   },
+  "summary": {
+    "label": "Latest scan summary",
+    "proposed": "Proposed",
+    "verified": "Verified",
+    "dropped": "Dropped",
+    "sampled": "Files sampled"
+  },
   "card": {
     "confidence": "Confidence",
+    "editRule": "Convention rule",
+    "evidence": "Evidence",
+    "openEvidence": "Open {path}, lines {lines}, on GitHub",
+    "accept": "Accept",
     "accepted": "Accepted",
-    "accepting": "Accepting…",
-    "acceptAsSkill": "Accept as Skill"
+    "reject": "Reject",
+    "rejected": "Rejected",
+    "updateFailed": "Could not update this convention. Your previous selection was restored."
+  },
+  "modal": {
+    "title": "Create skill from conventions",
+    "subtitle": "Review the generated skill before adding it to Skills Lab.",
+    "info": "Merged from {count, plural, one {# accepted convention} other {# accepted conventions}} in {repo}. Everything below is editable before you save.",
+    "splitByCategory": "Split by category",
+    "mergedDraft": "Merged",
+    "loadingDraft": "Building skill draft…",
+    "noDrafts": "No accepted conventions are available for this draft.",
+    "draftFailed": "Could not build the skill draft.",
+    "promotionFailed": "Could not create the skill.",
+    "fields": {
+      "name": "Name",
+      "namePlaceholder": "repository-conventions",
+      "description": "Description",
+      "descriptionPlaceholder": "House conventions used during review",
+      "type": "Type",
+      "typeConvention": "convention",
+      "enabled": "Enabled",
+      "body": "Skill body"
+    },
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "tokens": "≈ {count} tokens",
+    "savedHint": "Saved as v1 · added to Skills Lab",
+    "cancel": "Cancel",
+    "create": "Create skill"
   }
 }

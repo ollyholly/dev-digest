@@ -15,6 +15,9 @@ import {
   OVER_MOCKING_SKILL,
   FLAKY_TEST_SMELLS_SKILL,
   API_CONTRACT_BREAKING_CHANGE_SKILL,
+  API_RESPONSE_SCHEMA_SKILL,
+  API_DEPRECATION_POLICY_SKILL,
+  API_SEMVER_DISCIPLINE_SKILL,
 } from './seed-skills.js';
 import { SkillsRepository } from '../modules/skills/repository.js';
 import { SkillsService } from '../modules/skills/service.js';
@@ -240,7 +243,7 @@ export async function seed(db: Db): Promise<{ workspaceId: string; userId: strin
     {
       workspaceId,
       name: 'API Contract Reviewer',
-      description: 'Flags breaking changes to route signatures and response contracts.',
+      description: 'Checks API compatibility, response schemas, deprecations, and version discipline.',
       provider: DEFAULT_PROVIDER,
       model: DEFAULT_MODEL,
       systemPrompt: API_CONTRACT_REVIEWER_PROMPT,
@@ -292,6 +295,24 @@ export async function seed(db: Db): Promise<{ workspaceId: string; userId: strin
       type: 'convention',
       body: API_CONTRACT_BREAKING_CHANGE_SKILL,
     },
+    {
+      name: 'api-response-schema',
+      description: 'Flags incompatible response types, requiredness, nullability, and envelopes.',
+      type: 'convention',
+      body: API_RESPONSE_SCHEMA_SKILL,
+    },
+    {
+      name: 'api-deprecation-policy',
+      description: 'Requires a compatibility window before routes or fields are removed.',
+      type: 'convention',
+      body: API_DEPRECATION_POLICY_SKILL,
+    },
+    {
+      name: 'api-semver-discipline',
+      description: 'Requires a major or parallel version for released breaking API changes.',
+      type: 'convention',
+      body: API_SEMVER_DISCIPLINE_SKILL,
+    },
   ];
   const skillIds: Record<string, string> = {};
   for (const s of directSkills) {
@@ -337,7 +358,12 @@ export async function seed(db: Db): Promise<{ workspaceId: string; userId: strin
     .from(t.agents)
     .where(and(eq(t.agents.workspaceId, workspaceId), eq(t.agents.name, 'API Contract Reviewer')));
   if (apiContractAgent) {
-    await agentsRepo.setSkills(apiContractAgent.id, [skillIds['api-contract-breaking-change']!]);
+    await agentsRepo.setSkills(apiContractAgent.id, [
+      skillIds['api-contract-breaking-change']!,
+      skillIds['api-response-schema']!,
+      skillIds['api-deprecation-policy']!,
+      skillIds['api-semver-discipline']!,
+    ]);
   }
 
   return { workspaceId, userId };

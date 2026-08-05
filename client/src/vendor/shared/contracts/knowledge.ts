@@ -152,15 +152,98 @@ export const SkillVersion = z.object({
 export type SkillVersion = z.infer<typeof SkillVersion>;
 
 // ---- Conventions ----
+/** Tri-state curation lifecycle for an extracted convention candidate. */
+export const ConventionStatus = z.enum(['pending', 'accepted', 'rejected']);
+export type ConventionStatus = z.infer<typeof ConventionStatus>;
+
 export const ConventionCandidate = z.object({
   id: z.string(),
+  repo_id: z.string(),
+  category: z.string(),
   rule: z.string(),
   evidence_path: z.string(),
   evidence_snippet: z.string(),
+  evidence_start_line: z.number().int().positive(),
+  evidence_end_line: z.number().int().positive(),
   confidence: z.number().min(0).max(1),
+  status: ConventionStatus,
+  /** @deprecated Prefer `status`. Kept true iff status === 'accepted' for older clients. */
   accepted: z.boolean(),
+  scanned_sha: z.string().nullable(),
+  fingerprint: z.string(),
+  created_at: z.string(),
 });
 export type ConventionCandidate = z.infer<typeof ConventionCandidate>;
+
+export const ConventionExtractionResult = z.object({
+  candidates: z.array(ConventionCandidate),
+  scanned_sha: z.string().nullable(),
+  sampled_files: z.array(z.string()),
+  considered_files: z.number().int().nonnegative(),
+  proposed: z.number().int().nonnegative(),
+  verified: z.number().int().nonnegative(),
+  dropped: z.number().int().nonnegative(),
+  model: z
+    .object({
+      provider: z.string(),
+      model: z.string(),
+    })
+    .nullable(),
+});
+export type ConventionExtractionResult = z.infer<typeof ConventionExtractionResult>;
+
+export const ConventionUpdate = z.object({
+  status: ConventionStatus.optional(),
+  rule: z.string().min(1).optional(),
+  category: z.string().min(1).optional(),
+});
+export type ConventionUpdate = z.infer<typeof ConventionUpdate>;
+
+export const ConventionSkillDraftMode = z.enum(['merged', 'by-category']);
+export type ConventionSkillDraftMode = z.infer<typeof ConventionSkillDraftMode>;
+
+export const ConventionSkillDraft = z.object({
+  name: z.string(),
+  description: z.string(),
+  type: z.literal('convention'),
+  body: z.string(),
+  evidence_files: z.array(z.string()),
+  accepted_count: z.number().int().nonnegative(),
+  category: z.string().nullish(),
+});
+export type ConventionSkillDraft = z.infer<typeof ConventionSkillDraft>;
+
+export const ConventionSkillDraftResult = z.object({
+  mode: ConventionSkillDraftMode,
+  drafts: z.array(ConventionSkillDraft),
+  repo_name: z.string(),
+});
+export type ConventionSkillDraftResult = z.infer<typeof ConventionSkillDraftResult>;
+
+export const ConventionPromoteInput = z.object({
+  mode: ConventionSkillDraftMode.default('merged'),
+  /** When set, overrides server-generated draft fields (body still must be non-empty). */
+  drafts: z
+    .array(
+      z.object({
+        name: z.string().min(1),
+        description: z.string().optional(),
+        body: z.string().min(1),
+        enabled: z.boolean().optional(),
+        category: z.string().nullish(),
+      }),
+    )
+    .optional(),
+  enabled: z.boolean().optional(),
+  /** When set, merge-link created skills onto this agent (preserving existing links). */
+  agent_id: z.string().uuid().optional(),
+});
+export type ConventionPromoteInput = z.infer<typeof ConventionPromoteInput>;
+
+export const ConventionPromoteResult = z.object({
+  skills: z.array(Skill),
+});
+export type ConventionPromoteResult = z.infer<typeof ConventionPromoteResult>;
 
 // ---- Agents ----
 export const Provider = z.enum(['openai', 'anthropic', 'openrouter']);

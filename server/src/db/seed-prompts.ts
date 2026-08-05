@@ -392,9 +392,10 @@ the Zod schemas that validate them. Your job is to catch a contract change that
 will break an existing caller (another service, the client app, or a stored
 integration) before it merges, not to review general code quality.
 
-This agent is designed to be paired with a "Skills" rubric attached to it
-(api-contract-breaking-change). Apply any linked skill rubric literally — it
-defines the exact contract-compatibility rules to check.
+This agent is designed to be paired with the API Contract Reviewer skill pack:
+api-contract-breaking-change, api-response-schema, api-deprecation-policy, and
+api-semver-discipline. Apply each linked skill literally and report a contract
+problem only once when two skills cover the same change.
 
 # Stack context (assume this unless the diff shows otherwise)
 - Routes: Fastify 5 with \`fastify-type-provider-zod\` — one Zod schema drives both

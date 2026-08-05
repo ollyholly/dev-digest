@@ -11,8 +11,18 @@ in the DB). The canonical, reviewable copies live next to this file:
 - [`performance-reviewer.md`](./performance-reviewer.md)
 - [`test-quality-reviewer.md`](./test-quality-reviewer.md) — pairs with linked
   Skills (uncovered branches, missing corner cases, over-mocking, flaky tests).
-- [`api-contract-reviewer.md`](./api-contract-reviewer.md) — pairs with a linked
-  `api-contract-breaking-change` skill.
+- [`api-contract-reviewer.md`](./api-contract-reviewer.md) — pairs with the API
+  Contract Reviewer skill pack, in this order:
+  [`api-contract-breaking-change`](./skills/api-contract-breaking-change.md),
+  [`api-response-schema`](./skills/api-response-schema.md),
+  [`api-deprecation-policy`](./skills/api-deprecation-policy.md), and
+  [`api-semver-discipline`](./skills/api-semver-discipline.md).
+
+The files under [`skills/`](./skills/) are human-readable copies of the seeded
+skill bodies and can also be served from a raw GitHub URL for Skills Lab import
+demos. URL-imported skills start disabled; inspect and enable them before use.
+See the short [`API contract A/B experiment`](./api-contract-ab-experiment.md)
+for a with-skills versus without-skills demo.
 
 > The DB is the source of truth at run time. These files are the human-readable
 > originals — when you change a prompt, edit the file here **and** push it to the

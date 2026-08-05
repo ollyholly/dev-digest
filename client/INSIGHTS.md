@@ -10,6 +10,9 @@
 
 ## Recurring Errors & Fixes
 
+- 2026-08-05: The checked-in conventions list endpoint currently returns `ConventionCandidate[]` (`server/src/modules/conventions/service.ts:132-135`), while extraction and the advertised GET contract use `ConventionExtractionResult`. `client/src/lib/hooks/conventions.ts` intentionally accepts both shapes, and `ConventionsView` renders scan metrics only for the full result — do not fabricate missing proposed/verified/dropped counts or remove compatibility until the list API is aligned.
+- 2026-08-05: Supersedes the list-shape mismatch note above — `GET /repos/:id/conventions` now returns `ConventionExtractionResult` (candidates + scan fields derived from stored rows). Client hooks consume only that envelope.
+
 ## Decisions
 
 - 2026-08-02: Run Cost Badge lives at `src/components/run-cost-badge` (not `@devdigest/ui`). Variants: `compact` (`$0.014` / `—`) for PR list + sidebar Stat; `withTokens` (`9,119 tok · $0.0013`) for RunHistory meta under timestamp. Wire points: `PRRow`, `RunHistory`, `TraceBody` (COST between Tokens and Findings).

@@ -25,6 +25,7 @@ import { PriceBook } from './price-book.js';
 import { ConfigError } from './errors.js';
 import { AgentsRepository } from '../modules/agents/repository.js';
 import { SkillsRepository } from '../modules/skills/repository.js';
+import { ConventionsRepository } from '../modules/conventions/repository.js';
 import { ReviewRepository } from '../modules/reviews/repository.js';
 import { RepoRepository } from '../modules/repos/repository.js';
 import { PullsRepository } from '../modules/pulls/repository.js';
@@ -81,6 +82,7 @@ export class Container {
   // there's exactly one construction pattern to follow, not two.
   private _agentsRepo?: AgentsRepository;
   private _skillsRepo?: SkillsRepository;
+  private _conventionsRepo?: ConventionsRepository;
   private _reviewRepo?: ReviewRepository;
   private _reposRepo?: RepoRepository;
   private _pullsRepo?: PullsRepository;
@@ -111,6 +113,10 @@ export class Container {
 
   get skillsRepo(): SkillsRepository {
     return (this._skillsRepo ??= new SkillsRepository(this.db));
+  }
+
+  get conventionsRepo(): ConventionsRepository {
+    return (this._conventionsRepo ??= new ConventionsRepository(this.db));
   }
 
   get communityCatalog(): CommunityCatalog {
