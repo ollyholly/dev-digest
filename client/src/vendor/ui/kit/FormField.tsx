@@ -2,13 +2,14 @@ import React from "react";
 import { TextInput } from "./TextInput";
 import { SelectInput } from "./SelectInput";
 import { Textarea } from "./Textarea";
+import { SearchableSelect } from "./SearchableSelect";
 
 /** Elements FormField knows how to associate with a generated `id` — the
  *  handful of "REAL controlled" inputs it's actually used with. Anything
  *  else (e.g. a custom combobox, or a control with its own internal label)
  *  renders untouched, same as before this fix. Checked by reference (not by
  *  name) so it survives production minification. */
-const LABELABLE_TYPES: unknown[] = [TextInput, SelectInput, Textarea];
+const LABELABLE_TYPES: unknown[] = [TextInput, SelectInput, Textarea, SearchableSelect];
 
 function isLabelableChild(
   child: React.ReactNode,
@@ -41,12 +42,16 @@ export function FormField({
   const content = labelable
     ? React.cloneElement(children, { id: children.props.id ?? fieldId })
     : children;
+  // When the caller passes an explicit `id`, trust they've placed it on the
+  // real control themselves (e.g. it's nested inside other markup FormField
+  // can't safely clone into) and still wire htmlFor to it.
+  const explicitId = id !== undefined;
 
   return (
     <div style={{ marginBottom: 20 }}>
       <div style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
         <label
-          htmlFor={labelable ? fieldId : undefined}
+          htmlFor={labelable || explicitId ? fieldId : undefined}
           style={{ fontSize: 13, fontWeight: 600, color: "var(--text-secondary)" }}
         >
           {label}

@@ -39,6 +39,7 @@ export function AgentsListView() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("list.searchPlaceholder")}
+              aria-label={t("list.searchPlaceholder")}
               style={s.searchInput}
             />
           </div>

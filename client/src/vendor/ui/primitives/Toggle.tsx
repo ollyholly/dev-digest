@@ -4,16 +4,22 @@ export function Toggle({
   on,
   onChange,
   size = 18,
+  "aria-label": ariaLabel,
 }: {
   on: boolean;
   onChange: (v: boolean) => void;
   size?: number;
+  /** Required unless the toggle is wrapped in its own associated <label>: a
+   *  bare switch has no other accessible name for screen readers. */
+  "aria-label"?: string;
 }) {
   return (
     <button
+      type="button"
       onClick={() => onChange(!on)}
       role="switch"
       aria-checked={on}
+      aria-label={ariaLabel}
       style={{
         width: size * 1.85,
         height: size + 4,

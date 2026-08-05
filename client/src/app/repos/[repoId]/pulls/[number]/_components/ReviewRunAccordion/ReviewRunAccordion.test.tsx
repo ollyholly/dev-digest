@@ -71,6 +71,16 @@ describe("ReviewRunAccordion (smoke)", () => {
     expect(screen.getByText("Hardcoded Stripe secret key")).toBeInTheDocument();
   });
 
+  it("reflects open state via aria-expanded and toggles on Space (without scrolling the page)", () => {
+    renderWithIntl(<ReviewRunAccordion review={REVIEW} prId="pr1" />);
+    const header = screen.getByText("Security").closest('[role="button"]')!;
+    expect(header).toHaveAttribute("aria-expanded", "false");
+    const event = fireEvent.keyDown(header, { key: " " });
+    expect(header).toHaveAttribute("aria-expanded", "true");
+    // preventDefault() was called, i.e. fireEvent reports the event as handled.
+    expect(event).toBe(false);
+  });
+
   it("is expanded by default when defaultOpen is set", () => {
     renderWithIntl(<ReviewRunAccordion review={REVIEW} prId="pr1" defaultOpen />);
     expect(screen.getByText("Hardcoded Stripe secret key")).toBeInTheDocument();

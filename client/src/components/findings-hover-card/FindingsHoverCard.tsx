@@ -57,7 +57,7 @@ export function FindingsHoverCard({
         e.stopPropagation();
         if (!open) setOpenState(true);
       }}
-      style={{ display: "inline-flex", alignItems: "center", outline: "none" }}
+      style={{ display: "inline-flex", alignItems: "center" }}
     >
       {children}
       {open && pos && (

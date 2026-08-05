@@ -96,12 +96,15 @@ describe("FindingsTab (smoke)", () => {
         onRunDone={vi.fn()}
       />,
     );
-    expect(screen.getByText("Review in progress…")).toBeInTheDocument();
+    // role="status" (implicit aria-live="polite") so screen readers hear the
+    // banner appear without polling the live log themselves.
+    const banner = screen.getByText("Review in progress…").closest('[role="status"]');
+    expect(banner).toBeInTheDocument();
     fireEvent.click(screen.getByText("Cancel"));
     expect(cancelMutation.mutate).toHaveBeenCalledWith("run1");
   });
 
-  it("surfaces a lethal-trifecta warning banner", () => {
+  it("surfaces a lethal-trifecta warning banner as an assertive alert", () => {
     renderWithIntl(
       <FindingsTab
         prId="pr1"
@@ -116,6 +119,6 @@ describe("FindingsTab (smoke)", () => {
         onRunDone={vi.fn()}
       />,
     );
-    expect(screen.getByText("Lethal Trifecta detected")).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("Lethal Trifecta detected");
   });
 });

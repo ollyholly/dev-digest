@@ -51,7 +51,22 @@ export function FindingCard({
 
   return (
     <div data-finding-id={f.id} style={s.card(!!focused, sevColor, muted)}>
-      <div onClick={() => setExpanded((e) => !e)} style={s.header}>
+      {/* role="button" (not a real <button>) because the header contains its
+          own interactive children (the file MonoLink, which stops propagation
+          on click) — nesting an <a> inside a <button> would be invalid HTML. */}
+      <div
+        role="button"
+        tabIndex={0}
+        aria-expanded={expanded}
+        onClick={() => setExpanded((e) => !e)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setExpanded((v) => !v);
+          }
+        }}
+        style={s.header}
+      >
         <div style={s.badgeWrap}>
           <SeverityBadge severity={f.severity as Severity} compact />
         </div>

@@ -14,6 +14,7 @@ export function SearchableSelect({
   placeholder = "Search…",
   mono = true,
   maxHeight = 280,
+  id,
 }: {
   value: string;
   onChange?: (v: string) => void;
@@ -21,23 +22,31 @@ export function SearchableSelect({
   placeholder?: string;
   mono?: boolean;
   maxHeight?: number;
+  /** Explicit id for the trigger control, for FormField's htmlFor association. */
+  id?: string;
 }) {
   const { open, setOpen, query, setQuery, hi, setHi, ref, inputRef, filtered, current, currentLabel, pick, onKeyDown } =
     useSearchableSelect({ value, onChange, options, placeholder });
 
   return (
     <div ref={ref} style={{ position: "relative" }}>
-      <div
+      <button
+        id={id}
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
         style={{
           display: "flex",
           alignItems: "center",
           gap: 10,
+          width: "100%",
           padding: "10px 12px",
           borderRadius: 7,
           border: "1px solid var(--border-strong)",
           background: "var(--bg-elevated)",
           cursor: "pointer",
+          textAlign: "left",
         }}
       >
         <span
@@ -54,7 +63,7 @@ export function SearchableSelect({
           {currentLabel}
         </span>
         <Icon.ChevronsUpDown size={14} style={{ color: "var(--text-muted)" }} />
-      </div>
+      </button>
       {open && (
         <div
           style={{
@@ -90,6 +99,7 @@ export function SearchableSelect({
               }}
               onKeyDown={onKeyDown}
               placeholder={placeholder}
+              aria-label={placeholder}
               className={mono ? "mono" : undefined}
               style={{
                 flex: 1,
@@ -97,11 +107,10 @@ export function SearchableSelect({
                 color: "var(--text-primary)",
                 background: "transparent",
                 border: "none",
-                outline: "none",
               }}
             />
           </div>
-          <div style={{ maxHeight, overflowY: "auto", padding: 6 }}>
+          <div role="listbox" style={{ maxHeight, overflowY: "auto", padding: 6 }}>
             {filtered.length === 0 && (
               <div style={{ padding: "8px 10px", fontSize: 13, color: "var(--text-muted)" }}>
                 No matches
@@ -115,6 +124,8 @@ export function SearchableSelect({
                 <button
                   key={v}
                   type="button"
+                  role="option"
+                  aria-selected={sel}
                   onMouseEnter={() => setHi(i)}
                   onClick={() => pick(o)}
                   className={mono ? "mono" : undefined}

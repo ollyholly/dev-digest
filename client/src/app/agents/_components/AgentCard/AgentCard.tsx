@@ -27,15 +27,26 @@ export function AgentCard({
   const del = useDeleteAgent();
   const color = modelColor(ag.model);
   return (
-    <div onClick={onClick} style={s.card(!!active, ag.enabled)}>
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
+      style={s.card(!!active, ag.enabled)}
+    >
       <div style={s.headerRow}>
         <div style={s.iconBox}>
           <Icon.Cpu size={15} />
         </div>
         <span style={s.name}>{ag.name}</span>
         {onToggle && (
-          <div onClick={(e) => e.stopPropagation()}>
-            <Toggle on={ag.enabled} onChange={onToggle} size={14} />
+          <div onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+            <Toggle on={ag.enabled} onChange={onToggle} size={14} aria-label={`${ag.enabled ? "Disable" : "Enable"} agent "${ag.name}"`} />
           </div>
         )}
         <button

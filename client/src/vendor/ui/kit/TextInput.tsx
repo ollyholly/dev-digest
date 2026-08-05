@@ -42,7 +42,6 @@ export function TextInput({
           color: "var(--text-primary)",
           background: "transparent",
           border: "none",
-          outline: "none",
           padding: 0,
         }}
       />

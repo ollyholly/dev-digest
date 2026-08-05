@@ -123,8 +123,11 @@ export function ConfigTab({ agent }: { agent: Agent }) {
         />
       </FormField>
       <FormField label={t("config.repoIntel")} hint={t("config.repoIntelHint")}>
+        {/* Unlike the "Enabled" toggle above, this label has no text of its own
+            (the visible label lives in FormField, unassociated with Toggle) —
+            give the switch its accessible name directly. */}
         <label style={s.enabledLabel}>
-          <Toggle on={repoIntel} onChange={setRepoIntel} size={16} />
+          <Toggle on={repoIntel} onChange={setRepoIntel} size={16} aria-label={t("config.repoIntel")} />
         </label>
       </FormField>
       <FormField label={t("config.systemPrompt")} hint={t("config.systemPromptHint")}>

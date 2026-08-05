@@ -76,18 +76,21 @@ export function LiveLogStream({
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             placeholder="Filter log…"
+            aria-label="Filter log"
             style={{
               flex: 1,
               fontSize: 12,
               color: "var(--text-primary)",
               background: "transparent",
               border: "none",
-              outline: "none",
             }}
           />
         </div>
+        {/* role="status": announce run start/finish to screen readers without
+            requiring them to poll the log itself. */}
         {running ? (
           <span
+            role="status"
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -101,7 +104,9 @@ export function LiveLogStream({
             {elapsedLabel ?? "Running"}
           </span>
         ) : (
-          <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{shown.length} lines</span>
+          <span role="status" style={{ fontSize: 12, color: "var(--text-muted)" }}>
+            {shown.length} lines
+          </span>
         )}
         <div style={{ marginLeft: "auto", display: "flex", gap: 2 }}>
           <IconBtn

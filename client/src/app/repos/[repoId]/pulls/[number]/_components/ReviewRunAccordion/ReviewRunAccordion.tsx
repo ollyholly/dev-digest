@@ -61,7 +61,8 @@ export function ReviewRunAccordion({
   React.useEffect(() => {
     if (review.run_id && review.run_id === scrollTarget?.runId) {
       setOpen(true);
-      rootRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+      rootRef.current?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
     }
   }, [scrollTarget?.runId, scrollTarget?.nonce, review.run_id]);
   const del = useDeleteReview(prId);
@@ -87,9 +88,14 @@ export function ReviewRunAccordion({
       <div
         role="button"
         tabIndex={0}
+        aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
         onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") setOpen((o) => !o);
+          if (e.key === "Enter" || e.key === " ") {
+            // Space's default action is page scroll on non-native buttons.
+            e.preventDefault();
+            setOpen((o) => !o);
+          }
         }}
         style={{
           width: "100%",

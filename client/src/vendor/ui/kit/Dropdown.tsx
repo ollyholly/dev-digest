@@ -7,6 +7,7 @@ function DropdownItem({ it, onClose }: { it: DropdownItemDef; onClose: () => voi
   const I = it.icon ? Icon[it.icon] : null;
   return (
     <button
+      role="menuitem"
       onMouseEnter={() => setH(true)}
       onMouseLeave={() => setH(false)}
       onClick={() => {
@@ -79,11 +80,29 @@ export function Dropdown({
     document.addEventListener("mousedown", h);
     return () => document.removeEventListener("mousedown", h);
   }, []);
+  React.useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+  // Inject menu-trigger semantics onto whatever the trigger renders to (a
+  // Button in most call sites) rather than the non-interactive wrapper div,
+  // so AT actually gets aria-haspopup/aria-expanded from the focusable node.
+  const triggerEl = React.isValidElement(trigger)
+    ? React.cloneElement(trigger as React.ReactElement<Record<string, unknown>>, {
+        "aria-haspopup": "menu",
+        "aria-expanded": open,
+      })
+    : trigger;
   return (
     <div ref={ref} style={{ position: "relative", display: "inline-block" }}>
-      <div onClick={() => setOpen((o) => !o)}>{trigger}</div>
+      <div onClick={() => setOpen((o) => !o)}>{triggerEl}</div>
       {open && (
         <div
+          role="menu"
           style={{
             position: "absolute",
             top: "calc(100% + 6px)",

@@ -39,7 +39,6 @@ export function SelectInput({
           color: "var(--text-primary)",
           background: "transparent",
           border: "none",
-          outline: "none",
           appearance: "none",
           cursor: "pointer",
         }}

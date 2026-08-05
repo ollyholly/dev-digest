@@ -34,7 +34,6 @@ export function Textarea({
         color: "var(--text-primary)",
         fontSize: 14,
         lineHeight: 1.55,
-        outline: "none",
       }}
     />
   );

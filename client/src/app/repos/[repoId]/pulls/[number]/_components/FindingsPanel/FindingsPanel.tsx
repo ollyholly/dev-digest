@@ -64,10 +64,12 @@ export function FindingsPanel({
             onChange={onSeverityChange}
           />
         )}
-        <div style={s.toggleGroup}>
+        {/* <label> wrapping both the text and the switch gives the switch its
+            accessible name — same pattern as ConfigTab's "Enabled" toggle. */}
+        <label style={s.toggleGroup}>
           {t("panel.hideLowConfidence")}
           <Toggle on={hideLow} onChange={setHideLow} size={16} />
-        </div>
+        </label>
       </div>
 
       <div style={s.list}>
