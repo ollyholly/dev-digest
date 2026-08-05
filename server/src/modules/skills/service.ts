@@ -3,6 +3,7 @@ import type { CommunitySkill, Skill, SkillType, SkillVersion } from '@devdigest/
 import { ExternalServiceError, ValidationError } from '../../platform/errors.js';
 import { deriveNameFromBody, isSkillConfigChange, toSkillDto, toSkillVersionDto } from './helpers.js';
 import { MAX_IMPORTED_BODY_BYTES } from './constants.js';
+import { assertSafeImportUrl } from './url-guard.js';
 
 /**
  * A1 — skills service. Business logic for the Skills Lab page + Skill editor.
@@ -40,10 +41,15 @@ export interface ImportFromCommunityInput {
 
 const DEFAULT_IMPORTED_TYPE: SkillType = 'custom';
 
+/** The slice of `Container` this service actually depends on — lets callers
+ *  (e.g. the seed script, which only ever calls `.create()`) construct a
+ *  properly-typed dependency object instead of casting a full `Container`. */
+export type SkillsServiceDeps = Pick<Container, 'skillsRepo' | 'communityCatalog' | 'agentsRepo'>;
+
 export class SkillsService {
   private repo: Container['skillsRepo'];
 
-  constructor(private container: Container) {
+  constructor(private container: SkillsServiceDeps) {
     this.repo = container.skillsRepo;
   }
 
@@ -177,19 +183,23 @@ export class SkillsService {
   }
 
   private async fetchSkillBody(url: string): Promise<string> {
+    // SSRF guard: only allowlisted public raw-content hosts, over https, with
+    // the *resolved* IP checked (not just the hostname) to close the
+    // DNS-rebinding gap. This is a server-side fetch of a user-supplied URL,
+    // so without this it could reach cloud metadata / internal infra.
+    await assertSafeImportUrl(url);
+
     let res: Response;
     try {
-      res = await fetch(url);
+      res = await fetch(url, { redirect: 'error' });
     } catch (err) {
       throw new ExternalServiceError(`Could not fetch skill from ${url}`, { cause: String(err) });
     }
     if (!res.ok) {
       throw new ExternalServiceError(`Fetching ${url} failed with status ${res.status}`);
     }
-    const text = await res.text();
-    if (Buffer.byteLength(text, 'utf8') > MAX_IMPORTED_BODY_BYTES) {
-      throw new ValidationError(`Skill body from ${url} exceeds the ${MAX_IMPORTED_BODY_BYTES}-byte limit`);
-    }
+
+    const text = await readCapped(res, MAX_IMPORTED_BODY_BYTES, url);
     if (!text.trim()) throw new ValidationError(`Skill body from ${url} is empty`);
     return text;
   }
@@ -203,4 +213,28 @@ export class SkillsService {
 /** The catalog entry's `repo` is a GitHub `owner/name` slug; resolve to a raw markdown URL. */
 function communityRawUrl(entry: CommunitySkill): string {
   return `https://raw.githubusercontent.com/${entry.repo}/main/SKILL.md`;
+}
+
+/**
+ * Read a Response body as text, aborting once `maxBytes` is exceeded instead
+ * of buffering the full body first — a slow/oversized host is cut off during
+ * the read rather than after it's already fully in memory.
+ */
+async function readCapped(res: Response, maxBytes: number, url: string): Promise<string> {
+  if (!res.body) return res.text();
+
+  const reader = res.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > maxBytes) {
+      await reader.cancel();
+      throw new ValidationError(`Skill body from ${url} exceeds the ${maxBytes}-byte limit`);
+    }
+    chunks.push(value);
+  }
+  return Buffer.concat(chunks).toString('utf8');
 }

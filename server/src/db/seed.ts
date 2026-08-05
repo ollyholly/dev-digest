@@ -19,7 +19,7 @@ import {
 import { SkillsRepository } from '../modules/skills/repository.js';
 import { SkillsService } from '../modules/skills/service.js';
 import { AgentsRepository } from '../modules/agents/repository.js';
-import type { Container } from '../platform/container.js';
+import { StaticCommunityCatalog } from '../adapters/community/static-list.js';
 
 /** Default provider/model for the built-in reviewer agents. */
 const DEFAULT_PROVIDER = 'openrouter' as const;
@@ -265,7 +265,7 @@ export async function seed(db: Db): Promise<{ workspaceId: string; userId: strin
   // the rest are inserted directly since they're first-party manual content.
   const skillsRepo = new SkillsRepository(db);
   const agentsRepo = new AgentsRepository(db);
-  const skillsService = new SkillsService({ skillsRepo, agentsRepo } as unknown as Container);
+  const skillsService = new SkillsService({ skillsRepo, agentsRepo, communityCatalog: new StaticCommunityCatalog() });
 
   const directSkills: Array<{ name: string; description: string; type: 'rubric' | 'convention'; body: string }> = [
     {

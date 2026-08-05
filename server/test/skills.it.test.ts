@@ -154,13 +154,16 @@ d('Skills module', () => {
     const res = await app.inject({
       method: 'POST',
       url: '/skills/import-url',
-      payload: { url: 'https://example.com/skills/security.md' },
+      payload: { url: 'https://raw.githubusercontent.com/some-org/some-repo/main/SKILL.md' },
     });
     expect(res.statusCode).toBe(201);
     const skill = res.json();
     expect(skill.source).toBe('imported_url');
     expect(skill.enabled).toBe(false);
-    expect(fetchImpl).toHaveBeenCalledWith('https://example.com/skills/security.md');
+    expect(fetchImpl).toHaveBeenCalledWith(
+      'https://raw.githubusercontent.com/some-org/some-repo/main/SKILL.md',
+      { redirect: 'error' },
+    );
     vi.unstubAllGlobals();
     await app.close();
   });
@@ -172,9 +175,39 @@ d('Skills module', () => {
     const res = await app.inject({
       method: 'POST',
       url: '/skills/import-url',
-      payload: { url: 'https://example.com/missing.md' },
+      payload: { url: 'https://raw.githubusercontent.com/some-org/missing/main/SKILL.md' },
     });
     expect(res.statusCode).toBe(502);
+    vi.unstubAllGlobals();
+    await app.close();
+  });
+
+  it('rejects a non-allowlisted host as a validation error (SSRF guard)', async () => {
+    const fetchImpl = vi.fn(async () => new Response('should never be reached', { status: 200 }));
+    const app = await makeApp(fetchImpl as unknown as typeof fetch);
+
+    const res = await app.inject({
+      method: 'POST',
+      url: '/skills/import-url',
+      payload: { url: 'https://example.com/skills/security.md' },
+    });
+    expect(res.statusCode).toBe(422);
+    expect(fetchImpl).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
+    await app.close();
+  });
+
+  it('rejects an IP-literal URL outright (not an allowlisted hostname)', async () => {
+    const fetchImpl = vi.fn(async () => new Response('should never be reached', { status: 200 }));
+    const app = await makeApp(fetchImpl as unknown as typeof fetch);
+
+    const res = await app.inject({
+      method: 'POST',
+      url: '/skills/import-url',
+      payload: { url: 'https://127.0.0.1/SKILL.md' },
+    });
+    expect(res.statusCode).toBe(422);
+    expect(fetchImpl).not.toHaveBeenCalled();
     vi.unstubAllGlobals();
     await app.close();
   });
