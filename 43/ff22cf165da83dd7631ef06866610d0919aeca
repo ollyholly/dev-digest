@@ -1,0 +1,61 @@
+client/src/app/skills/[id]/_components/SkillEditor/_components/ConfigTab/MarkdownEditor.test.tsx
+  s_b0e7632ba747ee::t_36f782889784e2 1-29
+client/src/app/skills/[id]/_components/SkillEditor/_components/ConfigTab/ConfigTab.tsx
+  s_c5b7634f7ea46a::t_613eaca1fa8a6e 10,49-51,75
+client/src/app/skills/[id]/_components/SkillEditor/_components/ConfigTab/MarkdownEditor.tsx
+  s_c5b7634f7ea46a::t_c9b6180ce6ce2a 1-46
+client/src/app/skills/[id]/_components/SkillEditor/_components/ConfigTab/highlight.tsx
+  s_c5b7634f7ea46a::t_cdc676c49e8fe4 1-56
+client/src/app/skills/[id]/_components/SkillEditor/_components/ConfigTab/styles.ts
+  s_c5b7634f7ea46a::t_8a05c2f7832411 7,36-52,54,61-64
+client/src/app/skills/[id]/_components/SkillEditor/_components/PreviewTab/PreviewTab.tsx
+  s_c5b7634f7ea46a::t_bd60de717fe936 4,12,15-16
+client/src/app/skills/[id]/_components/SkillEditor/_components/PreviewTab/styles.ts
+  s_c5b7634f7ea46a::t_90a4a6fdb077e3 6-7
+client/src/app/skills/[id]/_components/SkillEditor/_components/StatsTab/StatsTab.test.tsx
+  s_c5b7634f7ea46a::t_7165183a5010ad 45
+client/src/app/skills/[id]/_components/SkillEditor/_components/StatsTab/StatsTab.tsx
+  s_c5b7634f7ea46a::t_63956f6f20f0ae 6,57-59
+client/src/app/skills/[id]/_components/SkillEditor/_components/StatsTab/styles.ts
+  s_c5b7634f7ea46a::t_2a3dedda111621 7-13,28-34,46-56
+client/src/app/skills/[id]/_components/SkillEditor/_components/VersionsTab/VersionsTab.test.tsx
+  s_c5b7634f7ea46a::t_1ad1c21a1b4c35 68-79,81
+client/src/app/skills/[id]/_components/SkillEditor/_components/VersionsTab/VersionsTab.tsx
+  s_c5b7634f7ea46a::t_8cd874699118dc 22-29,37-39
+client/src/app/skills/[id]/_components/SkillEditor/_components/VersionsTab/styles.ts
+  s_c5b7634f7ea46a::t_6ee7d2cdecd091 6-7
+client/src/app/skills/[id]/_components/SkillEditorView/SkillEditorView.tsx
+  s_c5b7634f7ea46a::t_aaef9187803d03 8,52,74-76,78-82
+client/src/app/skills/_components/SkillCard/SkillCard.test.tsx
+  s_c5b7634f7ea46a::t_795ae616795bee 76-82
+client/src/app/skills/_components/SkillCard/constants.ts
+  s_c5b7634f7ea46a::t_df7c0e2791d304 14-17
+client/src/app/skills/_components/SkillCard/styles.ts
+  s_c5b7634f7ea46a::t_e6da8e5dba0250 5-7,12
+client/src/vendor/ui/primitives/Markdown.tsx
+  s_c5b7634f7ea46a::t_17286544079243 13-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "43ff22cf165da83dd7631ef06866610d0919aeca",
+  "prompts": {},
+  "sessions": {
+    "s_b0e7632ba747ee": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "983ced4d-82b0-4d95-899d-8c39d1247170",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    },
+    "s_c5b7634f7ea46a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52ebc5fe-7943-41f8-b37c-b8c298ed4e19",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
