@@ -4,7 +4,7 @@ import {
   parseReferences,
   parseImports,
   langForFile,
-} from '../src/adapters/astgrep/index.js';
+} from '../src/lib/parsing/astgrep.js';
 import { MAX_SIGNATURE_CHARS } from '../src/modules/repo-intel/constants.js';
 
 /**

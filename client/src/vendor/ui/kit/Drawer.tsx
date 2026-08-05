@@ -1,5 +1,6 @@
 import React from "react";
 import { IconBtn } from "../primitives";
+import { useDialog } from "./useDialog";
 
 export function Drawer({
   width = 720,
@@ -16,6 +17,7 @@ export function Drawer({
   children?: React.ReactNode;
   footer?: React.ReactNode;
 }) {
+  const { panelRef, titleId, subtitleId } = useDialog(onClose);
   return (
     <div style={{ position: "fixed", inset: 0, display: "flex", justifyContent: "flex-end", zIndex: 50 }}>
       <div
@@ -23,8 +25,12 @@ export function Drawer({
         style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.45)", animation: "ddfadein .15s ease" }}
       />
       <div
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
+        aria-labelledby={title ? titleId : undefined}
+        aria-describedby={subtitle ? subtitleId : undefined}
+        tabIndex={-1}
         style={{
           position: "relative",
           width,
@@ -47,9 +53,13 @@ export function Drawer({
           }}
         >
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em" }}>{title}</div>
+            <div id={titleId} style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.01em" }}>
+              {title}
+            </div>
             {subtitle && (
-              <div style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 2 }}>{subtitle}</div>
+              <div id={subtitleId} style={{ fontSize: 13, color: "var(--text-secondary)", marginTop: 2 }}>
+                {subtitle}
+              </div>
             )}
           </div>
           {onClose && <IconBtn icon="X" label="Close" onClick={onClose} />}

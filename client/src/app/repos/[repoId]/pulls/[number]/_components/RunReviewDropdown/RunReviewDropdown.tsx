@@ -53,6 +53,7 @@ export function RunReviewDropdown({
   // only enabled agents.
   const agentItems: DropdownItemDef[] = all.length
     ? all.map((a) => ({
+        id: a.id,
         label: a.name,
         icon: "Cpu" as const,
         hint: a.enabled ? a.model : `${a.model} · disabled`,

@@ -10,4 +10,3 @@ export * from "./shell";
 export * from "./command-palette";
 export * from "./LiveLogStream";
 export * from "./ExportWizardSteps";
-export * from "./AutoTriggerStatus";

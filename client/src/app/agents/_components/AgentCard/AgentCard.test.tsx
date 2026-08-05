@@ -1,5 +1,5 @@
-import { describe, it, expect, afterEach } from "vitest";
-import { render, screen, cleanup } from "@testing-library/react";
+import { describe, it, expect, afterEach, vi } from "vitest";
+import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Agent } from "@devdigest/shared";
@@ -45,5 +45,20 @@ describe("AgentCard (smoke)", () => {
   it("falls back to a translated placeholder when description is empty", () => {
     renderWithIntl(<AgentCard ag={{ ...AGENT, description: "" }} />);
     expect(screen.getByText("No description")).toBeInTheDocument();
+  });
+
+  it("is keyboard-openable (role=button, Enter/Space activate onClick)", () => {
+    const onClick = vi.fn();
+    renderWithIntl(<AgentCard ag={AGENT} onClick={onClick} />);
+    const card = screen.getByText("Security Reviewer").closest('[role="button"]')!;
+    fireEvent.keyDown(card, { key: "Enter" });
+    expect(onClick).toHaveBeenCalledTimes(1);
+    fireEvent.keyDown(card, { key: " " });
+    expect(onClick).toHaveBeenCalledTimes(2);
+  });
+
+  it("gives the enable/disable toggle an accessible name derived from the agent", () => {
+    renderWithIntl(<AgentCard ag={AGENT} onToggle={vi.fn()} />);
+    expect(screen.getByRole("switch", { name: 'Disable agent "Security Reviewer"' })).toBeInTheDocument();
   });
 });

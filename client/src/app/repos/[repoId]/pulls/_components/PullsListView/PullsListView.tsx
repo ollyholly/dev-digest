@@ -1,0 +1,101 @@
+/* PullsListView — filter/sort chrome + table for the PR list. Ported from
+   screen_dashboard.jsx; filters/sort live in query (?status&sort). */
+"use client";
+
+import React from "react";
+import { useTranslations } from "next-intl";
+import { Skeleton, EmptyState, ErrorState } from "@devdigest/ui";
+import { AutoTriggerStatus } from "@/components/auto-trigger-status";
+import { ApiError } from "@/lib/api";
+import type { PrMeta } from "./constants";
+import { COLUMN_KEYS, SKELETON_ROWS } from "./constants";
+import { s } from "./styles";
+import { usePullsListFilters } from "./usePullsListFilters";
+import { PRRow } from "./_components/PRRow";
+import { FilterBar } from "./_components/FilterBar";
+
+export interface PullsListViewProps {
+  repoId: string;
+  pulls: PrMeta[] | undefined;
+  isLoading: boolean;
+  isError: boolean;
+  error: unknown;
+  onRetry: () => void;
+  onRefresh: () => void;
+  refreshing: boolean;
+}
+
+export function PullsListView({
+  repoId,
+  pulls,
+  isLoading,
+  isError,
+  error,
+  onRetry,
+  onRefresh,
+  refreshing,
+}: PullsListViewProps) {
+  const t = useTranslations("prReview");
+  const { status, setStatus, query, setQuery, sort, setSort, filtered, openCount, needsReviewCount } =
+    usePullsListFilters(repoId, pulls);
+
+  return (
+    <>
+      <div style={s.pageHeader}>
+        <div>
+          <h1 style={s.pageTitle}>{t("list.title")}</h1>
+          <p style={s.pageSubtitle}>
+            {pulls
+              ? t("list.summary", { open: openCount, needsReview: needsReviewCount })
+              : t("list.loading")}
+          </p>
+        </div>
+        <div style={s.headerActions}>
+          <AutoTriggerStatus on={false} />
+        </div>
+      </div>
+
+      <div style={s.tableCard}>
+        <FilterBar
+          statusFilter={{ active: status, onChange: setStatus }}
+          search={{ query, onChange: setQuery }}
+          sort={{ value: sort, onChange: setSort }}
+          refresh={{ onClick: onRefresh, pending: refreshing }}
+        />
+        <div style={s.headRow}>
+          {COLUMN_KEYS.map((key, i) => (
+            <div key={key} style={s.headCell(i === COLUMN_KEYS.length - 1)}>
+              {t(`list.columns.${key}`)}
+            </div>
+          ))}
+        </div>
+
+        {isLoading ? (
+          <div style={s.loadingStack}>
+            {Array.from({ length: SKELETON_ROWS }).map((_, i) => (
+              <Skeleton key={i} height={28} />
+            ))}
+          </div>
+        ) : isError ? (
+          <ErrorState
+            title={t("list.errorTitle")}
+            body={error instanceof ApiError ? error.message : t("list.errorBody")}
+            onRetry={onRetry}
+          />
+        ) : filtered.length === 0 ? (
+          <EmptyState
+            icon="GitPullRequest"
+            title={t("list.emptyTitle")}
+            body={
+              status === "all"
+                ? t("list.emptyAllBody")
+                : t("list.emptyStatusBody", { status })
+            }
+          />
+        ) : (
+          filtered.map((pr) => <PRRow key={pr.number} pr={pr} repoId={repoId} />)
+        )}
+      </div>
+    </>
+  );
+}

@@ -1,7 +1,6 @@
 import type { Container } from '../../platform/container.js';
 import { type Repo } from '@devdigest/shared';
 import { NotFoundError } from '../../platform/errors.js';
-import { RepoRepository } from './repository.js';
 import { parseRepoUrl, withGitHubToken, toRepoDto } from './helpers.js';
 import {
   CLONE_JOB_KIND,
@@ -31,10 +30,10 @@ export interface CloneJobPayload {
 }
 
 export class RepoService {
-  private repo: RepoRepository;
+  private repo: Container['reposRepo'];
 
   constructor(private container: Container) {
-    this.repo = new RepoRepository(container.db);
+    this.repo = container.reposRepo;
   }
 
   /**

@@ -4,31 +4,30 @@ import React, { useCallback } from "react";
 import { Icon, Badge, Button, SectionLabel, EmptyState } from "@devdigest/ui";
 import { RunStatus } from "../RunStatus";
 import { RunHistory } from "../RunHistory/RunHistory";
-import { ReviewRunAccordion } from "../ReviewRunAccordion";
+import { ReviewRunAccordion, type SeverityFilter } from "../ReviewRunAccordion";
 import { s } from "./styles";
+import type { useCancelRun } from "@/lib/hooks/reviews";
 import type {
   FindingRecord,
   ReviewRecord,
   RunSummary,
   PrCommit,
-  Severity,
 } from "@devdigest/shared";
-import type { UseMutationResult } from "@tanstack/react-query";
+
+export interface LiveRun {
+  ids: string[];
+  running: boolean;
+}
 
 interface FindingsTabProps {
   prId: string | null;
-  liveRunIds: string[];
-  reviewRunning: boolean;
+  liveRun: LiveRun;
   lethalTrifecta: FindingRecord[];
   runs: ReviewRecord[];
   prRuns: RunSummary[] | undefined;
   prCommits: PrCommit[];
-  cancelMutation: UseMutationResult<any, any, string, any>;
-  /** owner/repo + head sha — used to deep-link a finding's file:line to GitHub. */
-  repoFullName?: string | null;
-  headSha?: string | null;
-  selectedSeverities?: Severity[];
-  onSeverityChange?: (next: Severity[]) => void;
+  cancelMutation: ReturnType<typeof useCancelRun>;
+  severityFilter?: SeverityFilter;
   onOpenTrace: (id: string) => void;
   onDelete: (id: string) => void;
   onRunDone: () => void;
@@ -36,21 +35,19 @@ interface FindingsTabProps {
 
 export function FindingsTab({
   prId,
-  liveRunIds,
-  reviewRunning,
+  liveRun,
   lethalTrifecta,
   runs,
   prRuns,
   prCommits,
   cancelMutation,
-  repoFullName,
-  headSha,
-  selectedSeverities = [],
-  onSeverityChange,
+  severityFilter,
   onOpenTrace,
   onDelete,
   onRunDone,
 }: FindingsTabProps) {
+  const { ids: liveRunIds, running: reviewRunning } = liveRun;
+
   const handleCancelAll = useCallback(() => {
     liveRunIds.forEach((id) => cancelMutation.mutate(id));
   }, [liveRunIds, cancelMutation]);
@@ -121,7 +118,7 @@ export function FindingsTab({
       )}
 
       {reviewRunning && (
-        <div style={s.reviewInProgress}>
+        <div role="status" style={s.reviewInProgress}>
           <Icon.RefreshCw size={16} style={{ color: "var(--accent)", animation: "ddspin 1s linear infinite" }} />
           <span style={s.reviewInProgressText}>Review in progress…</span>
           <span style={s.reviewInProgressSub}>
@@ -131,7 +128,7 @@ export function FindingsTab({
       )}
 
       {lethalTrifecta.length > 0 && (
-        <div style={s.lethalTrifecta}>
+        <div role="alert" style={s.lethalTrifecta}>
           <Icon.Shield size={16} style={{ color: "var(--crit)" }} />
           <span style={s.lethalTrifectaTitle}>Lethal Trifecta detected</span>
           <Badge color="var(--crit)" bg="transparent">
@@ -181,12 +178,8 @@ export function FindingsTab({
             review={review}
             prId={prId}
             defaultOpen={i === 0}
-            repoFullName={repoFullName}
-            headSha={headSha}
-            targetRunId={target?.runId ?? null}
-            targetNonce={target?.n ?? 0}
-            selectedSeverities={selectedSeverities}
-            onSeverityChange={onSeverityChange}
+            scrollTarget={target ? { runId: target.runId, nonce: target.n } : null}
+            severityFilter={severityFilter}
           />
         ))
       )}

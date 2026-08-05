@@ -16,15 +16,11 @@ import { s } from "./styles";
 export function FindingsPanel({
   findings,
   prId,
-  repoFullName,
-  headSha,
   selectedSeverities = [],
   onSeverityChange,
 }: {
   findings: FindingRecord[];
   prId: string;
-  repoFullName?: string | null;
-  headSha?: string | null;
   selectedSeverities?: Severity[];
   onSeverityChange?: (next: Severity[]) => void;
 }) {
@@ -68,10 +64,12 @@ export function FindingsPanel({
             onChange={onSeverityChange}
           />
         )}
-        <div style={s.toggleGroup}>
+        {/* <label> wrapping both the text and the switch gives the switch its
+            accessible name — same pattern as ConfigTab's "Enabled" toggle. */}
+        <label style={s.toggleGroup}>
           {t("panel.hideLowConfidence")}
           <Toggle on={hideLow} onChange={setHideLow} size={16} />
-        </div>
+        </label>
       </div>
 
       <div style={s.list}>
@@ -85,8 +83,6 @@ export function FindingsPanel({
               focused={i === focusIdx}
               defaultExpanded={i === 0}
               pending={action.isPending}
-              repoFullName={repoFullName}
-              headSha={headSha}
               onAction={(act) => action.mutate({ findingId: f.id, action: act, prId })}
             />
           ))

@@ -3,7 +3,6 @@ import type { Db } from '../../db/client.js';
 import * as t from '../../db/schema.js';
 import type { CiFailOn, Provider, ReviewStrategy } from '@devdigest/shared';
 import { DEFAULT_AGENT_DESCRIPTION, INITIAL_AGENT_VERSION } from './constants.js';
-import { isConfigChange } from './helpers.js';
 
 /**
  * A2 — agents data-access. Owns `agents`, `agent_versions`, and the
@@ -106,20 +105,20 @@ export class AgentsRepository {
   }
 
   /**
-   * Update an agent. Any config change bumps the version and snapshots the new
-   * config into agent_versions (reproducibility for eval).
+   * Update an agent. `bumpVersion` (whether this patch is config-affecting vs.
+   * just toggling `enabled`) is decided by the service — the repository only
+   * persists the decision and snapshots agent_versions when true.
    */
   async update(
     workspaceId: string,
     id: string,
     patch: UpdateAgent,
+    { bumpVersion }: { bumpVersion: boolean },
   ): Promise<AgentRow | undefined> {
     const existing = await this.getById(workspaceId, id);
     if (!existing) return undefined;
 
-    // A config-affecting change (anything except just toggling enabled) bumps version.
-    const configChanged = isConfigChange(existing, patch);
-    const nextVersion = configChanged ? existing.version + 1 : existing.version;
+    const nextVersion = bumpVersion ? existing.version + 1 : existing.version;
 
     const [row] = await this.db
       .update(t.agents)
@@ -136,12 +135,12 @@ export class AgentsRepository {
         ...(patch.ciFailOn !== undefined ? { ciFailOn: patch.ciFailOn } : {}),
         ...(patch.repoIntel !== undefined ? { repoIntel: patch.repoIntel } : {}),
         ...(patch.enabled !== undefined ? { enabled: patch.enabled } : {}),
-        ...(configChanged ? { version: nextVersion } : {}),
+        ...(bumpVersion ? { version: nextVersion } : {}),
       })
       .where(and(eq(t.agents.workspaceId, workspaceId), eq(t.agents.id, id)))
       .returning();
 
-    if (configChanged && row) await this.snapshotVersion(row, nextVersion);
+    if (bumpVersion && row) await this.snapshotVersion(row, nextVersion);
     return row;
   }
 

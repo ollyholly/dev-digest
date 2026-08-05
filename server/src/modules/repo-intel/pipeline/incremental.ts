@@ -19,8 +19,8 @@ import { extname, join } from 'node:path';
 import type { RepoRef } from '@devdigest/shared';
 import type { Container } from '../../../platform/container.js';
 import { withTimeout } from '../../../platform/resilience.js';
-import { parseSymbols, parseReferences, langForFile } from '../../../adapters/astgrep/index.js';
-import { extractEndpoints, extractCrons } from '../../../adapters/codeindex/extract.js';
+import { parseSymbols, parseReferences, langForFile } from '../../../lib/parsing/astgrep.js';
+import { extractEndpoints, extractCrons } from '../../../lib/parsing/extract.js';
 import {
   DEFAULT_REPO_MAP_TOKEN_BUDGET,
   INDEXER_VERSION,
@@ -109,7 +109,7 @@ export async function runIncremental(
   let changedAll: string[];
   try {
     changedAll = await container.git.diffNameOnly(ref, state.lastIndexedSha, currentSha);
-  } catch (err) {
+  } catch {
     // diff failure (shallow clone, missing base, etc.) — fall back to full.
     // The full path is heavier but correct; degrading silently to "no-op" would
     // leave the index drifted from HEAD.

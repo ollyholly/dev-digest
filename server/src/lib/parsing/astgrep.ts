@@ -1,13 +1,19 @@
 /**
- * ast-grep adapter — tree-sitter-backed TS/JS extractor.
+ * ast-grep parser — tree-sitter-backed TS/JS extractor.
  *
- * This is the AST-accurate complement to `adapters/codeindex/extract.ts`. The
- * regex extractor stays as the ALWAYS-available fallback; this adapter is the
- * "good path" used by the repo-intel facade (wired by T1.3).
+ * Pure, stateless parsing (no DB/HTTP/git/secrets I/O), so it lives under
+ * `lib/parsing/` rather than `adapters/` — there's no swappable port here,
+ * just an algorithm callers use directly. See onion-architecture skill:
+ * "adapter" is reserved for concrete implementations of a shared port wired
+ * through `Container`.
+ *
+ * This is the AST-accurate complement to `lib/parsing/extract.ts`. The regex
+ * extractor stays as the ALWAYS-available fallback; this is the "good path"
+ * used by the repo-intel facade (wired by T1.3).
  *
  * Compatibility baseline: `ParsedSymbol extends ExtractedSymbol` and
  * `ParsedReference extends ExtractedReference`, so any consumer of the
- * degraded path can swap to this adapter without changing field reads. Extras
+ * degraded path can swap to this without changing field reads. Extras
  * (`exported`, `signature`, `endLine`, `refFile`) sit alongside.
  *
  * Method symbols follow the legacy extractor's dual-emit convention: each
@@ -21,7 +27,7 @@ import { parse, Lang, type SgNode } from '@ast-grep/napi';
 import { readFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
 
-import type { ExtractedReference, ExtractedSymbol } from '../codeindex/extract.js';
+import type { ExtractedReference, ExtractedSymbol } from './extract.js';
 import { MAX_SIGNATURE_CHARS, SUPPORTED_EXT } from '../../modules/repo-intel/constants.js';
 
 // ---------------------------------------------------------------------------

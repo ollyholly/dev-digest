@@ -57,4 +57,18 @@ describe("FindingCard (smoke, both themes)", () => {
     fireEvent.click(screen.getByText("Dismiss"));
     expect(onAction).toHaveBeenCalledWith("dismiss");
   });
+
+  it("expands/collapses via the keyboard (Enter/Space on the header)", () => {
+    renderWithIntl(<FindingCard f={FINDING} onAction={() => {}} />);
+    const header = screen.getByText("Hardcoded Stripe secret key").closest('[role="button"]')!;
+    expect(header).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByText("Move the key to an environment variable.")).not.toBeInTheDocument();
+
+    fireEvent.keyDown(header, { key: "Enter" });
+    expect(header).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByText("Move the key to an environment variable.")).toBeInTheDocument();
+
+    fireEvent.keyDown(header, { key: " " });
+    expect(header).toHaveAttribute("aria-expanded", "false");
+  });
 });

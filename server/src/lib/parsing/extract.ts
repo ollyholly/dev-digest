@@ -1,6 +1,11 @@
 /**
  * Enhanced regex symbol/reference extractor for TS/JS (A3, L04).
  *
+ * Pure, stateless parsing — lives under `lib/parsing/` (not `adapters/`)
+ * because it's a plain algorithm, not a swappable port implementation. Used
+ * both as an internal helper by `adapters/codeindex/ripgrep.ts` (the
+ * `CodeIndex` port impl) and directly by the repo-intel pipeline.
+ *
  * DESIGN NOTE (tree-sitter vs. regex): the F1 scaffolding left a TODO to wire
  * `web-tree-sitter` for accurate blast-radius. Under the parallel-phase rules
  * we MUST NOT run installs, and `web-tree-sitter` additionally needs grammar

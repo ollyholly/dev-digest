@@ -8,8 +8,7 @@ import type {
   Provider,
   ReviewStrategy,
 } from '@devdigest/shared';
-import { AgentsRepository } from './repository.js';
-import { toAgentDto, toAgentVersionDto } from './helpers.js';
+import { isConfigChange, toAgentDto, toAgentVersionDto } from './helpers.js';
 
 /**
  * A2 — agents service. Business logic for the Agents tab + Agent Editor.
@@ -49,10 +48,10 @@ export interface UpdateAgentInput {
 }
 
 export class AgentsService {
-  private repo: AgentsRepository;
+  private repo: Container['agentsRepo'];
 
   constructor(private container: Container) {
-    this.repo = new AgentsRepository(container.db);
+    this.repo = container.agentsRepo;
   }
 
   async list(workspaceId: string): Promise<Agent[]> {
@@ -93,7 +92,10 @@ export class AgentsService {
     id: string,
     patch: UpdateAgentInput,
   ): Promise<Agent | undefined> {
-    const row = await this.repo.update(workspaceId, id, {
+    const existing = await this.repo.getById(workspaceId, id);
+    if (!existing) return undefined;
+
+    const repoPatch = {
       ...(patch.name !== undefined ? { name: patch.name } : {}),
       ...(patch.description !== undefined ? { description: patch.description } : {}),
       ...(patch.provider !== undefined ? { provider: patch.provider } : {}),
@@ -104,7 +106,11 @@ export class AgentsService {
       ...(patch.ci_fail_on !== undefined ? { ciFailOn: patch.ci_fail_on } : {}),
       ...(patch.repo_intel !== undefined ? { repoIntel: patch.repo_intel } : {}),
       ...(patch.enabled !== undefined ? { enabled: patch.enabled } : {}),
-    });
+    };
+    // A config-affecting change (anything except just toggling enabled) bumps
+    // the version and snapshots agent_versions — domain rule, decided here.
+    const bumpVersion = isConfigChange(existing, repoPatch);
+    const row = await this.repo.update(workspaceId, id, repoPatch, { bumpVersion });
     return row ? toAgentDto(row) : undefined;
   }
 
@@ -139,6 +145,13 @@ export class AgentsService {
   async skillLinks(agentId: string): Promise<AgentSkillLink[]> {
     const links = await this.repo.linkedSkills(agentId);
     return links.map((l) => ({ agent_id: agentId, skill_id: l.skill.id, order: l.order }));
+  }
+
+  /** Linked skills for an agent, workspace-scoped. Undefined ⇒ agent not found (route → 404). */
+  async skillLinksForAgent(workspaceId: string, agentId: string): Promise<AgentSkillLink[] | undefined> {
+    const agent = await this.repo.getById(workspaceId, agentId);
+    if (!agent) return undefined;
+    return this.skillLinks(agentId);
   }
 
   /**
@@ -182,5 +195,12 @@ export class AgentsService {
     } catch {
       return [];
     }
+  }
+
+  /** Model list for an agent's own provider, workspace-scoped. Undefined ⇒ agent not found (route → 404). */
+  async modelsForAgent(workspaceId: string, agentId: string): Promise<ModelInfo[] | undefined> {
+    const agent = await this.repo.getById(workspaceId, agentId);
+    if (!agent) return undefined;
+    return this.listModels(agent.provider);
   }
 }

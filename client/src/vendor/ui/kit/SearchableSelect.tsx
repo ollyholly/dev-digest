@@ -1,9 +1,6 @@
 import React from "react";
 import { Icon } from "../icons";
-
-type SelectOption = string | { value: string; label: string };
-const optValue = (o: SelectOption) => (typeof o === "string" ? o : o.value);
-const optLabel = (o: SelectOption) => (typeof o === "string" ? o : o.label);
+import { optLabel, optValue, useSearchableSelect, type SelectOption } from "./useSearchableSelect";
 
 /**
  * Searchable single-select — same options API as SelectInput, but with a filter
@@ -17,6 +14,7 @@ export function SearchableSelect({
   placeholder = "Search…",
   mono = true,
   maxHeight = 280,
+  id,
 }: {
   value: string;
   onChange?: (v: string) => void;
@@ -24,72 +22,31 @@ export function SearchableSelect({
   placeholder?: string;
   mono?: boolean;
   maxHeight?: number;
+  /** Explicit id for the trigger control, for FormField's htmlFor association. */
+  id?: string;
 }) {
-  const [open, setOpen] = React.useState(false);
-  const [query, setQuery] = React.useState("");
-  const [hi, setHi] = React.useState(0);
-  const ref = React.useRef<HTMLDivElement>(null);
-  const inputRef = React.useRef<HTMLInputElement>(null);
-
-  React.useEffect(() => {
-    const h = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", h);
-    return () => document.removeEventListener("mousedown", h);
-  }, []);
-  React.useEffect(() => {
-    if (open) {
-      setQuery("");
-      setHi(0);
-      inputRef.current?.focus();
-    }
-  }, [open]);
-
-  const q = query.trim().toLowerCase();
-  const filtered = q
-    ? options.filter(
-        (o) => optValue(o).toLowerCase().includes(q) || optLabel(o).toLowerCase().includes(q),
-      )
-    : options;
-
-  const current = options.find((o) => optValue(o) === value);
-  const currentLabel = current ? optLabel(current) : value || placeholder;
-
-  const pick = (o: SelectOption) => {
-    onChange?.(optValue(o));
-    setOpen(false);
-  };
-  const onKey = (e: React.KeyboardEvent) => {
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      setHi((i) => Math.min(i + 1, filtered.length - 1));
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      setHi((i) => Math.max(i - 1, 0));
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      const o = filtered[hi];
-      if (o) pick(o);
-    } else if (e.key === "Escape") {
-      e.preventDefault();
-      setOpen(false);
-    }
-  };
+  const { open, setOpen, query, setQuery, hi, setHi, ref, inputRef, filtered, current, currentLabel, pick, onKeyDown } =
+    useSearchableSelect({ value, onChange, options, placeholder });
 
   return (
     <div ref={ref} style={{ position: "relative" }}>
-      <div
+      <button
+        id={id}
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
         style={{
           display: "flex",
           alignItems: "center",
           gap: 10,
+          width: "100%",
           padding: "10px 12px",
           borderRadius: 7,
           border: "1px solid var(--border-strong)",
           background: "var(--bg-elevated)",
           cursor: "pointer",
+          textAlign: "left",
         }}
       >
         <span
@@ -106,7 +63,7 @@ export function SearchableSelect({
           {currentLabel}
         </span>
         <Icon.ChevronsUpDown size={14} style={{ color: "var(--text-muted)" }} />
-      </div>
+      </button>
       {open && (
         <div
           style={{
@@ -140,8 +97,9 @@ export function SearchableSelect({
                 setQuery(e.target.value);
                 setHi(0);
               }}
-              onKeyDown={onKey}
+              onKeyDown={onKeyDown}
               placeholder={placeholder}
+              aria-label={placeholder}
               className={mono ? "mono" : undefined}
               style={{
                 flex: 1,
@@ -149,11 +107,10 @@ export function SearchableSelect({
                 color: "var(--text-primary)",
                 background: "transparent",
                 border: "none",
-                outline: "none",
               }}
             />
           </div>
-          <div style={{ maxHeight, overflowY: "auto", padding: 6 }}>
+          <div role="listbox" style={{ maxHeight, overflowY: "auto", padding: 6 }}>
             {filtered.length === 0 && (
               <div style={{ padding: "8px 10px", fontSize: 13, color: "var(--text-muted)" }}>
                 No matches
@@ -167,6 +124,8 @@ export function SearchableSelect({
                 <button
                   key={v}
                   type="button"
+                  role="option"
+                  aria-selected={sel}
                   onMouseEnter={() => setHi(i)}
                   onClick={() => pick(o)}
                   className={mono ? "mono" : undefined}

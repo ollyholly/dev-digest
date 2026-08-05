@@ -36,7 +36,11 @@ export function PromptModalBody({ text }: { text: string }) {
   const [q, setQ] = React.useState("");
   const lines = React.useMemo(() => (text || "—").split("\n"), [text]);
   const ql = q.trim().toLowerCase();
-  const shown = ql ? lines.filter((l) => l.toLowerCase().includes(ql)) : lines;
+  // Keep each line's original-file line number as a stable key across
+  // filtering (searching narrows `shown` but must not reuse DOM nodes across
+  // unrelated lines that happen to land on the same post-filter index).
+  const numbered = React.useMemo(() => lines.map((l, lineNo) => ({ l, lineNo })), [lines]);
+  const shown = ql ? numbered.filter(({ l }) => l.toLowerCase().includes(ql)) : numbered;
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "70vh" }}>
       <div style={{ padding: "12px 24px", borderBottom: "1px solid var(--border)", flexShrink: 0 }}>
@@ -63,7 +67,9 @@ export function PromptModalBody({ text }: { text: string }) {
             className="mono"
             style={{ margin: 0, padding: "16px 24px", whiteSpace: "pre-wrap", fontSize: 12.5, lineHeight: 1.6 }}
           >
-            {ql ? shown.map((l, i) => <div key={i}>{highlightLine(l, q)}</div>) : text || "—"}
+            {ql
+              ? shown.map(({ l, lineNo }) => <div key={lineNo}>{highlightLine(l, q)}</div>)
+              : text || "—"}
           </pre>
         )}
       </div>

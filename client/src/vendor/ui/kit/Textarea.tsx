@@ -7,15 +7,18 @@ export function Textarea({
   placeholder,
   rows = 5,
   mono,
+  id,
 }: {
   value: string;
   onChange?: (v: string) => void;
   placeholder?: string;
   rows?: number;
   mono?: boolean;
+  id?: string;
 }) {
   return (
     <textarea
+      id={id}
       className={mono ? "mono" : undefined}
       value={value}
       rows={rows}
@@ -31,7 +34,6 @@ export function Textarea({
         color: "var(--text-primary)",
         fontSize: 14,
         lineHeight: 1.55,
-        outline: "none",
       }}
     />
   );

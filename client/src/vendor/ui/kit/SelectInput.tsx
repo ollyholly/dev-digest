@@ -7,11 +7,13 @@ export function SelectInput({
   onChange,
   options,
   mono = true,
+  id,
 }: {
   value: string;
   onChange?: (v: string) => void;
   options: (string | { value: string; label: string })[];
   mono?: boolean;
+  id?: string;
 }) {
   return (
     <div
@@ -27,6 +29,7 @@ export function SelectInput({
       }}
     >
       <select
+        id={id}
         className={mono ? "mono" : undefined}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
@@ -36,7 +39,6 @@ export function SelectInput({
           color: "var(--text-primary)",
           background: "transparent",
           border: "none",
-          outline: "none",
           appearance: "none",
           cursor: "pointer",
         }}

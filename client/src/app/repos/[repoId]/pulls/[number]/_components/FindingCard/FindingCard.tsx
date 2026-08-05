@@ -21,6 +21,7 @@ import type { FindingRecord, FindingActionKind } from "@devdigest/shared";
 import { SEV_COLOR, SEV_COLOR_FALLBACK } from "./constants";
 import { lineLabel } from "./helpers";
 import { githubBlobUrl } from "../../../../../../../lib/github-urls";
+import { useGithubLink } from "../PrDetailView/GithubLinkContext";
 import { s } from "./styles";
 
 export function FindingCard({
@@ -29,18 +30,15 @@ export function FindingCard({
   defaultExpanded,
   onAction,
   pending,
-  repoFullName,
-  headSha,
 }: {
   f: FindingRecord;
   focused?: boolean;
   defaultExpanded?: boolean;
   onAction?: (action: FindingActionKind, reply?: string) => void;
   pending?: boolean;
-  repoFullName?: string | null;
-  headSha?: string | null;
 }) {
   const t = useTranslations("prReview");
+  const { repoFullName, headSha } = useGithubLink();
   const [expanded, setExpanded] = React.useState(defaultExpanded ?? false);
   const sevColor = SEV_COLOR[f.severity] ?? SEV_COLOR_FALLBACK;
   const fileHref =
@@ -53,7 +51,22 @@ export function FindingCard({
 
   return (
     <div data-finding-id={f.id} style={s.card(!!focused, sevColor, muted)}>
-      <div onClick={() => setExpanded((e) => !e)} style={s.header}>
+      {/* role="button" (not a real <button>) because the header contains its
+          own interactive children (the file MonoLink, which stops propagation
+          on click) — nesting an <a> inside a <button> would be invalid HTML. */}
+      <div
+        role="button"
+        tabIndex={0}
+        aria-expanded={expanded}
+        onClick={() => setExpanded((e) => !e)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setExpanded((v) => !v);
+          }
+        }}
+        style={s.header}
+      >
         <div style={s.badgeWrap}>
           <SeverityBadge severity={f.severity as Severity} compact />
         </div>

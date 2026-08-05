@@ -34,6 +34,7 @@ function KeyRow({
   configured: boolean | undefined;
 }) {
   const t = useTranslations("settings");
+  const inputId = React.useId();
   const [val, setVal] = React.useState("");
   const [reveal, setReveal] = React.useState(false);
   const test = useTestConnection();
@@ -50,17 +51,26 @@ function KeyRow({
   };
 
   return (
-    <FormField label={label} hint={hint} right={<StatusBadge configured={configured} />}>
+    <FormField label={label} hint={hint} id={inputId} right={<StatusBadge configured={configured} />}>
       <div style={s.keyRow}>
         <div style={s.keyInput}>
           <TextInput
+            id={inputId}
             value={val}
             onChange={setVal}
             mono
             type={reveal ? "text" : "password"}
             placeholder={t("apiKeys.placeholder")}
             suffix={
-              <Icon.EyeOff size={14} style={s.revealIcon} onClick={() => setReveal((r) => !r)} />
+              <button
+                type="button"
+                style={s.revealBtn}
+                aria-label={reveal ? t("apiKeys.hideKey") : t("apiKeys.showKey")}
+                aria-pressed={reveal}
+                onClick={() => setReveal((r) => !r)}
+              >
+                {reveal ? <Icon.Eye size={14} /> : <Icon.EyeOff size={14} />}
+              </button>
             }
           />
         </div>
@@ -69,7 +79,7 @@ function KeyRow({
         </Button>
       </div>
       {res && (
-        <div style={s.result(res.ok)}>
+        <div role={res.ok ? "status" : "alert"} style={s.result(res.ok)}>
           {res.ok ? <Icon.CheckCircle size={13} /> : <Icon.XCircle size={13} />}
           {res.message}
         </div>

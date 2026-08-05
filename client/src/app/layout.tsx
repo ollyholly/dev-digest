@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
@@ -7,7 +8,10 @@ import { Providers } from "../lib/providers";
 import { themeNoFlashScript } from "../lib/theme";
 
 export const metadata: Metadata = {
-  title: "DevDigest",
+  title: {
+    default: "DevDigest",
+    template: "%s · DevDigest",
+  },
   description: "Local-first AI PR review tool",
 };
 
@@ -17,8 +21,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} data-theme="dark" data-density="regular" suppressHydrationWarning>
       <head>
-        {/* set theme before paint to avoid FOUC */}
-        <script dangerouslySetInnerHTML={{ __html: themeNoFlashScript }} />
+        {/* set theme before paint to avoid FOUC; beforeInteractive runs before
+            hydration, same timing as the inline script it replaces */}
+        <Script id="theme-no-flash" strategy="beforeInteractive">
+          {themeNoFlashScript}
+        </Script>
       </head>
       {/* suppressHydrationWarning: browser extensions (Grammarly, translators, …)
           inject attributes like data-gr-ext-installed onto <body> before React
