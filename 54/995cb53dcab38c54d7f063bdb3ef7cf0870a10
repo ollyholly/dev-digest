@@ -1,0 +1,31 @@
+client/INSIGHTS.md
+  s_c5b7634f7ea46a::t_ffa9d199f4ba08 18,20-24
+client/messages/en/agents.json
+  s_c5b7634f7ea46a::t_774564a76a7016 4,94-98
+client/messages/en/skills.json
+  s_c5b7634f7ea46a::t_6518201088cb56 24,69,80,82-83,108-109,129-132,147-148
+client/src/app/agents/[id]/_components/AgentEditor/_components/SkillsTab/SkillsTab.test.tsx
+  s_c5b7634f7ea46a::t_e9dc2fe469d312 83,86-88,169-231
+client/src/app/agents/[id]/_components/AgentEditor/_components/SkillsTab/SkillsTab.tsx
+  s_c5b7634f7ea46a::t_ffd3a591a05923 97-115,141,151,169,178
+client/src/app/skills/_components/SkillCard/SkillCard.tsx
+  s_c5b7634f7ea46a::t_533232b86259c9 22,29-31,52,67,74,77-78,91-95,97-108
+client/src/vendor/shared/contracts/knowledge.ts
+  s_c5b7634f7ea46a::t_93a291447db559 205-229
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "54995cb53dcab38c54d7f063bdb3ef7cf0870a10",
+  "prompts": {},
+  "sessions": {
+    "s_c5b7634f7ea46a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52ebc5fe-7943-41f8-b37c-b8c298ed4e19",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
