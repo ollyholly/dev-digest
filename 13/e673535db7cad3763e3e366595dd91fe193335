@@ -1,0 +1,31 @@
+server/INSIGHTS.md
+  s_c5b7634f7ea46a::t_8a6bafdf5b999a 21-22
+server/src/db/seed.ts
+  s_c5b7634f7ea46a::t_0077ce935d24ac 22,268
+server/src/modules/skills/service.ts
+  s_c5b7634f7ea46a::t_5f786a74ffb750 6,44-48,52,186-191,194,201-202,217-240
+server/src/modules/skills/url-guard.ts
+  s_c5b7634f7ea46a::t_5818d10451f18a 1-63
+server/test/skills-import-url.test.ts
+  s_c5b7634f7ea46a::t_1eceb7e591a603 1-71
+server/test/skills-url-guard.test.ts
+  s_c5b7634f7ea46a::t_c836358f77b33a 1-72
+server/test/skills.it.test.ts
+  s_c5b7634f7ea46a::t_d7a857c3e50da7 157,163-166,178,185-214
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "13e673535db7cad3763e3e366595dd91fe193335",
+  "prompts": {},
+  "sessions": {
+    "s_c5b7634f7ea46a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52ebc5fe-7943-41f8-b37c-b8c298ed4e19",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
