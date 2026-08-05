@@ -19,6 +19,14 @@ export function VersionsTab({ skill }: { skill: Skill }) {
 
   return (
     <div style={s.wrap}>
+      <div style={s.header}>
+        <h2 style={s.h2}>{t("versions.title")}</h2>
+        {!isLoading && sorted && sorted.length > 0 && (
+          <Badge color="var(--text-secondary)" mono>
+            {t("versions.count", { count: sorted.length })}
+          </Badge>
+        )}
+      </div>
       <div style={s.hint}>{t("versions.hint")}</div>
       {isLoading && (
         <>
@@ -26,7 +34,9 @@ export function VersionsTab({ skill }: { skill: Skill }) {
           <Skeleton height={48} />
         </>
       )}
-      {!isLoading && (sorted?.length ?? 0) === 0 && <EmptyState icon="History" title={t("versions.title")} />}
+      {!isLoading && (sorted?.length ?? 0) === 0 && (
+        <EmptyState icon="History" title={t("versions.emptyTitle")} />
+      )}
       {!isLoading &&
         sorted?.map((v) => (
           <div key={v.version} style={s.row}>

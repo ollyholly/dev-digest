@@ -3,7 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Button, Skeleton, EmptyState } from "@devdigest/ui";
+import { Button, Skeleton, EmptyState, Icon } from "@devdigest/ui";
 import type { Skill } from "@devdigest/shared";
 import { useSkillAgents } from "@/lib/hooks/skills";
 import { s } from "./styles";
@@ -54,6 +54,9 @@ export function StatsTab({ skill }: { skill: Skill }) {
         {!isLoading &&
           agents?.map((a) => (
             <div key={a.id} style={s.agentRow}>
+              <div style={s.agentIcon}>
+                <Icon.Cpu size={14} />
+              </div>
               <span style={s.agentName}>{a.name}</span>
               <Button kind="secondary" size="sm" onClick={() => router.push(`/agents/${a.id}`)}>
                 {t("stats.open")}

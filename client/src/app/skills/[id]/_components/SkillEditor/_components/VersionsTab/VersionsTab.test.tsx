@@ -65,6 +65,19 @@ describe("Skill VersionsTab (smoke)", () => {
   it("shows an empty state when there is no version history", () => {
     useSkillVersionsMock = () => ({ data: [], isLoading: false });
     renderWithIntl(<VersionsTab skill={SKILL} />);
+    expect(screen.getByText("No version history yet")).toBeInTheDocument();
+  });
+
+  it("shows the version count badge next to the title", () => {
+    useSkillVersionsMock = () => ({
+      data: [
+        { skill_id: "sk1", version: 1, body: "v1", created_at: "2026-01-01T00:00:00Z" },
+        { skill_id: "sk1", version: 2, body: "v2", created_at: "2026-02-01T00:00:00Z" },
+      ],
+      isLoading: false,
+    });
+    renderWithIntl(<VersionsTab skill={SKILL} />);
     expect(screen.getByText("Version history")).toBeInTheDocument();
+    expect(screen.getByText("2 versions")).toBeInTheDocument();
   });
 });

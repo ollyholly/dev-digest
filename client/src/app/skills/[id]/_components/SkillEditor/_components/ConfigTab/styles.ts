@@ -4,7 +4,7 @@ import type { CSSProperties } from "react";
  *  mini code-editor look for the skill body field). */
 export const s = {
   wrap: { maxWidth: 760 } satisfies CSSProperties,
-  header: { display: "flex", alignItems: "center", marginBottom: 20 } satisfies CSSProperties,
+  header: { display: "flex", alignItems: "center", gap: 10, marginBottom: 20 } satisfies CSSProperties,
   h2: { fontSize: 18, fontWeight: 700 } satisfies CSSProperties,
   enabledLabel: {
     marginLeft: "auto",
@@ -33,14 +33,35 @@ export const s = {
   } satisfies CSSProperties,
   bodyEditorFilename: { fontFamily: "var(--mono, monospace)", color: "var(--text-secondary)" } satisfies CSSProperties,
   bodyEditorTokens: { marginLeft: "auto", color: "var(--text-muted)" } satisfies CSSProperties,
+  // Shared metrics between the overlay and the textarea — they must match
+  // exactly or the highlighted text drifts from the caret.
+  editorLayer: { position: "relative", display: "grid" } satisfies CSSProperties,
+  highlightOverlay: {
+    position: "absolute",
+    inset: 0,
+    margin: 0,
+    padding: "12px 14px",
+    overflow: "hidden",
+    whiteSpace: "pre-wrap",
+    wordBreak: "break-word",
+    fontSize: 13.5,
+    lineHeight: 1.6,
+    fontFamily: "var(--mono, monospace)",
+    color: "var(--text-primary)",
+    pointerEvents: "none",
+  } satisfies CSSProperties,
   bodyTextarea: {
+    position: "relative",
     width: "100%",
     resize: "vertical",
     padding: "12px 14px",
     border: "none",
     outline: "none",
     background: "transparent",
-    color: "var(--text-primary)",
+    // Text itself is transparent — the highlight overlay behind the textarea
+    // renders the visible, colored text; only the caret/selection show here.
+    color: "transparent",
+    caretColor: "var(--text-primary)",
     fontSize: 13.5,
     lineHeight: 1.6,
     fontFamily: "var(--mono, monospace)",

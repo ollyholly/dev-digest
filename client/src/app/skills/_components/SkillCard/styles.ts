@@ -2,14 +2,14 @@ import type { CSSProperties } from "react";
 
 /** Co-located styles for SkillCard — mirrors AgentCard's card/header/meta layout. */
 export const s = {
-  card: (active: boolean, enabled: boolean): CSSProperties => ({
-    padding: 14,
-    borderRadius: 8,
+  card: (active: boolean, enabled: boolean, compact = false): CSSProperties => ({
+    padding: compact ? "8px 10px" : 14,
+    borderRadius: compact ? 6 : 8,
     cursor: "pointer",
     border: "1px solid " + (active ? "var(--border-strong)" : "var(--border)"),
     background: active ? "var(--bg-hover)" : "var(--bg-elevated)",
     opacity: enabled ? 1 : 0.6,
-    marginBottom: 10,
+    marginBottom: compact ? 4 : 10,
   }),
   headerRow: { display: "flex", alignItems: "center", gap: 10 } satisfies CSSProperties,
   iconBox: {

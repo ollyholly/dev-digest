@@ -42,7 +42,7 @@ describe("Skill StatsTab (smoke)", () => {
   it("shows a real 'Used by' count from the agents list", () => {
     useSkillAgentsMock = () => ({ data: [{ id: "a1", name: "Security Reviewer" }], isLoading: false });
     renderWithIntl(<StatsTab skill={SKILL} />);
-    expect(screen.getByText("1 agents")).toBeInTheDocument();
+    expect(screen.getByText("1 agent")).toBeInTheDocument();
     expect(screen.getByText("Security Reviewer")).toBeInTheDocument();
   });
 

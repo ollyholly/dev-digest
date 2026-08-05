@@ -5,7 +5,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Skeleton, Icon, Badge } from "@devdigest/ui";
+import { Button, Skeleton, Icon, Badge } from "@devdigest/ui";
 import type { Skill } from "@devdigest/shared";
 import { SkillCard } from "@/app/skills/_components/SkillCard";
 import { TYPE_ICON } from "@/app/skills/_components/SkillCard/constants";
@@ -49,6 +49,7 @@ export function SkillEditorView({ id, skills, skill, isLoading, onToggleSkill }:
               key={sk.id}
               skill={sk}
               active={sk.id === id}
+              compact
               onClick={() => router.push(`/skills/${sk.id}?tab=${tab}`)}
               onToggle={(enabled) => onToggleSkill(sk.id, enabled)}
             />
@@ -70,7 +71,15 @@ export function SkillEditorView({ id, skills, skill, isLoading, onToggleSkill }:
             <Badge color="var(--text-secondary)" mono>
               {t(`listItem.type.${skill.type}`)}
             </Badge>
+            <Badge color="var(--text-secondary)" mono icon="History">
+              {t("preview.version", { version: skill.version })}
+            </Badge>
             {!skill.enabled && <Badge color="var(--text-muted)">disabled</Badge>}
+            <div style={{ marginLeft: "auto" }}>
+              <Button kind="secondary" size="sm" icon="FlaskConical" onClick={() => setTab("evals")}>
+                {t("detail.runOnEvals")}
+              </Button>
+            </div>
           </div>
           <div style={{ flex: 1, minHeight: 0, overflow: "auto" }}>
             <SkillEditor skill={skill} tab={tab} onTab={setTab} />

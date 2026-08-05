@@ -11,7 +11,10 @@ export const TYPE_ICON: Record<SkillType, IconName> = {
 };
 
 export const TYPE_COLOR: Record<SkillType, string> = {
-  rubric: "var(--info)",
+  // `--info` (a muted gray, shared with severity badges elsewhere) reads as
+  // near-monochrome next to convention/security's saturated colors — use the
+  // brand accent blue instead so rubric is visually distinct in the list.
+  rubric: "var(--accent)",
   convention: "var(--ok)",
   security: "var(--crit)",
   custom: "var(--text-secondary)",

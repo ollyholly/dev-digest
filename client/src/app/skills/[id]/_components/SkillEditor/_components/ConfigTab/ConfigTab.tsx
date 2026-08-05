@@ -7,6 +7,7 @@ import type { Skill, SkillType } from "@devdigest/shared";
 import { useUpdateSkill } from "@/lib/hooks/skills";
 import { SKILL_TYPE_VALUES } from "./constants";
 import { estimateTokens, toKebabCase } from "./helpers";
+import { MarkdownEditor } from "./MarkdownEditor";
 import { s } from "./styles";
 
 /** Config tab — name/description/type/enabled + a mini code-editor for the
@@ -45,6 +46,9 @@ export function ConfigTab({ skill }: { skill: Skill }) {
     <div style={s.wrap}>
       <div style={s.header}>
         <h2 style={s.h2}>{t("config.title")}</h2>
+        <Badge color="var(--text-secondary)" mono icon="History">
+          {t("preview.version", { version: skill.version })}
+        </Badge>
         <label style={s.enabledLabel}>
           {t("config.enabled")}
           <Toggle on={enabled} onChange={setEnabled} size={16} />
@@ -68,13 +72,7 @@ export function ConfigTab({ skill }: { skill: Skill }) {
             {unsaved && <Badge color="var(--warn)" bg="var(--warn-bg)">{t("config.unsaved")}</Badge>}
             <span style={s.bodyEditorTokens}>{t("config.tokens", { count: tokenCount })}</span>
           </div>
-          <textarea
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            rows={16}
-            spellCheck={false}
-            style={s.bodyTextarea}
-          />
+          <MarkdownEditor value={body} onChange={setBody} rows={16} />
         </div>
       </FormField>
       <div style={s.actions}>

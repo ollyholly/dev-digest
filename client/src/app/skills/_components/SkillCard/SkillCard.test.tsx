@@ -73,4 +73,11 @@ describe("SkillCard (smoke)", () => {
     renderWithIntl(<SkillCard skill={SKILL} onToggle={vi.fn()} />);
     expect(screen.getByRole("switch", { name: 'Disable skill "pr-quality-rubric"' })).toBeInTheDocument();
   });
+
+  it("compact mode hides the description and badge row, keeping the name", () => {
+    renderWithIntl(<SkillCard skill={SKILL} compact />);
+    expect(screen.getByText("pr-quality-rubric")).toBeInTheDocument();
+    expect(screen.queryByText("Rubric for evaluating overall PR quality")).not.toBeInTheDocument();
+    expect(screen.queryByText("Manual")).not.toBeInTheDocument();
+  });
 });
