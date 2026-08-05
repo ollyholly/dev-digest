@@ -3,7 +3,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
-import type { Agent, ModelInfo, Provider } from "@devdigest/shared";
+import type { Agent, AgentSkillLink, ModelInfo, Provider } from "@devdigest/shared";
 
 export function useAgents() {
   return useQuery({
@@ -83,5 +83,27 @@ export function useProviderModels(provider: Provider | null | undefined) {
     queryFn: () => api.get<ModelInfo[]>(`/providers/${provider}/models`),
     enabled: !!provider,
     staleTime: 5 * 60_000,
+  });
+}
+
+/** Skills linked to an agent, in prompt order (Agent editor's Skills tab). */
+export function useAgentSkills(id: string | null | undefined) {
+  return useQuery({
+    queryKey: ["agent-skills", id],
+    queryFn: () => api.get<AgentSkillLink[]>(`/agents/${id}/skills`),
+    enabled: !!id,
+  });
+}
+
+/** Replace an agent's full linked-skill set (attach/detach/reorder in one call). */
+export function useSetAgentSkills(id: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (skillIds: string[]) =>
+      api.post<AgentSkillLink[]>(`/agents/${id}/skills`, { skill_ids: skillIds }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["agent-skills", id] });
+      qc.invalidateQueries({ queryKey: ["agents"] });
+    },
   });
 }

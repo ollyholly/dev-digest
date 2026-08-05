@@ -1,6 +1,6 @@
 import { useRouter, useSearchParams } from "next/navigation";
 
-const VALID_TABS = ["config"];
+const VALID_TABS = ["config", "skills"];
 
 /** Tab state for the agent editor lives in `?tab=` so it survives navigation. */
 export function useAgentEditorTab(id: string) {

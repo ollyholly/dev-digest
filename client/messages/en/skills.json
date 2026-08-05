@@ -19,16 +19,68 @@
     "selectPrompt": {
       "title": "Select a skill",
       "body": "Pick a skill on the left to preview its body."
+    },
+    "card": {
+      "agentsCount": "{count, plural, one {# agent} other {# agents}}",
+      "pull": "{pct}% pull",
+      "accept": "{pct}% accept",
+      "noStats": "—"
     }
   },
   "detail": {
     "crumbSkill": "Skill",
     "back": "← All skills",
     "loadError": "Could not load this skill.",
+    "runOnEvals": "Run on evals",
     "notFound": {
       "title": "Skill not found",
       "body": "It may have been deleted."
+    },
+    "tabs": {
+      "config": "Config",
+      "preview": "Preview",
+      "evals": "Evals",
+      "stats": "Stats",
+      "versions": "Versions"
     }
+  },
+  "config": {
+    "title": "Configuration",
+    "enabled": "Enabled",
+    "name": "Name",
+    "description": "Description",
+    "descriptionHint": "Written as an instruction to the reviewing agent, not a summary.",
+    "type": "Type",
+    "body": "Skill body",
+    "bodyRequired": "Skill body *",
+    "unsaved": "unsaved",
+    "tokens": "{count} tokens",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved (v{version})",
+    "savedToast": "Skill saved (v{version})"
+  },
+  "evals": {
+    "comingSoonTitle": "Evals are coming soon",
+    "comingSoonBody": "Run this skill against a saved eval set once the Eval Dashboard ships."
+  },
+  "stats": {
+    "usedBy": "Used by",
+    "agentsCount": "{count, plural, one {# agent} other {# agents}}",
+    "pullFrequency": "Pull frequency",
+    "acceptRate": "Accept rate",
+    "findings30d": "Findings (30D)",
+    "noData": "Not enough run history yet",
+    "agentsUsing": "Agents using this skill",
+    "open": "Open",
+    "findingsByCategory": "Findings by category"
+  },
+  "versions": {
+    "title": "Version history",
+    "count": "{count, plural, one {# version} other {# versions}}",
+    "current": "Current",
+    "hint": "Every save snapshots the body so eval runs stay reproducible against the exact text they scored.",
+    "emptyTitle": "No version history yet"
   },
   "drawer": {
     "title": "Add a skill",
@@ -53,8 +105,8 @@
   },
   "url": {
     "label": "Skill URL",
-    "hint": "Fetched server-side, stored as untrusted, and left disabled until vetted.",
-    "placeholder": "https://example.com/skills/security.md",
+    "hint": "Fetched server-side from GitHub raw-content URLs only, stored as untrusted, and left disabled until vetted.",
+    "placeholder": "https://raw.githubusercontent.com/owner/repo/main/SKILL.md",
     "fetching": "Fetching…",
     "import": "Import from URL",
     "success": "Imported \"{name}\". Disabled until you vet + enable it."
@@ -74,6 +126,10 @@
   "listItem": {
     "needsVetting": "needs vetting",
     "vettingTitle": "Untrusted source — vet before enabling",
+    "enable": "Enable skill \"{name}\"",
+    "disable": "Disable skill \"{name}\"",
+    "delete": "Delete skill",
+    "deleteConfirm": "Delete skill \"{name}\"? This cannot be undone.",
     "type": {
       "rubric": "rubric",
       "convention": "convention",
@@ -88,6 +144,8 @@
     }
   },
   "preview": {
+    "title": "Preview",
+    "subtitle": "Rendered as the reviewing agent receives it.",
     "untrustedBadge": "untrusted source",
     "enabled": "Enabled",
     "disabled": "Disabled",

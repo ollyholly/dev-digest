@@ -203,6 +203,17 @@ export class AgentsRepository {
     return links.map((l) => l.skill.id);
   }
 
+  /** Agents (id + name) that have a given skill linked — the Skill detail
+   *  page's Stats tab "Used by" list. Reverse of `linkedSkills`. */
+  async agentsUsingSkill(skillId: string): Promise<{ id: string; name: string }[]> {
+    const rows = await this.db
+      .select({ id: t.agents.id, name: t.agents.name })
+      .from(t.agentSkills)
+      .innerJoin(t.agents, eq(t.agentSkills.agentId, t.agents.id))
+      .where(eq(t.agentSkills.skillId, skillId));
+    return rows;
+  }
+
   /** Link a skill to an agent at a given order (idempotent: upserts order). */
   async linkSkill(agentId: string, skillId: string, order: number): Promise<void> {
     await this.db
