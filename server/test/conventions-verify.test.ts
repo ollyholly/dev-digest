@@ -65,7 +65,8 @@ describe('conventions evidence verification', () => {
 
   it('grounds only non-trivial evidence from the provided samples map', () => {
     const content = 'export function fail(message: string) {\n  throw new ValidationError(message);\n}\n';
-    const verified = verifyCandidate(candidate, new Map([['src/errors.ts', content]]));
+    const samples = new Map([['src/errors.ts', content]]);
+    const verified = verifyCandidate(candidate, samples);
 
     expect(verified).toMatchObject({
       category: 'error-handling',
@@ -74,6 +75,14 @@ describe('conventions evidence verification', () => {
       evidenceEndLine: 2,
       confidence: 0.9,
     });
+    // Legacy prompt labels used "kind:path"; strip known prefixes so those
+    // still ground against bare samples-map keys.
+    expect(
+      verifyCandidate({ ...candidate, evidence_path: 'code:src/errors.ts' }, samples),
+    ).toMatchObject({ evidencePath: 'src/errors.ts' });
+    expect(
+      verifyCandidate({ ...candidate, evidence_path: 'config:src/errors.ts' }, samples),
+    ).toMatchObject({ evidencePath: 'src/errors.ts' });
     expect(verifyCandidate({ ...candidate, evidence_path: 'src/other.ts' }, new Map())).toBeNull();
     expect(
       verifyCandidate(
@@ -84,7 +93,7 @@ describe('conventions evidence verification', () => {
     expect(
       verifyCandidate(
         { ...candidate, evidence_snippet: '});' },
-        new Map([['src/errors.ts', content]]),
+        samples,
       ),
     ).toBeNull();
     expect(isTrivialSnippet('}')).toBe(true);

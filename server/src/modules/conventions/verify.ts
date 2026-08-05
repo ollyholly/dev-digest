@@ -91,7 +91,11 @@ export function verifyCandidate(
     return null;
   }
 
-  const evidencePath = normalizeRepoRelativePath(candidate.evidence_path);
+  // Models sometimes echo legacy "kind:path" prompt labels; strip known
+  // prefixes so grounding still matches the bare samples-map keys.
+  const evidencePath = normalizeRepoRelativePath(
+    candidate.evidence_path.replace(/^(?:code|config):/u, ''),
+  );
   if (!evidencePath) return null;
   const content = samplesByPath.get(evidencePath);
   if (content === undefined) return null;

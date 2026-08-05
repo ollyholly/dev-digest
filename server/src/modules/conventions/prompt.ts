@@ -29,16 +29,20 @@ export function buildConventionSystemPrompt(): string {
 export function buildConventionUserPrompt(samples: ConventionSample[]): string {
   const fenced = samples
     .map((sample) => {
-      const label = `${sample.kind}:${sample.path}`.replaceAll('"', '&quot;');
+      const path = sample.path.replaceAll('"', '&quot;');
+      const kind = sample.kind.replaceAll('"', '&quot;');
       const content = sample.content.replaceAll('</untrusted>', '<\\/untrusted>');
-      return `<untrusted source="${label}">\n${content}\n</untrusted>`;
+      // Keep path and kind as separate attributes so models copy the bare
+      // repository path into evidence_path (not a "code:…" / "config:…" label).
+      return `<untrusted source="${path}" kind="${kind}">\n${content}\n</untrusted>`;
     })
     .join('\n\n');
 
   return [
     'Find house conventions demonstrated by the samples below.',
     'Write each rule as an imperative reviewer directive (for example, “Use named exports for shared utilities.”).',
-    'Use evidence_path exactly as shown in a source label. Copy evidence_snippet from that same sample.',
+    'Set evidence_path to the exact `source` attribute value (the repository-relative path only — never include the `kind` attribute).',
+    'Copy evidence_snippet verbatim from that same sample.',
     'Report the best verified candidates only; consistency is more valuable than candidate count.',
     'The provided line numbers are hints only and will be recomputed mechanically.',
     '## Repository samples',
