@@ -1,0 +1,19 @@
+.claude/agents/README.md
+  s_6dfa8b5a39726e::t_3911d580f0cb0a 1-85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "cf2ee4df193e0cb2be12148670601b5ea406d639",
+  "prompts": {},
+  "sessions": {
+    "s_6dfa8b5a39726e": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "325f47ba-7240-4843-a59e-b441067412c0",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
