@@ -1,0 +1,21 @@
+.claude/agents/implementer.md
+  s_6dfa8b5a39726e::t_1377cb3c138533 1-118
+.claude/agents/planner.md
+  s_6dfa8b5a39726e::t_61fd6a8df0495f 1-141
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "eb27dbaf9aeff602f6596a79b1615086e6e25890",
+  "prompts": {},
+  "sessions": {
+    "s_6dfa8b5a39726e": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "325f47ba-7240-4843-a59e-b441067412c0",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
