@@ -93,8 +93,9 @@ d('Skills wired into the review prompt', () => {
     expect(started.statusCode).toBe(200);
     const runId = started.json().runs[0].run_id;
     await waitForPrRuns(pg.handle.db, prId, { expected: 1 });
-    const trace = (await app.inject({ method: 'GET', url: `/runs/${runId}/trace` })).json();
-    return trace;
+    const res = await app.inject({ method: 'GET', url: `/runs/${runId}/trace` });
+    expect(res.statusCode).toBe(200);
+    return res.json();
   }
 
   it('an agent with no linked skills omits the Skills section entirely', async () => {
