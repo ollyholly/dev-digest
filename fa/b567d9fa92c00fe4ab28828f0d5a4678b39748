@@ -1,0 +1,23 @@
+.claude/agents/implementer.md
+  s_6dfa8b5a39726e::t_2e0a38f3412f72 11
+.claude/agents/planner.md
+  s_6dfa8b5a39726e::t_c10d0dac2bc8e3 11
+.claude/agents/researcher.md
+  s_6dfa8b5a39726e::t_53d742e197cb17 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "fab567d9fa92c00fe4ab28828f0d5a4678b39748",
+  "prompts": {},
+  "sessions": {
+    "s_6dfa8b5a39726e": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "325f47ba-7240-4843-a59e-b441067412c0",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
