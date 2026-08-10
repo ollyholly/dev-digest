@@ -1,0 +1,29 @@
+.claude/agents/README.md
+  s_6dfa8b5a39726e::t_9fe5a1b1e278c2 11-18,26-31,90-171,177-178
+.claude/agents/architecture-reviewer.md
+  s_6dfa8b5a39726e::t_5f1f9e072dabed 1-77
+.claude/agents/doc-writer.md
+  s_6dfa8b5a39726e::t_02d8639e828e4f 1-80
+.claude/agents/implementer.md
+  s_6dfa8b5a39726e::t_b4b65e21293493 8-10,114-115
+.claude/agents/plan-verifier.md
+  s_6dfa8b5a39726e::t_ae4490306639da 1-76
+.claude/agents/test-writer.md
+  s_6dfa8b5a39726e::t_b66a158b00a666 1-79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "c03aad20750dde190ad11a756abb6542cc4d0a32",
+  "prompts": {},
+  "sessions": {
+    "s_6dfa8b5a39726e": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "325f47ba-7240-4843-a59e-b441067412c0",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
