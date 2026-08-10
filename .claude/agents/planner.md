@@ -8,7 +8,7 @@ description: >
   matches what implementer will apply. Never writes or edits code. If the
   goal or scope is unclear, clarify first.
 tools: Read, Grep, Glob, Bash, Skill
-model: opus
+model: inherit
 color: purple
 permissionMode: plan
 skills:

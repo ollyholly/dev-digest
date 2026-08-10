@@ -8,7 +8,7 @@ description: >
   output or an equivalent structured plan. Does not perform architecture or
   security review — those are separate agents. Does not open PRs.
 tools: Read, Grep, Glob, Bash, Write, Edit, Skill
-model: sonnet
+model: inherit
 color: green
 ---
 

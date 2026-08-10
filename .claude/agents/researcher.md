@@ -7,7 +7,7 @@ description: >
   edit code. If the request is vague or lacks a specific question, clarify
   first instead of researching.
 tools: Read, Grep, Glob, Bash, WebSearch, WebFetch
-model: sonnet
+model: inherit
 color: blue
 ---
 
