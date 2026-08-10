@@ -5,8 +5,9 @@ description: >
   backend. Loads the project skills named in the plan (or the path→skill map),
   implements only in-scope changes, runs package-scoped existing tests, and
   self-checks implementation only. Use after the user approves a planner
-  output or an equivalent structured plan. Does not perform architecture or
-  security review — those are separate agents. Does not open PRs.
+  output or an equivalent structured plan. Hands off to test-writer,
+  architecture-reviewer, plan-verifier, and doc-writer; does not perform
+  architecture or security review itself. Does not open PRs.
 tools: Read, Grep, Glob, Bash, Write, Edit, Skill
 model: inherit
 color: green
@@ -110,7 +111,8 @@ Always use this template:
 - not a substitute for architecture or security review
 
 ## Handoff
-- ready for: architecture-review / security-review agents
+- ready for: `test-writer` (optional), `architecture-reviewer`, `plan-verifier`,
+  `doc-writer`; security-review / `pr-self-review` remain separate
 - INSIGHTS: appended | skipped (<why>)
 
 ## Not done / blocked
