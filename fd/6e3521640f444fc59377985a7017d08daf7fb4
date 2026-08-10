@@ -1,0 +1,23 @@
+server/INSIGHTS.md
+  s_f77b954a16a940::t_16851a74a6b639 12
+server/src/modules/reviews/run-executor.ts
+  s_f77b954a16a940::t_7a52c79d966a8e 77-82,256-259,293-304,315-318,322
+server/test/skills-in-review.it.test.ts
+  s_f77b954a16a940::t_19075b1c097366 96-98
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "fd6e3521640f444fc59377985a7017d08daf7fb4",
+  "prompts": {},
+  "sessions": {
+    "s_f77b954a16a940": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "2cd18043-ae9f-40cc-8fa2-2916bcc4f37d",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
