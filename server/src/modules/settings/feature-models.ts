@@ -21,6 +21,8 @@ const DEFAULTS = Object.fromEntries(
   FEATURE_MODELS.map((f) => [f.id, { provider: f.defaultProvider, model: f.defaultModel }]),
 ) as Record<FeatureModelId, FeatureModelChoice>;
 
+type FeatureModelContainer = Pick<Container, 'db'>;
+
 /** The registry default (provider+model) for a feature — no DB read. */
 export function defaultFeatureModel(id: FeatureModelId): FeatureModelChoice {
   return DEFAULTS[id];
@@ -33,7 +35,7 @@ export function defaultFeatureModel(id: FeatureModelId): FeatureModelChoice {
  * `resolveFeatureModel` instead.
  */
 export async function getFeatureModelOverride(
-  container: Container,
+  container: FeatureModelContainer,
   workspaceId: string,
   id: FeatureModelId,
 ): Promise<FeatureModelChoice | undefined> {
@@ -46,7 +48,7 @@ export async function getFeatureModelOverride(
 
 /** Resolve `id` to a concrete provider+model: workspace override, else registry default. */
 export async function resolveFeatureModel(
-  container: Container,
+  container: FeatureModelContainer,
   workspaceId: string,
   id: FeatureModelId,
 ): Promise<FeatureModelChoice> {

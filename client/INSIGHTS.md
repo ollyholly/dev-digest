@@ -9,6 +9,10 @@
 ## Tool & Library Notes
 
 ## Recurring Errors & Fixes
+- 2026-08-05: Conventions empty-state (“No conventions extracted yet”) with a non-zero Proposed scan summary means the extract response’s verified set was empty — only grounded rows are persisted. Create skill stays disabled until `accepted.length > 0`. Prefer diagnosing server grounding (path/snippet mismatch) over treating the empty UI as a client bug.
+
+- 2026-08-05: The checked-in conventions list endpoint currently returns `ConventionCandidate[]` (`server/src/modules/conventions/service.ts:132-135`), while extraction and the advertised GET contract use `ConventionExtractionResult`. `client/src/lib/hooks/conventions.ts` intentionally accepts both shapes, and `ConventionsView` renders scan metrics only for the full result — do not fabricate missing proposed/verified/dropped counts or remove compatibility until the list API is aligned.
+- 2026-08-05: Supersedes the list-shape mismatch note above — `GET /repos/:id/conventions` now returns `ConventionExtractionResult` (candidates + scan fields derived from stored rows). Client hooks consume only that envelope.
 
 ## Decisions
 
