@@ -1,0 +1,67 @@
+client/INSIGHTS.md
+  s_34c5ede4c63404::t_045113a74798fe 14
+server/INSIGHTS.md
+  s_34c5ede4c63404::t_82ae911ee367c8 33
+server/src/db/seed.ts
+  s_4edcee73555b9a::t_30cf5b160465f3 236-239,241-247,250-256
+server/src/modules/intent/service.ts
+  s_34c5ede4c63404::t_544d88e80eec55 110-114,116-122,129-132,138,140-143,151,205-209,217,265-315,412,416
+client/messages/en/brief.json
+  s_4edcee73555b9a::t_a47f7f82af16e7 13-16
+client/src/app/repos/[repoId]/pulls/[number]/_components/OverviewTab/OverviewTab.tsx
+  s_4edcee73555b9a::t_13f82a6862b036 39-40,52
+client/src/app/repos/[repoId]/pulls/[number]/_components/OverviewTab/_components/IntentCard/IntentCard.tsx
+  s_4edcee73555b9a::t_ca26df6ec5615a 5,10-11,20,44,51,58-74,81-101
+client/src/app/repos/[repoId]/pulls/[number]/_components/OverviewTab/styles.ts
+  s_4edcee73555b9a::t_6184ccaf414613 56-71
+client/src/app/settings/[section]/layout.tsx
+  s_4edcee73555b9a::t_d2f703506fc319 2
+client/src/dev/showcase/Showcase.tsx
+  s_4edcee73555b9a::t_f86aecaadcf89f 40-43,49
+client/src/lib/hooks/intent.ts
+  s_4edcee73555b9a::t_7a4759a309370d 29-30
+client/src/vendor/shared/contracts/brief.ts
+  s_4edcee73555b9a::t_07b5b27ce1c792 23-27
+client/src/vendor/shared/contracts/review-api.ts
+  s_4edcee73555b9a::t_ff142a6689e4db 60-65
+client/src/vendor/ui/README.md
+  s_4edcee73555b9a::t_2b4065ba3a9ca7 13-15,18-22
+client/src/vendor/ui/charts/Donut.tsx
+  s_4edcee73555b9a::t_e70de2e2d57765 2-3
+client/src/vendor/ui/charts/LineChart.tsx
+  s_4edcee73555b9a::t_806f2ed7650538 2-3
+client/src/vendor/ui/index.ts
+  s_4edcee73555b9a::t_e6b4dd270b8319 7-9
+server/src/modules/intent/helpers.ts
+  s_4edcee73555b9a::t_71f843b3240515 24-25,28
+server/src/modules/intent/repository.ts
+  s_4edcee73555b9a::t_fd18f62abcab28 28-33
+server/src/vendor/shared/contracts/brief.ts
+  s_4edcee73555b9a::t_141d80064a4902 23-27
+server/src/vendor/shared/contracts/review-api.ts
+  s_4edcee73555b9a::t_e29a561e4bd64f 60-65
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "f5653840b351cccfa262cad5ef535d4a9f7f110a",
+  "prompts": {},
+  "sessions": {
+    "s_34c5ede4c63404": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52df70e6-7504-4766-a02e-d120216a5cd3",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    },
+    "s_4edcee73555b9a": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "42346640-21f9-4791-8bb1-752c504f6cf7",
+        "model": "default"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
