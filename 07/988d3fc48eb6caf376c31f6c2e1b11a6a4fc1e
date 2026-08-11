@@ -1,0 +1,35 @@
+server/INSIGHTS.md
+  s_4edcee73555b9a::t_d8f56ebe5fc59d 30
+server/src/vendor/shared/contracts/platform.ts
+  s_71632c9e1dda4e::t_ad188cd3f49c7e 56-59
+client/src/lib/feature-models.ts
+  s_4edcee73555b9a::t_1bf603b78e96b6 29-32
+client/src/vendor/shared/contracts/platform.ts
+  s_4edcee73555b9a::t_bd94808e8aba1f 56-59
+docs/plans/intent-layer.md
+  s_4edcee73555b9a::t_59e2ba94d243ff 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "07988d3fc48eb6caf376c31f6c2e1b11a6a4fc1e",
+  "prompts": {},
+  "sessions": {
+    "s_4edcee73555b9a": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "42346640-21f9-4791-8bb1-752c504f6cf7",
+        "model": "default"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    },
+    "s_71632c9e1dda4e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ff4063e-27ab-434b-85cc-cd2ff942f78d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
