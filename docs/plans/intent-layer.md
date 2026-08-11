@@ -3,7 +3,7 @@
 Derive, cache, and display PR intent from title/body/ticket/plan-spec signals;
 inject it into review prompts as untrusted context with a fixed out-of-scope
 CRITICAL policy. Cheap model via Settings `review_intent` (default
-`openai` / `gpt-4o-mini`).
+`openrouter` / `deepseek/deepseek-v4-flash`, same as seeded agents).
 
 ## End-to-end flow
 
