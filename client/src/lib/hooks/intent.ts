@@ -26,6 +26,8 @@ export function useEnsureIntent(prId: string | null | undefined) {
       qc.setQueryData(["pr-intent", prId], {
         pr_id: data.pr_id,
         ...data.intent,
+        model: data.model,
+        computed_at: data.computed_at,
       } satisfies PrIntentRecord);
       qc.invalidateQueries({ queryKey: ["pr-intent", prId] });
     },

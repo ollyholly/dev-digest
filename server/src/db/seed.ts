@@ -233,13 +233,27 @@ export async function seed(db: Db): Promise<{ workspaceId: string; userId: strin
         synthesis_mode: 'author_stated',
         risk_areas: ['api', 'abuse', 'middleware'],
         sources: [
-          { kind: 'title', ref: seedTitle },
-          ...(seedBody.trim() ? [{ kind: 'description' as const, ref: 'body' }] : []),
+          { kind: 'title', ref: seedTitle, fetched_ok: null },
+          ...(seedBody.trim()
+            ? [{ kind: 'description' as const, ref: 'body', fetched_ok: null }]
+            : []),
           ...(seedPaths.length > 0
-            ? [{ kind: 'file_paths' as const, ref: `${seedPaths.length} paths` }]
+            ? [
+                {
+                  kind: 'file_paths' as const,
+                  ref: `${seedPaths.length} paths`,
+                  fetched_ok: null,
+                },
+              ]
             : []),
           ...(seedCommits.length > 0
-            ? [{ kind: 'commit_messages' as const, ref: `${seedCommits.length} commits` }]
+            ? [
+                {
+                  kind: 'commit_messages' as const,
+                  ref: `${seedCommits.length} commits`,
+                  fetched_ok: null,
+                },
+              ]
             : []),
         ],
         missing_inputs: [],

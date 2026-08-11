@@ -36,6 +36,8 @@ export function OverviewTab({ prId, prBody }: OverviewTabProps) {
       }
     : undefined);
 
+  const model = ensure.data?.model ?? cached.data?.model ?? null;
+
   const errMsg =
     ensure.error instanceof ApiError
       ? ensure.error.message
@@ -47,6 +49,7 @@ export function OverviewTab({ prId, prBody }: OverviewTabProps) {
     <>
       <IntentCard
         intent={intent}
+        model={model}
         loading={ensure.isPending && !intent}
         error={errMsg}
         regenerating={ensure.isPending && !!intent}

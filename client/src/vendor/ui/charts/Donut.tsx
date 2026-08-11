@@ -1,4 +1,6 @@
 /* Donut — ring chart with a legend, on Recharts. */
+"use client";
+
 import React from "react";
 import { PieChart, Pie, Cell } from "recharts";
 

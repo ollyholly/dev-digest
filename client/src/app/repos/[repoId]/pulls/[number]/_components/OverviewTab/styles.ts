@@ -53,6 +53,22 @@ export const s = {
     color: "var(--text-muted)",
   } satisfies CSSProperties,
 
+  intentModel: {
+    fontSize: 11,
+    fontFamily: "var(--font-mono, ui-monospace, monospace)",
+    color: "var(--text-muted)",
+  } satisfies CSSProperties,
+
+  intentSourceKind: {
+    fontFamily: "var(--font-mono, ui-monospace, monospace)",
+    fontSize: 12,
+    color: "var(--text-muted)",
+  } satisfies CSSProperties,
+
+  intentSourceRef: {
+    wordBreak: "break-all" as const,
+  } satisfies CSSProperties,
+
   intentSummary: {
     margin: 0,
     fontSize: 14,

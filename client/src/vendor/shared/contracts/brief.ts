@@ -20,8 +20,11 @@ export type IntentSourceKind = z.infer<typeof IntentSourceKind>;
 export const IntentSource = z.object({
   kind: IntentSourceKind,
   ref: z.string(),
-  /** Set when a URL/file fetch was attempted; omit for local signals. */
-  fetched_ok: z.boolean().optional(),
+  /**
+   * Fetch result when a URL/file was attempted; null for local-only signals.
+   * Nullable (not optional) so OpenAI/OpenRouter strict JSON Schema accepts it.
+   */
+  fetched_ok: z.boolean().nullable(),
 });
 export type IntentSource = z.infer<typeof IntentSource>;
 

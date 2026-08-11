@@ -11,6 +11,7 @@
 ## Tool & Library Notes
 
 ## Recurring Errors & Fixes
+- 2026-08-11: IntentCard “## Plan” / “Touch …path” / “Commit: …” with `missing_inputs: ["llm"]` is the **offline heuristic**, not the model — usually because `review_intent` resolved to a provider without a key (stale OpenAI default before openrouter flip) and Regenerate silently rewrote the same heuristic. Plan URLs can still show `fetched_ok: true` while never reaching the LLM. Fix: default openrouter + Regenerate throws `ConfigError` when the key is missing (no overwrite of good LLM intent); IntentCard now shows model / sources / missing inputs.
 - 2026-08-05: Conventions empty-state (“No conventions extracted yet”) with a non-zero Proposed scan summary means the extract response’s verified set was empty — only grounded rows are persisted. Create skill stays disabled until `accepted.length > 0`. Prefer diagnosing server grounding (path/snippet mismatch) over treating the empty UI as a client bug.
 
 - 2026-08-05: The checked-in conventions list endpoint currently returns `ConventionCandidate[]` (`server/src/modules/conventions/service.ts:132-135`), while extraction and the advertised GET contract use `ConventionExtractionResult`. `client/src/lib/hooks/conventions.ts` intentionally accepts both shapes, and `ConventionsView` renders scan metrics only for the full result — do not fabricate missing proposed/verified/dropped counts or remove compatibility until the list API is aligned.

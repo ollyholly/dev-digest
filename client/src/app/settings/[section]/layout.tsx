@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SETTINGS_SECTIONS } from "@devdigest/ui";
+import { SETTINGS_SECTIONS } from "@devdigest/ui/nav";
 
 export async function generateMetadata({
   params,

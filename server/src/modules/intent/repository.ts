@@ -25,7 +25,12 @@ function rowToIntent(row: PrIntentRow): Intent {
 }
 
 export function rowToPrIntentRecord(row: PrIntentRow): PrIntentRecord {
-  return { pr_id: row.prId, ...rowToIntent(row) };
+  return {
+    pr_id: row.prId,
+    ...rowToIntent(row),
+    ...(row.model ? { model: row.model } : {}),
+    ...(row.computedAt ? { computed_at: row.computedAt.toISOString() } : {}),
+  };
 }
 
 /**

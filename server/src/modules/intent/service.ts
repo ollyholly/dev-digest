@@ -107,28 +107,40 @@ export class IntentService {
     });
 
     const localSources: IntentSource[] = [
-      { kind: 'title', ref: pull.title },
-      ...(hasBody ? [{ kind: 'description' as const, ref: 'body' }] : []),
-      ...(paths.length > 0 ? [{ kind: 'file_paths' as const, ref: `${paths.length} paths` }] : []),
+      { kind: 'title', ref: pull.title, fetched_ok: null },
+      ...(hasBody ? [{ kind: 'description' as const, ref: 'body', fetched_ok: null }] : []),
+      ...(paths.length > 0
+        ? [{ kind: 'file_paths' as const, ref: `${paths.length} paths`, fetched_ok: null }]
+        : []),
       ...(commitSubjects.length > 0
-        ? [{ kind: 'commit_messages' as const, ref: `${commitSubjects.length} commits` }]
+        ? [
+            {
+              kind: 'commit_messages' as const,
+              ref: `${commitSubjects.length} commits`,
+              fetched_ok: null,
+            },
+          ]
         : []),
     ];
     const fetchedSources = contents.map((c) => c.source);
     const sources: IntentSource[] = [...localSources, ...fetchedSources];
 
     const choice = await resolveFeatureModel(this.container, workspaceId, 'review_intent');
+    logger?.info(
+      { prId, provider: choice.provider, model: choice.model, force },
+      'intent: resolved feature model',
+    );
 
     let llm;
     try {
       llm = await this.container.llm(choice.provider);
     } catch (err) {
-      // No provider key — prefer any stored row, else offline heuristic (seed/demo).
+      // Soft ensure may cache/heuristic; regenerate must not silently overwrite LLM intent.
       if (isMissingProviderKey(err)) {
-        if (existing && !force) {
-          return this.cachedResponse(prId, existing, logger, 'intent: cache hit (llm unavailable)');
-        }
-        return this.persistHeuristic({
+        return this.handleLlmUnavailable({
+          err,
+          force,
+          existing,
           prId,
           fingerprint,
           title: pull.title,
@@ -136,6 +148,7 @@ export class IntentService {
           paths,
           commitSubjects,
           sources,
+          choice,
           logger,
         });
       }
@@ -189,11 +202,11 @@ export class IntentService {
         maxRetries: 1,
       });
     } catch (err) {
-      if (isMissingProviderKey(err) || err instanceof ConfigError) {
-        if (existing && !force) {
-          return this.cachedResponse(prId, existing, logger, 'intent: cache hit (llm call failed)');
-        }
-        return this.persistHeuristic({
+      if (isMissingProviderKey(err)) {
+        return this.handleLlmUnavailable({
+          err,
+          force,
+          existing,
           prId,
           fingerprint,
           title: pull.title,
@@ -201,6 +214,7 @@ export class IntentService {
           paths,
           commitSubjects,
           sources,
+          choice,
           logger,
         });
       }
@@ -246,6 +260,57 @@ export class IntentService {
       computed_at: computedAt.toISOString(),
       intent,
     };
+  }
+
+  private handleLlmUnavailable(opts: {
+    err: unknown;
+    force: boolean;
+    existing: Awaited<ReturnType<IntentRepository['getByPrId']>>;
+    prId: string;
+    fingerprint: string;
+    title: string;
+    body: string;
+    paths: string[];
+    commitSubjects: string[];
+    sources: IntentSource[];
+    choice: { provider: string; model: string };
+    logger?: IntentLogger;
+  }): Promise<EnsureIntentResponse> {
+    const message = opts.err instanceof Error ? opts.err.message : String(opts.err);
+    opts.logger?.info(
+      {
+        prId: opts.prId,
+        provider: opts.choice.provider,
+        model: opts.choice.model,
+        force: opts.force,
+        err: message,
+      },
+      'intent: llm unavailable',
+    );
+
+    if (opts.force) {
+      // Surface to the UI instead of replacing good LLM intent with heuristic.
+      throw opts.err instanceof ConfigError
+        ? opts.err
+        : new ConfigError(message || 'Intent model API key is not configured');
+    }
+
+    if (opts.existing) {
+      return Promise.resolve(
+        this.cachedResponse(opts.prId, opts.existing, opts.logger, 'intent: cache hit (llm unavailable)'),
+      );
+    }
+
+    return this.persistHeuristic({
+      prId: opts.prId,
+      fingerprint: opts.fingerprint,
+      title: opts.title,
+      body: opts.body,
+      paths: opts.paths,
+      commitSubjects: opts.commitSubjects,
+      sources: opts.sources,
+      logger: opts.logger,
+    });
   }
 
   private cachedResponse(
@@ -344,11 +409,11 @@ function mergeSources(primary: IntentSource[], fromModel: IntentSource[]): Inten
       byKey.set(key, s);
       continue;
     }
-    // Keep fetched_ok from primary when present.
+    // Keep fetched_ok from primary when present (including null).
     byKey.set(key, {
       ...prev,
       ...s,
-      ...(prev.fetched_ok !== undefined ? { fetched_ok: prev.fetched_ok } : {}),
+      fetched_ok: prev.fetched_ok !== undefined ? prev.fetched_ok : s.fetched_ok,
     });
   }
   return [...byKey.values()];

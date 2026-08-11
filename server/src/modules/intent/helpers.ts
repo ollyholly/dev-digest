@@ -21,11 +21,11 @@ export function gatherCommitSubjects(messages: string[]): string[] {
 }
 
 /**
- * Linked issue number from PR body — same regex family as Octokit adapter
- * (`closes|fixes|resolves #N` / bare `#N`).
+ * Linked issue number from PR body — require an explicit link keyword so prose
+ * like “seeded PR #482” does not become a false linked_issue signal.
  */
 export function extractLinkedIssueNumber(body: string): number | undefined {
-  const m = body.match(/(?:closes|fixes|resolves)?\s*#(\d+)/i);
+  const m = body.match(/(?:closes|fixes|resolves)\s*:?\s*#(\d+)/i);
   if (!m?.[1]) return undefined;
   return Number(m[1]);
 }

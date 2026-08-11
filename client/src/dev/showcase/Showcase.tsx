@@ -37,14 +37,16 @@ import {
   SelectInput,
   Textarea,
   Checkbox,
+  LiveLogStream,
+  ExportWizardSteps,
+} from "@devdigest/ui";
+import {
   Sparkline,
   LineChart,
   Donut,
   BarRow,
   MetricCard,
-  LiveLogStream,
-  ExportWizardSteps,
-} from "@devdigest/ui";
+} from "@devdigest/ui/charts";
 import { AutoTriggerStatus } from "@/components/auto-trigger-status";
 import { s } from "./styles";
 import { SEVERITIES, CATEGORIES, MODEL_OPTIONS } from "./constants";
