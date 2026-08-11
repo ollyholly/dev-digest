@@ -35,6 +35,8 @@ import { type DepGraph, DepCruiseGraph } from '../adapters/depgraph/index.js';
 import { TiktokenTokenizer } from '../adapters/tokenizer/index.js';
 import type { CommunityCatalog } from '../adapters/community/types.js';
 import { StaticCommunityCatalog } from '../adapters/community/static-list.js';
+import type { HttpClient } from '../adapters/http/types.js';
+import { SafeHttpClient } from '../adapters/http/safe-fetch.js';
 
 /**
  * DI container. One per app instance. Holds config, db, the JobRunner,
@@ -58,6 +60,8 @@ export interface ContainerOverrides {
   depgraph?: DepGraph;
   tokenizer?: Tokenizer;
   communityCatalog?: CommunityCatalog;
+  /** Outbound HTTP (plan/spec URL fetch). Tests inject a no-network mock. */
+  http?: HttpClient;
 }
 
 export class Container {
@@ -89,6 +93,7 @@ export class Container {
   private _repoIntel?: RepoIntel;
   private _depgraph?: DepGraph;
   private _tokenizer?: Tokenizer;
+  private _http?: HttpClient;
   private _priceBook?: PriceBook;
   private _communityCatalog?: CommunityCatalog;
 
@@ -166,6 +171,17 @@ export class Container {
     if (this.overrides.tokenizer) return this.overrides.tokenizer;
     this._tokenizer ??= new TiktokenTokenizer();
     return this._tokenizer;
+  }
+
+  /**
+   * Outbound HTTP for allowlisted URL fetches (intent plan/spec links).
+   * SSRF policy lives in SafeHttpClient — feature modules must not call
+   * global `fetch`.
+   */
+  get http(): HttpClient {
+    if (this.overrides.http) return this.overrides.http;
+    this._http ??= new SafeHttpClient();
+    return this._http;
   }
 
   /**

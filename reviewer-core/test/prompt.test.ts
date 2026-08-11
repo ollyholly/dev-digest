@@ -63,4 +63,18 @@ describe('assemblePrompt — ## PR description', () => {
     });
     expect((assembly.pr_description as string).length).toBe(4000);
   });
+
+  it('returns safe section length metadata without bodies', () => {
+    const { log } = assemblePrompt({
+      system: 'sys',
+      diff: 'SECRET_DIFF_BODY',
+      prDescription: 'private description text',
+    });
+    const serialized = JSON.stringify(log);
+    expect(serialized).not.toContain('SECRET_DIFF_BODY');
+    expect(serialized).not.toContain('private description text');
+    expect(log.sections.some((s) => s.source === 'diff' && s.chars > 0)).toBe(true);
+    expect(log.sections.some((s) => s.source === 'pr_description')).toBe(true);
+    expect(log.approx_tokens).toBeGreaterThan(0);
+  });
 });

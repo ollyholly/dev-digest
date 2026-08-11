@@ -1,6 +1,6 @@
 {
-  "id": "5b034ea8-91b9-459a-9a35-1f5e0db46be7",
-  "prevId": "af76500a-2083-43ef-a13b-86fd4cd5823f",
+  "id": "f23faabc-2a95-4943-87ec-40796fedcf0b",
+  "prevId": "5b034ea8-91b9-459a-9a35-1f5e0db46be7",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -899,6 +899,59 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'[]'::jsonb"
+        },
+        "confidence": {
+          "name": "confidence",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "synthesis_mode": {
+          "name": "synthesis_mode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'inferred_from_signals'"
+        },
+        "risk_areas": {
+          "name": "risk_areas",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
+        "sources": {
+          "name": "sources",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
+        "missing_inputs": {
+          "name": "missing_inputs",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
+        "input_fingerprint": {
+          "name": "input_fingerprint",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "model": {
+          "name": "model",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "computed_at": {
+          "name": "computed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},

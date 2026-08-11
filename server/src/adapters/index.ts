@@ -1,4 +1,3 @@
-/** Adapter barrel — real + mock implementations behind the adapter interfaces. */
 export { LocalSecretsProvider } from './secrets/local.js';
 export { LocalNoAuthProvider } from './auth/local.js';
 export { OpenAIProvider } from './llm/openai.js';
@@ -9,4 +8,6 @@ export { SimpleGitClient } from './git/simple-git.js';
 export { parseUnifiedDiff } from './git/diff-parser.js';
 export { RipgrepCodeIndex } from './codeindex/ripgrep.js';
 export { estimateCost } from './llm/pricing.js';
+export { SafeHttpClient, isPrivateOrBlockedIp } from './http/index.js';
+export type { HttpClient, HttpGetOptions, HttpGetResult } from './http/index.js';
 export * from './mocks.js';

@@ -5,6 +5,16 @@
     "risks": "Risks",
     "history": "PR history"
   },
+  "intentCard": {
+    "title": "Intent",
+    "inScope": "In scope",
+    "outOfScope": "Out of scope",
+    "riskAreas": "Risk areas",
+    "regenerate": "Regenerate",
+    "regenerating": "Regenerating…",
+    "deriving": "Deriving PR intent…",
+    "failed": "Could not derive intent: {message}"
+  },
   "noRisks": "No notable risks flagged.",
   "noHistory": "No prior PRs overlap these files.",
   "overlap": "{count} overlap",

@@ -6,6 +6,8 @@
 
 ## Codebase Patterns
 
+- 2026-08-11: Overview IntentCard auto-ensures via `POST /pulls/:id/intent` `{force:false}` on mount (`useEnsureIntent`); Regenerate uses `{force:true}`. Prefer mutation result over GET cache (GET 404s until first ensure/seed).
+
 ## Tool & Library Notes
 
 ## Recurring Errors & Fixes

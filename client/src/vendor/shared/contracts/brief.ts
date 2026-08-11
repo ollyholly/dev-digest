@@ -6,10 +6,41 @@ import { z } from 'zod';
  */
 
 // ---- Intent ----
+export const IntentSourceKind = z.enum([
+  'title',
+  'description',
+  'linked_issue',
+  'plan_url',
+  'spec_url',
+  'file_paths',
+  'commit_messages',
+]);
+export type IntentSourceKind = z.infer<typeof IntentSourceKind>;
+
+export const IntentSource = z.object({
+  kind: IntentSourceKind,
+  ref: z.string(),
+  /** Set when a URL/file fetch was attempted; omit for local signals. */
+  fetched_ok: z.boolean().optional(),
+});
+export type IntentSource = z.infer<typeof IntentSource>;
+
+export const SynthesisMode = z.enum([
+  'author_stated',
+  'ticket_grounded',
+  'inferred_from_signals',
+]);
+export type SynthesisMode = z.infer<typeof SynthesisMode>;
+
 export const Intent = z.object({
   intent: z.string(),
   in_scope: z.array(z.string()),
   out_of_scope: z.array(z.string()),
+  confidence: z.number().min(0).max(1),
+  synthesis_mode: SynthesisMode,
+  risk_areas: z.array(z.string().max(32)).max(8),
+  sources: z.array(IntentSource),
+  missing_inputs: z.array(z.string()),
 });
 export type Intent = z.infer<typeof Intent>;
 

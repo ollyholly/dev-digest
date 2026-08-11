@@ -23,6 +23,8 @@ import { SkillsRepository } from '../modules/skills/repository.js';
 import { SkillsService } from '../modules/skills/service.js';
 import { AgentsRepository } from '../modules/agents/repository.js';
 import { StaticCommunityCatalog } from '../adapters/community/static-list.js';
+import { computeIntentFingerprint } from '../modules/intent/fingerprint.js';
+import { IntentRepository } from '../modules/intent/repository.js';
 
 /** Default provider/model for the built-in reviewer agents. */
 const DEFAULT_PROVIDER = 'openrouter' as const;
@@ -191,6 +193,56 @@ export async function seed(db: Db): Promise<{ workspaceId: string; userId: strin
         confidence: 0.86,
       },
     ]);
+  }
+
+  // Seed PR intent for #482 (idempotent upsert — works on re-seed too).
+  {
+    const seedTitle = 'Add rate limiting to public API endpoints';
+    const seedBody =
+      'Add rate limiting to public API endpoints to prevent abuse from unauthenticated clients.';
+    const seedPaths = [
+      'src/middleware/ratelimit.ts',
+      'src/api/public/webhooks.ts',
+      'src/config.ts',
+      'src/api/users.ts',
+    ];
+    const seedCommits = ['Add token-bucket rate limiter'];
+    const fingerprint = computeIntentFingerprint({
+      title: seedTitle,
+      body: seedBody,
+      issueKey: '',
+      urls: [],
+      paths: seedPaths,
+      commits: seedCommits,
+    });
+    const intents = new IntentRepository(db);
+    await intents.upsert(
+      pr!.id,
+      {
+        intent:
+          'Add token-bucket rate limiting on public API endpoints to curb abuse from unauthenticated clients.',
+        in_scope: [
+          'Public API middleware rate limiter',
+          'Apply limits to unauthenticated webhook/public routes',
+          'Config knobs for bucket size / refill',
+        ],
+        out_of_scope: [
+          'Authenticated session auth redesign',
+          'Billing / quota product features',
+        ],
+        confidence: 0.82,
+        synthesis_mode: 'author_stated',
+        risk_areas: ['api', 'abuse', 'middleware'],
+        sources: [
+          { kind: 'title', ref: seedTitle },
+          { kind: 'description', ref: 'body' },
+          { kind: 'file_paths', ref: `${seedPaths.length} paths` },
+          { kind: 'commit_messages', ref: '1 commits' },
+        ],
+        missing_inputs: [],
+      },
+      { inputFingerprint: fingerprint, model: 'seed', computedAt: new Date() },
+    );
   }
 
   // ---- built-in agents (the three starter presets) ----

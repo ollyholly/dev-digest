@@ -1,5 +1,6 @@
 import type {
   Finding,
+  Intent,
   LLMProvider,
   PromptAssembly,
   Review,
@@ -9,6 +10,7 @@ import type {
 } from '@devdigest/shared';
 import { Review as ReviewSchema } from '@devdigest/shared';
 import { assemblePrompt } from '../prompt.js';
+import type { PromptAssemblyLog } from '../prompt.js';
 import { groundFindings, groundingSummary } from '../grounding.js';
 import { reduceReviews, scoreFromFindings, sliceDiff } from './reduce.js';
 
@@ -71,6 +73,8 @@ export interface ReviewInput {
   /** PR author's description/body (untrusted; truncated + delimiter-wrapped in
       the prompt). Empty/undefined → section omitted. */
   prDescription?: string;
+  /** Derived PR intent (untrusted). Empty/undefined → section omitted. */
+  intent?: Intent;
   /** Task framing line, e.g. "Review PR #482 …". */
   task?: string;
   /** Override the structured-output retry budget. */
@@ -82,6 +86,11 @@ export interface ReviewInput {
    * review group into one session in the OpenRouter dashboard.
    */
   sessionId?: string;
+  /**
+   * Correlation id for safe prompt-assembly logs (typically the agent run id).
+   * Emitted with section length metadata — never with prompt bodies.
+   */
+  correlationId?: string;
   /** Progress sink. */
   onEvent?: (e: ReviewEvent) => void;
   /**
@@ -103,6 +112,8 @@ export interface ReviewOutcome {
   mode: ReviewMode;
   /** Prompt assembly (for the run trace). Single-pass: the one call; map-reduce: the whole-diff assembly. */
   assembly: PromptAssembly;
+  /** Safe section length metadata from the primary assembly (for ops logs). */
+  promptLog: PromptAssemblyLog;
   /** Per-chunk labels (for the run trace's tool_calls). */
   chunks: { label: string }[];
   tokensIn: number;
@@ -135,11 +146,14 @@ export async function reviewPullRequest(input: ReviewInput): Promise<ReviewOutco
     callers: input.callers,
     repoMap: input.repoMap,
     prDescription: input.prDescription,
+    intent: input.intent,
     task: input.task,
   };
 
   // Whole-diff assembly is the trace default; overwritten below for single-pass.
-  let assembly: PromptAssembly = assemblePrompt({ ...promptParts, diff: input.diff.raw }).assembly;
+  const whole = assemblePrompt({ ...promptParts, diff: input.diff.raw });
+  let assembly: PromptAssembly = whole.assembly;
+  let promptLog: PromptAssemblyLog = whole.log;
 
   const chunks =
     mode === 'map-reduce'
@@ -152,6 +166,15 @@ export async function reviewPullRequest(input: ReviewInput): Promise<ReviewOutco
       ? `Large diff → map-reduce over ${input.diff.files.length} files`
       : `Reviewing ${input.diff.files.length} changed file(s) in one pass`,
   );
+
+  // Safe prompt metadata only (section names + lengths). Never emit bodies.
+  emit('info', 'Prompt assembly summary', {
+    event: 'prompt_assembly',
+    correlation_id: input.correlationId ?? input.sessionId ?? null,
+    model: input.model,
+    chunk: 'whole-diff',
+    ...promptLog,
+  });
 
   const partials: Review[] = [];
   let tokensIn = 0;
@@ -170,7 +193,18 @@ export async function reviewPullRequest(input: ReviewInput): Promise<ReviewOutco
       { file: chunk.label },
     );
     const a = assemblePrompt({ ...promptParts, diff: chunk.diffText });
-    if (mode === 'single-pass') assembly = a.assembly;
+    if (mode === 'single-pass') {
+      assembly = a.assembly;
+      promptLog = a.log;
+    } else if (mode === 'map-reduce') {
+      emit('info', 'Prompt assembly summary', {
+        event: 'prompt_assembly',
+        correlation_id: input.correlationId ?? input.sessionId ?? null,
+        model: input.model,
+        chunk: chunk.label,
+        ...a.log,
+      });
+    }
     const res = await input.llm.completeStructured<Review>({
       model: input.model,
       schema: ReviewSchema,
@@ -210,6 +244,7 @@ export async function reviewPullRequest(input: ReviewInput): Promise<ReviewOutco
     dropped: ground.dropped,
     mode,
     assembly,
+    promptLog,
     chunks: chunks.map((c) => ({ label: c.label })),
     tokensIn,
     tokensOut,

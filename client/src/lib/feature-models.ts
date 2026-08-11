@@ -8,7 +8,11 @@ import type { FeatureModelDef } from "./types";
  * a runtime VALUE pulls `vendor/shared/index.ts` into the webpack bundle, whose
  * `./contracts/*.js` re-exports Next's webpack can't resolve. So we mirror the
  * registry here (same pattern as the vendored `vendor/shared` / `vendor/ui`).
- * Keep this in sync with the shared registry.
+ *
+ * Keep this in sync with:
+ *   - server/src/vendor/shared/contracts/platform.ts FEATURE_MODELS
+ *   - client/src/vendor/shared/contracts/platform.ts FEATURE_MODELS
+ * (Intent Layer / any feature-model default change must update all three.)
  */
 export const FEATURE_MODELS: FeatureModelDef[] = [
   {
@@ -23,7 +27,7 @@ export const FEATURE_MODELS: FeatureModelDef[] = [
     label: "PR Review · Intent",
     description: "Derives a PR’s intent and scope before review.",
     defaultProvider: "openai",
-    defaultModel: "gpt-4.1",
+    defaultModel: "gpt-4o-mini",
   },
   {
     id: "risk_brief",
