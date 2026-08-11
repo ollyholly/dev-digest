@@ -92,7 +92,7 @@ Edit **both** `server/src/vendor/shared` and `client/src/vendor/shared`.
 
 - `GET /pulls/:id/intent` → `PrIntentRecord` or 404
 - `POST /pulls/:id/intent` `{ force?: boolean }` →
-  `{ pr_id, status: 'cached'|'computed', model, computed_at, intent }`
+  `{ pr_id, status: 'cached'|'llm'|'heuristic', model, computed_at, intent }`
 
 HTTP fetch allowlist: `github.com`, `raw.githubusercontent.com`,
 `gist.githubusercontent.com`; resolve DNS and reject private/link-local IPs;

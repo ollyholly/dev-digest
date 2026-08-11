@@ -26,12 +26,47 @@ function safeRepoRelativePath(rel: string): string | null {
   return cleaned;
 }
 
+async function fetchOneUrl(
+  container: Container,
+  repo: RepoRef,
+  u: ExtractedUrl,
+): Promise<FetchedSourceContent> {
+  const kind = u.kind;
+  if (u.repoPath) {
+    const safe = safeRepoRelativePath(u.repoPath);
+    if (!safe) {
+      return { source: { kind, ref: u.repoPath, fetched_ok: false } };
+    }
+    try {
+      const text = await container.git.readFile(repo, safe);
+      return {
+        source: { kind, ref: safe, fetched_ok: true },
+        text: text.slice(0, FETCH_MAX_BYTES),
+      };
+    } catch {
+      return { source: { kind, ref: safe, fetched_ok: false } };
+    }
+  }
+
+  const result = await container.http.getText(u.url, {
+    timeoutMs: FETCH_TIMEOUT_MS,
+    maxBytes: FETCH_MAX_BYTES,
+    allowedHosts: INTENT_HTTP_ALLOWED_HOSTS,
+    blockPrivateIps: true,
+  });
+  return {
+    source: { kind, ref: u.url, fetched_ok: result.ok },
+    ...(result.text !== undefined ? { text: result.text } : {}),
+  };
+}
+
 /**
  * Fetch linked issue + plan/spec sources. Best-effort; each source gets
  * `fetched_ok` when a network/fs attempt was made.
  *
  * HTTP goes through `container.http` (SafeHttpClient) — allowlist, DNS
- * private-IP check, 5s timeout, 64 KiB streamed cap.
+ * private-IP check, 5s timeout, 64 KiB streamed cap. Plan/spec URLs are
+ * fetched in parallel after the linked-issue attempt.
  */
 export async function fetchIntentSources(opts: {
   container: Container;
@@ -56,38 +91,10 @@ export async function fetchIntentSources(opts: {
     }
   }
 
-  for (const u of opts.urls) {
-    const kind = u.kind;
-    if (u.repoPath) {
-      const safe = safeRepoRelativePath(u.repoPath);
-      if (!safe) {
-        contents.push({ source: { kind, ref: u.repoPath, fetched_ok: false } });
-        continue;
-      }
-      try {
-        const text = await opts.container.git.readFile(opts.repo, safe);
-        const truncated = text.slice(0, FETCH_MAX_BYTES);
-        contents.push({
-          source: { kind, ref: safe, fetched_ok: true },
-          text: truncated,
-        });
-      } catch {
-        contents.push({ source: { kind, ref: safe, fetched_ok: false } });
-      }
-      continue;
-    }
-
-    const result = await opts.container.http.getText(u.url, {
-      timeoutMs: FETCH_TIMEOUT_MS,
-      maxBytes: FETCH_MAX_BYTES,
-      allowedHosts: INTENT_HTTP_ALLOWED_HOSTS,
-      blockPrivateIps: true,
-    });
-    contents.push({
-      source: { kind, ref: u.url, fetched_ok: result.ok },
-      ...(result.text !== undefined ? { text: result.text } : {}),
-    });
-  }
+  const urlResults = await Promise.all(
+    opts.urls.map((u) => fetchOneUrl(opts.container, opts.repo, u)),
+  );
+  contents.push(...urlResults);
 
   return { issue, contents };
 }

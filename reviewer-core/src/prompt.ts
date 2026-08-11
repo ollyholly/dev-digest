@@ -203,29 +203,83 @@ export function assemblePrompt(parts: PromptParts): AssembledPrompt {
 
   const intentText = parts.intent ? formatIntentForPrompt(parts.intent) : undefined;
 
-  const userSections: string[] = [];
-  if (parts.task) userSections.push(parts.task);
+  type UserSection = {
+    section: string;
+    source: PromptSectionSource;
+    /** Length logged (raw content — not delimiter wrappers). */
+    rawChars: number;
+    /** Full chunk appended to the user message. */
+    chunk: string;
+  };
+
+  const userSections: UserSection[] = [];
+  if (parts.task) {
+    userSections.push({ section: 'task', source: 'task', rawChars: parts.task.length, chunk: parts.task });
+  }
   if (prDescription) {
-    userSections.push(`## PR description\n${wrapUntrusted('pr-description', prDescription)}`);
+    userSections.push({
+      section: 'PR description',
+      source: 'pr_description',
+      rawChars: prDescription.length,
+      chunk: `## PR description\n${wrapUntrusted('pr-description', prDescription)}`,
+    });
   }
   if (intentText) {
-    userSections.push(`## Derived PR intent\n${wrapUntrusted('pr-intent', intentText)}`);
+    userSections.push({
+      section: 'Derived PR intent',
+      source: 'pr_intent',
+      rawChars: intentText.length,
+      chunk: `## Derived PR intent\n${wrapUntrusted('pr-intent', intentText)}`,
+    });
   }
-  if (skillsBlock) userSections.push(`## Skills / rules\n${skillsBlock}`);
-  if (memoryBlock) userSections.push(`## Relevant memory\n${memoryBlock}`);
+  if (skillsBlock) {
+    userSections.push({
+      section: 'Skills / rules',
+      source: 'skills',
+      rawChars: skillsBlock.length,
+      chunk: `## Skills / rules\n${skillsBlock}`,
+    });
+  }
+  if (memoryBlock) {
+    userSections.push({
+      section: 'Relevant memory',
+      source: 'memory',
+      rawChars: memoryBlock.length,
+      chunk: `## Relevant memory\n${memoryBlock}`,
+    });
+  }
   if (parts.repoMap && parts.repoMap.trim().length > 0) {
-    userSections.push(`## Repo skeleton\n${wrapUntrusted('repo-map', parts.repoMap)}`);
+    userSections.push({
+      section: 'Repo skeleton',
+      source: 'repo_map',
+      rawChars: parts.repoMap.length,
+      chunk: `## Repo skeleton\n${wrapUntrusted('repo-map', parts.repoMap)}`,
+    });
   }
-  if (specsBlock) userSections.push(`## Project context\n${specsBlock}`);
+  if (specsBlock) {
+    userSections.push({
+      section: 'Project context',
+      source: 'specs',
+      rawChars: specsBlock.length,
+      chunk: `## Project context\n${specsBlock}`,
+    });
+  }
   if (parts.callers && parts.callers.trim().length > 0) {
-    userSections.push(
-      `## Callers of changed symbols\n${wrapUntrusted('callers', parts.callers)}`,
-    );
+    userSections.push({
+      section: 'Callers of changed symbols',
+      source: 'callers',
+      rawChars: parts.callers.length,
+      chunk: `## Callers of changed symbols\n${wrapUntrusted('callers', parts.callers)}`,
+    });
   }
-  const diffBlock = `## Diff to review\n${wrapUntrusted('diff', parts.diff)}`;
-  userSections.push(diffBlock);
+  userSections.push({
+    section: 'Diff to review',
+    source: 'diff',
+    rawChars: parts.diff.length,
+    chunk: `## Diff to review\n${wrapUntrusted('diff', parts.diff)}`,
+  });
 
-  const user = userSections.join('\n\n');
+  const user = userSections.map((s) => s.chunk).join('\n\n');
 
   const messages: ChatMessage[] = [
     { role: 'system', content: system },
@@ -250,30 +304,13 @@ export function assemblePrompt(parts: PromptParts): AssembledPrompt {
     sectionStat('injection guard', 'injection_guard', INJECTION_GUARD.length),
   ];
   if (parts.intent) {
-    sections.push(sectionStat('intent scope policy', 'intent_scope_policy', INTENT_SCOPE_POLICY.length));
-  }
-  if (parts.task) sections.push(sectionStat('task', 'task', parts.task.length));
-  if (prDescription) {
-    sections.push(sectionStat('PR description', 'pr_description', prDescription.length));
-  }
-  if (intentText) {
-    sections.push(sectionStat('Derived PR intent', 'pr_intent', intentText.length));
-  }
-  if (skillsBlock) sections.push(sectionStat('Skills / rules', 'skills', skillsBlock.length));
-  if (memoryBlock) sections.push(sectionStat('Relevant memory', 'memory', memoryBlock.length));
-  if (parts.repoMap && parts.repoMap.trim().length > 0) {
-    sections.push(sectionStat('Repo skeleton', 'repo_map', parts.repoMap.length));
-  }
-  if (specsBlock) {
-    // Count only — do not expose spec text or filenames in ops logs.
     sections.push(
-      sectionStat('Project context', 'specs', specsBlock.length),
+      sectionStat('intent scope policy', 'intent_scope_policy', INTENT_SCOPE_POLICY.length),
     );
   }
-  if (parts.callers && parts.callers.trim().length > 0) {
-    sections.push(sectionStat('Callers of changed symbols', 'callers', parts.callers.length));
+  for (const s of userSections) {
+    sections.push(sectionStat(s.section, s.source, s.rawChars));
   }
-  sections.push(sectionStat('Diff to review', 'diff', parts.diff.length));
 
   const totalChars = system.length + user.length;
   const log: PromptAssemblyLog = {

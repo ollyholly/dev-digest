@@ -74,7 +74,7 @@ describe('AI contracts parse fixtures', () => {
         confidence: 0.8,
         synthesis_mode: 'author_stated',
         risk_areas: ['api'],
-        sources: [{ kind: 'title', ref: 'x' }],
+        sources: [{ kind: 'title', ref: 'x', fetched_ok: null }],
         missing_inputs: [],
       }),
     ).not.toThrow();

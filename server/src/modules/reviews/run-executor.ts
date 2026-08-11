@@ -111,18 +111,13 @@ export class ReviewRunExecutor {
 
     // Best-effort intent: shared pre-work for every agent. Failure → continue
     // without an intent section (do not fail the run).
-    let intent: Intent | undefined;
-    try {
-      const ensured = await runLog.step(
-        'Deriving PR intent',
-        () => new IntentService(this.container).ensureIntent(pull.id, workspaceId, false, logger),
-        { kind: 'tool' },
-      );
-      intent = ensured.intent;
-    } catch (err) {
-      const msg = (err as Error).message;
-      runLog.info(`Intent derivation skipped: ${msg}`);
-      logger?.warn({ prId: pull.id, err: msg }, 'review: intent ensure failed; continuing without intent');
+    const intent = await runLog.step(
+      'Deriving PR intent',
+      () => new IntentService(this.container).loadIntentBestEffort(pull.id, workspaceId, logger),
+      { kind: 'tool' },
+    );
+    if (!intent) {
+      runLog.info('Intent derivation skipped or empty; continuing without intent');
     }
 
     for (const { agent, runId } of jobs) {

@@ -68,7 +68,11 @@ export type PrIntentRecord = z.infer<typeof PrIntentRecord>;
 /** Response of POST /pulls/:id/intent (lazy ensure / regenerate). */
 export const EnsureIntentResponse = z.object({
   pr_id: z.string(),
-  status: z.enum(['cached', 'computed']),
+  /**
+   * `cached` = served existing row; `llm` = freshly model-derived;
+   * `heuristic` = freshly offline/fallback (never used for regenerate success).
+   */
+  status: z.enum(['cached', 'llm', 'heuristic']),
   model: z.string(),
   computed_at: z.string(),
   intent: Intent,

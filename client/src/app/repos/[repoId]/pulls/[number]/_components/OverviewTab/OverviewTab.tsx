@@ -2,7 +2,7 @@
 
 import React from "react";
 import { SectionLabel } from "@devdigest/ui";
-import { useEnsureIntent, usePrIntent } from "@/lib/hooks/intent";
+import { intentFromPrRecord, useEnsureIntent, usePrIntent } from "@/lib/hooks/intent";
 import { ApiError } from "@/lib/api";
 import { IntentCard } from "./_components/IntentCard";
 import { s } from "./styles";
@@ -23,19 +23,7 @@ export function OverviewTab({ prId, prBody }: OverviewTabProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [prId]);
 
-  const intent = ensure.data?.intent ?? (cached.data
-    ? {
-        intent: cached.data.intent,
-        in_scope: cached.data.in_scope,
-        out_of_scope: cached.data.out_of_scope,
-        confidence: cached.data.confidence,
-        synthesis_mode: cached.data.synthesis_mode,
-        risk_areas: cached.data.risk_areas,
-        sources: cached.data.sources,
-        missing_inputs: cached.data.missing_inputs,
-      }
-    : undefined);
-
+  const intent = ensure.data?.intent ?? (cached.data ? intentFromPrRecord(cached.data) : undefined);
   const model = ensure.data?.model ?? cached.data?.model ?? null;
 
   const errMsg =

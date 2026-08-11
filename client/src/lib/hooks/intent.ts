@@ -3,7 +3,21 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
-import type { EnsureIntentResponse, PrIntentRecord } from "@devdigest/shared";
+import type { EnsureIntentResponse, Intent, PrIntentRecord } from "@devdigest/shared";
+
+/** Strip persistence metadata from a cached / ensure record. */
+export function intentFromPrRecord(record: PrIntentRecord): Intent {
+  return {
+    intent: record.intent,
+    in_scope: record.in_scope,
+    out_of_scope: record.out_of_scope,
+    confidence: record.confidence,
+    synthesis_mode: record.synthesis_mode,
+    risk_areas: record.risk_areas,
+    sources: record.sources,
+    missing_inputs: record.missing_inputs,
+  };
+}
 
 export function usePrIntent(prId: string | null | undefined) {
   return useQuery({
