@@ -24,6 +24,7 @@ import { SkillsService } from '../modules/skills/service.js';
 import { AgentsRepository } from '../modules/agents/repository.js';
 import { StaticCommunityCatalog } from '../adapters/community/static-list.js';
 import { computeIntentFingerprint } from '../modules/intent/fingerprint.js';
+import { gatherCommitSubjects, gatherFilePaths } from '../modules/intent/helpers.js';
 import { IntentRepository } from '../modules/intent/repository.js';
 
 /** Default provider/model for the built-in reviewer agents. */
@@ -195,22 +196,20 @@ export async function seed(db: Db): Promise<{ workspaceId: string; userId: strin
     ]);
   }
 
-  // Seed PR intent for #482 (idempotent upsert — works on re-seed too).
+  // Seed PR intent for #482 (idempotent upsert — fingerprint from live DB rows
+  // so Overview ensure cache-hits without an LLM key).
   {
-    const seedTitle = 'Add rate limiting to public API endpoints';
-    const seedBody =
-      'Add rate limiting to public API endpoints to prevent abuse from unauthenticated clients.';
-    const seedPaths = [
-      'src/middleware/ratelimit.ts',
-      'src/api/public/webhooks.ts',
-      'src/config.ts',
-      'src/api/users.ts',
-    ];
-    const seedCommits = ['Add token-bucket rate limiter'];
+    const fileRows = await db.select().from(t.prFiles).where(eq(t.prFiles.prId, pr!.id));
+    const commitRows = await db.select().from(t.prCommits).where(eq(t.prCommits.prId, pr!.id));
+    const seedTitle = pr!.title;
+    const seedBody = pr!.body ?? '';
+    const seedPaths = gatherFilePaths(fileRows.map((f) => f.path));
+    const seedCommits = gatherCommitSubjects(commitRows.map((c) => c.message));
+    const issueKey = '';
     const fingerprint = computeIntentFingerprint({
       title: seedTitle,
       body: seedBody,
-      issueKey: '',
+      issueKey,
       urls: [],
       paths: seedPaths,
       commits: seedCommits,
@@ -235,9 +234,13 @@ export async function seed(db: Db): Promise<{ workspaceId: string; userId: strin
         risk_areas: ['api', 'abuse', 'middleware'],
         sources: [
           { kind: 'title', ref: seedTitle },
-          { kind: 'description', ref: 'body' },
-          { kind: 'file_paths', ref: `${seedPaths.length} paths` },
-          { kind: 'commit_messages', ref: '1 commits' },
+          ...(seedBody.trim() ? [{ kind: 'description' as const, ref: 'body' }] : []),
+          ...(seedPaths.length > 0
+            ? [{ kind: 'file_paths' as const, ref: `${seedPaths.length} paths` }]
+            : []),
+          ...(seedCommits.length > 0
+            ? [{ kind: 'commit_messages' as const, ref: `${seedCommits.length} commits` }]
+            : []),
         ],
         missing_inputs: [],
       },

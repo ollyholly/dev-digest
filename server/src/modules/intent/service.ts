@@ -6,12 +6,13 @@ import type {
 } from '@devdigest/shared';
 import { Intent as IntentSchema } from '@devdigest/shared';
 import type { Container } from '../../platform/container.js';
-import { NotFoundError } from '../../platform/errors.js';
+import { NotFoundError, ConfigError } from '../../platform/errors.js';
 import { resolveFeatureModel } from '../settings/feature-models.js';
 import { clampIntentConfidence } from './confidence.js';
 import { extractPlanSpecUrls } from './extract-urls.js';
 import { computeIntentFingerprint } from './fingerprint.js';
 import { fetchIntentSources } from './fetch-sources.js';
+import { buildHeuristicIntent } from './heuristic.js';
 import {
   extractLinkedIssueNumber,
   gatherCommitSubjects,
@@ -95,35 +96,7 @@ export class IntentService {
       existing.inputFingerprint === fingerprint &&
       existing.computedAt
     ) {
-      const intent = rowToPrIntentRecord(existing);
-      const model = existing.model ?? 'unknown';
-      const computedAt = existing.computedAt.toISOString();
-      logger?.info(
-        {
-          prId,
-          model,
-          confidence: intent.confidence,
-          cacheHit: true,
-          synthesis_mode: intent.synthesis_mode,
-        },
-        'intent: cache hit',
-      );
-      return {
-        pr_id: prId,
-        status: 'cached',
-        model,
-        computed_at: computedAt,
-        intent: {
-          intent: intent.intent,
-          in_scope: intent.in_scope,
-          out_of_scope: intent.out_of_scope,
-          confidence: intent.confidence,
-          synthesis_mode: intent.synthesis_mode,
-          risk_areas: intent.risk_areas,
-          sources: intent.sources,
-          missing_inputs: intent.missing_inputs,
-        },
-      };
+      return this.cachedResponse(prId, existing, logger, 'intent: cache hit');
     }
 
     const { issue, contents } = await fetchIntentSources({
@@ -145,7 +118,29 @@ export class IntentService {
     const sources: IntentSource[] = [...localSources, ...fetchedSources];
 
     const choice = await resolveFeatureModel(this.container, workspaceId, 'review_intent');
-    const llm = await this.container.llm(choice.provider);
+
+    let llm;
+    try {
+      llm = await this.container.llm(choice.provider);
+    } catch (err) {
+      // No provider key — prefer any stored row, else offline heuristic (seed/demo).
+      if (isMissingProviderKey(err)) {
+        if (existing && !force) {
+          return this.cachedResponse(prId, existing, logger, 'intent: cache hit (llm unavailable)');
+        }
+        return this.persistHeuristic({
+          prId,
+          fingerprint,
+          title: pull.title,
+          body,
+          paths,
+          commitSubjects,
+          sources,
+          logger,
+        });
+      }
+      throw err;
+    }
 
     const ticketBlock =
       issue && contents.find((c) => c.source.kind === 'linked_issue' && c.source.fetched_ok)
@@ -181,16 +176,36 @@ export class IntentService {
       .filter(Boolean)
       .join('\n\n');
 
-    const result = await llm.completeStructured<Intent>({
-      model: choice.model,
-      schema: IntentSchema,
-      schemaName: 'Intent',
-      messages: [
-        { role: 'system', content: INTENT_SYSTEM },
-        { role: 'user', content: userPrompt },
-      ],
-      maxRetries: 1,
-    });
+    let result;
+    try {
+      result = await llm.completeStructured<Intent>({
+        model: choice.model,
+        schema: IntentSchema,
+        schemaName: 'Intent',
+        messages: [
+          { role: 'system', content: INTENT_SYSTEM },
+          { role: 'user', content: userPrompt },
+        ],
+        maxRetries: 1,
+      });
+    } catch (err) {
+      if (isMissingProviderKey(err) || err instanceof ConfigError) {
+        if (existing && !force) {
+          return this.cachedResponse(prId, existing, logger, 'intent: cache hit (llm call failed)');
+        }
+        return this.persistHeuristic({
+          prId,
+          fingerprint,
+          title: pull.title,
+          body,
+          paths,
+          commitSubjects,
+          sources,
+          logger,
+        });
+      }
+      throw err;
+    }
 
     let intent = clampIntentConfidence(
       {
@@ -232,6 +247,92 @@ export class IntentService {
       intent,
     };
   }
+
+  private cachedResponse(
+    prId: string,
+    existing: NonNullable<Awaited<ReturnType<IntentRepository['getByPrId']>>>,
+    logger: IntentLogger | undefined,
+    msg: string,
+  ): EnsureIntentResponse {
+    const intent = rowToPrIntentRecord(existing);
+    const model = existing.model ?? 'unknown';
+    const computedAt = (existing.computedAt ?? new Date()).toISOString();
+    logger?.info(
+      {
+        prId,
+        model,
+        confidence: intent.confidence,
+        cacheHit: true,
+        synthesis_mode: intent.synthesis_mode,
+      },
+      msg,
+    );
+    return {
+      pr_id: prId,
+      status: 'cached',
+      model,
+      computed_at: computedAt,
+      intent: {
+        intent: intent.intent,
+        in_scope: intent.in_scope,
+        out_of_scope: intent.out_of_scope,
+        confidence: intent.confidence,
+        synthesis_mode: intent.synthesis_mode,
+        risk_areas: intent.risk_areas,
+        sources: intent.sources,
+        missing_inputs: intent.missing_inputs,
+      },
+    };
+  }
+
+  private async persistHeuristic(opts: {
+    prId: string;
+    fingerprint: string;
+    title: string;
+    body: string;
+    paths: string[];
+    commitSubjects: string[];
+    sources: IntentSource[];
+    logger?: IntentLogger;
+  }): Promise<EnsureIntentResponse> {
+    const intent = buildHeuristicIntent({
+      title: opts.title,
+      body: opts.body,
+      paths: opts.paths,
+      commitSubjects: opts.commitSubjects,
+      sources: opts.sources,
+    });
+    const computedAt = new Date();
+    const model = 'heuristic';
+    await this.intents.upsert(opts.prId, intent, {
+      inputFingerprint: opts.fingerprint,
+      model,
+      computedAt,
+    });
+    opts.logger?.info(
+      {
+        prId: opts.prId,
+        model,
+        confidence: intent.confidence,
+        cacheHit: false,
+        synthesis_mode: intent.synthesis_mode,
+      },
+      'intent: heuristic (llm unavailable)',
+    );
+    return {
+      pr_id: opts.prId,
+      status: 'computed',
+      model,
+      computed_at: computedAt.toISOString(),
+      intent,
+    };
+  }
+}
+
+function isMissingProviderKey(err: unknown): boolean {
+  if (err instanceof ConfigError) return /API_KEY is not configured/i.test(err.message);
+  if (err instanceof Error) return /API_KEY is not configured/i.test(err.message);
+  return false;
 }
 
 function mergeSources(primary: IntentSource[], fromModel: IntentSource[]): IntentSource[] {
