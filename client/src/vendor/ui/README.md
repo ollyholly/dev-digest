@@ -10,12 +10,16 @@ themed entirely through CSS variables.
 import "@devdigest/ui/styles.css";
 
 // anywhere:
-import { Button, Card, SeverityBadge, LineChart } from "@devdigest/ui";
+import { Button, Card, SeverityBadge } from "@devdigest/ui";
+// Recharts-backed charts stay on a separate entry (safe for RSC barrels):
+import { LineChart } from "@devdigest/ui/charts";
 ```
 
-Everything is re-exported from the single barrel `index.ts` — **always import
-from `@devdigest/ui`**, never reach into a layer file directly. The TS path
-alias is configured in `tsconfig.json` (`@devdigest/ui` → `src/vendor/ui`).
+Most components are re-exported from the main barrel `index.ts` — prefer
+`@devdigest/ui` for those. Charts must use `@devdigest/ui/charts` so Server
+Components that import the main barrel do not pull Recharts into the RSC
+graph. The TS path alias is configured in `tsconfig.json`
+(`@devdigest/ui` → `src/vendor/ui`).
 
 ## Layout
 

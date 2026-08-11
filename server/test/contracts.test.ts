@@ -67,7 +67,16 @@ describe('AI contracts parse fixtures', () => {
 
   it('Intent / BlastRadius / Risks / PrHistory', () => {
     expect(() =>
-      Intent.parse({ intent: 'x', in_scope: ['a'], out_of_scope: ['b'] }),
+      Intent.parse({
+        intent: 'x',
+        in_scope: ['a'],
+        out_of_scope: ['b'],
+        confidence: 0.8,
+        synthesis_mode: 'author_stated',
+        risk_areas: ['api'],
+        sources: [{ kind: 'title', ref: 'x', fetched_ok: null }],
+        missing_inputs: [],
+      }),
     ).not.toThrow();
     expect(() =>
       BlastRadius.parse({

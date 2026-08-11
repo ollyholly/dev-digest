@@ -6,6 +6,8 @@
 
 ## Codebase Patterns
 
+- 2026-08-11: Intent Layer lives in `modules/intent/` (not reviews). Persistence is `IntentRepository` only; reviews no longer own `pr_intent` upsert/get. Review path calls `IntentService.ensureIntent` best-effort after diff load — soft-fail continues without intent in the prompt.
+
 ## Tool & Library Notes
 
 ## Recurring Errors & Fixes
@@ -25,6 +27,10 @@
 - 2026-08-05: Conventions migration `0012_misty_cassandra_nova.sql` adds tri-state `status` with a `pending` default, so Drizzle generation alone would silently downgrade legacy `accepted=true` rows; keep the generated migration's explicit `UPDATE conventions SET status = 'accepted' WHERE accepted = true` backfill whenever preserving the legacy boolean mirror.
 - 2026-08-05: Conventions Extractor verifies candidates against already-loaded samples only (`verifyCandidate` never opens arbitrary post-model paths). Model-supplied paths still go through `normalizeRepoRelativePath` + `resolveSafePath` (lexical + realpath containment) when loading samples. Confidence is clamped with a 0.35 floor after grounding so inconsistently followed house rules stay visible. Rescan upserts by `fingerprint` and never deletes accepted/rejected rows when zero candidates verify.
 - 2026-08-05: `ConventionsService.promote` wraps skill inserts (+ version snapshots) and optional agent link rewrite in one `db.transaction`, constructing tx-scoped `SkillsRepository`/`AgentsRepository` instances — a mid-loop failure must not leave orphaned `source=extracted` skills.
+- 2026-08-11: `review_intent` registry default is `openrouter` / `deepseek/deepseek-v4-flash` (aligned with seeded agents + conventions; both vendor shared trees + `client/src/lib/feature-models.ts`). Workspace Settings → Feature Models overrides; a stale `feature_models.review_intent` row can still pin an older provider until cleared.
+- 2026-08-11: Shared contracts must be edited in **both** `server/src/vendor/shared` and `client/src/vendor/shared` (separate trees; client cannot import server runtime values). `reviewer-core` aliases the server copy.
+- 2026-08-11: Intent plan/spec HTTP must use `container.http` (`SafeHttpClient`: allowlist + DNS private-IP check + streamed 64 KiB cap), never module-level `fetch`. `IntentService` uses `container.pullsRepo` (not `new PullsRepository`).
+- 2026-08-11: Soft ensure without an LLM key may persist heuristic; **force regenerate must not** — it throws `ConfigError` so the UI can show the missing key instead of replacing a prior LLM row. Linked-issue extraction requires `closes|fixes|resolves #N` (bare `#N` falsely matched “PR #482” in descriptions). Soft ensure **upgrades sticky heuristic** when a key appears (`decideIntentAction` in `cache-policy.ts`); `EnsureIntentResponse.status` is `cached|llm|heuristic`.
 
 ## Open Questions
 

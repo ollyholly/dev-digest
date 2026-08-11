@@ -4,7 +4,9 @@
 export * from "./icons";
 export * from "./primitives";
 export * from "./kit";
-export * from "./charts";
+/* Charts stay off this barrel: Recharts is client-only and breaks RSC
+   pages/layouts that import `@devdigest/ui` (e.g. settings metadata).
+   Import from `@devdigest/ui/charts` instead. */
 export * from "./nav";
 export * from "./shell";
 export * from "./command-palette";

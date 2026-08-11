@@ -22,7 +22,7 @@ import { OpenAIEmbedder } from '../adapters/embedder/openai.js';
 import { OpenRouterProvider } from '@devdigest/reviewer-core';
 import { estimateCost } from '../adapters/llm/pricing.js';
 import { PriceBook } from './price-book.js';
-import { ConfigError } from './errors.js';
+import { ConfigError, MissingApiKeyError } from './errors.js';
 import { AgentsRepository } from '../modules/agents/repository.js';
 import { SkillsRepository } from '../modules/skills/repository.js';
 import { ConventionsRepository } from '../modules/conventions/repository.js';
@@ -35,6 +35,8 @@ import { type DepGraph, DepCruiseGraph } from '../adapters/depgraph/index.js';
 import { TiktokenTokenizer } from '../adapters/tokenizer/index.js';
 import type { CommunityCatalog } from '../adapters/community/types.js';
 import { StaticCommunityCatalog } from '../adapters/community/static-list.js';
+import type { HttpClient } from '../adapters/http/types.js';
+import { SafeHttpClient } from '../adapters/http/safe-fetch.js';
 
 /**
  * DI container. One per app instance. Holds config, db, the JobRunner,
@@ -58,6 +60,8 @@ export interface ContainerOverrides {
   depgraph?: DepGraph;
   tokenizer?: Tokenizer;
   communityCatalog?: CommunityCatalog;
+  /** Outbound HTTP (plan/spec URL fetch). Tests inject a no-network mock. */
+  http?: HttpClient;
 }
 
 export class Container {
@@ -89,6 +93,7 @@ export class Container {
   private _repoIntel?: RepoIntel;
   private _depgraph?: DepGraph;
   private _tokenizer?: Tokenizer;
+  private _http?: HttpClient;
   private _priceBook?: PriceBook;
   private _communityCatalog?: CommunityCatalog;
 
@@ -169,6 +174,17 @@ export class Container {
   }
 
   /**
+   * Outbound HTTP for allowlisted URL fetches (intent plan/spec links).
+   * SSRF policy lives in SafeHttpClient — feature modules must not call
+   * global `fetch`.
+   */
+  get http(): HttpClient {
+    if (this.overrides.http) return this.overrides.http;
+    this._http ??= new SafeHttpClient();
+    return this._http;
+  }
+
+  /**
    * Live OpenRouter pricing for cost attribution. The lister builds a bare
    * OpenRouter provider just for `/models` (no estimator needed) and degrades to
    * `[]` when no key is configured; the static `estimateCost` table is the
@@ -210,7 +226,7 @@ export class Container {
   private async buildLlm(id: 'openai' | 'anthropic' | 'openrouter'): Promise<LLMProvider> {
     if (id === 'openai') {
       const key = await this.secrets.get('OPENAI_API_KEY');
-      if (!key) throw new ConfigError('OPENAI_API_KEY is not configured');
+      if (!key) throw new MissingApiKeyError('OPENAI_API_KEY');
       return new OpenAIProvider(key);
     }
     if (id === 'openrouter') {
@@ -218,14 +234,14 @@ export class Container {
       // runner); inject the PriceBook so cost attribution uses LIVE OpenRouter
       // prices (with the static table as a fallback) rather than a hardcoded one.
       const key = await this.secrets.get('OPENROUTER_API_KEY');
-      if (!key) throw new ConfigError('OPENROUTER_API_KEY is not configured');
+      if (!key) throw new MissingApiKeyError('OPENROUTER_API_KEY');
       return new OpenRouterProvider(key, {
         estimateCost: (model, tokensIn, tokensOut) =>
           this.priceBook.estimate(model, tokensIn, tokensOut),
       });
     }
     const key = await this.secrets.get('ANTHROPIC_API_KEY');
-    if (!key) throw new ConfigError('ANTHROPIC_API_KEY is not configured');
+    if (!key) throw new MissingApiKeyError('ANTHROPIC_API_KEY');
     return new AnthropicProvider(key);
   }
 

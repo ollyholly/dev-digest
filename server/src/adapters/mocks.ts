@@ -33,6 +33,7 @@ import type {
   SecretKey,
 } from '@devdigest/shared';
 import { parseUnifiedDiff } from './git/diff-parser.js';
+import type { HttpClient, HttpGetOptions, HttpGetResult } from './http/types.js';
 
 /**
  * Deterministic MOCK adapters for tests/dev — NO real network. Each mirrors the
@@ -305,6 +306,21 @@ export class MockCodeIndex implements CodeIndex {
   }
   async references(_repo: RepoRef, symbol: string): Promise<CodeReference[]> {
     return [{ fromPath: 'src/api/public/index.ts', toSymbol: symbol, line: 23 }];
+  }
+}
+
+// ---------- Mock Http (no network) ----------
+export class MockHttpClient implements HttpClient {
+  public calls: { url: string; opts?: HttpGetOptions }[] = [];
+  constructor(private opts: { ok?: boolean; text?: string; status?: number } = {}) {}
+  async getText(url: string, opts?: HttpGetOptions): Promise<HttpGetResult> {
+    this.calls.push({ url, opts });
+    if (this.opts.ok === false) return { ok: false, status: this.opts.status };
+    return {
+      ok: true,
+      status: this.opts.status ?? 200,
+      text: this.opts.text ?? '',
+    };
   }
 }
 

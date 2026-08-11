@@ -9,6 +9,7 @@ import {
   doublePrecision,
   index,
 } from 'drizzle-orm/pg-core';
+import type { IntentSource } from '@devdigest/shared';
 import { now } from './_shared';
 import { workspaces } from './core';
 import { pullRequests } from './pulls';
@@ -67,6 +68,14 @@ export const prIntent = pgTable('pr_intent', {
   intent: text('intent').notNull(),
   inScope: jsonb('in_scope').$type<string[]>().notNull().default(sql`'[]'::jsonb`),
   outOfScope: jsonb('out_of_scope').$type<string[]>().notNull().default(sql`'[]'::jsonb`),
+  confidence: doublePrecision('confidence').notNull().default(0),
+  synthesisMode: text('synthesis_mode').notNull().default('inferred_from_signals'),
+  riskAreas: jsonb('risk_areas').$type<string[]>().notNull().default(sql`'[]'::jsonb`),
+  sources: jsonb('sources').$type<IntentSource[]>().notNull().default(sql`'[]'::jsonb`),
+  missingInputs: jsonb('missing_inputs').$type<string[]>().notNull().default(sql`'[]'::jsonb`),
+  inputFingerprint: text('input_fingerprint'),
+  model: text('model'),
+  computedAt: timestamp('computed_at', { withTimezone: true }),
 });
 
 export const prBrief = pgTable('pr_brief', {

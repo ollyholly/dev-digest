@@ -39,3 +39,15 @@ export class ConfigError extends AppError {
     super('config_error', message, 500, details);
   }
 }
+
+/** Provider secret missing — distinct from other config errors for typed handling. */
+export class MissingApiKeyError extends AppError {
+  constructor(public readonly keyName: string) {
+    super('missing_api_key', `${keyName} is not configured`, 500, { key: keyName });
+    this.name = 'MissingApiKeyError';
+  }
+}
+
+export function isMissingApiKeyError(err: unknown): err is MissingApiKeyError {
+  return err instanceof MissingApiKeyError || (err instanceof AppError && err.code === 'missing_api_key');
+}

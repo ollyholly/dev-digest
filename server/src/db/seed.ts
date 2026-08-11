@@ -23,6 +23,9 @@ import { SkillsRepository } from '../modules/skills/repository.js';
 import { SkillsService } from '../modules/skills/service.js';
 import { AgentsRepository } from '../modules/agents/repository.js';
 import { StaticCommunityCatalog } from '../adapters/community/static-list.js';
+import { computeIntentFingerprint } from '../modules/intent/fingerprint.js';
+import { gatherCommitSubjects, gatherFilePaths } from '../modules/intent/helpers.js';
+import { IntentRepository } from '../modules/intent/repository.js';
 
 /** Default provider/model for the built-in reviewer agents. */
 const DEFAULT_PROVIDER = 'openrouter' as const;
@@ -191,6 +194,72 @@ export async function seed(db: Db): Promise<{ workspaceId: string; userId: strin
         confidence: 0.86,
       },
     ]);
+  }
+
+  // Seed PR intent for #482 (idempotent upsert — fingerprint from live DB rows
+  // so Overview ensure cache-hits without an LLM key).
+  {
+    const fileRows = await db.select().from(t.prFiles).where(eq(t.prFiles.prId, pr!.id));
+    const commitRows = await db.select().from(t.prCommits).where(eq(t.prCommits.prId, pr!.id));
+    const seedTitle = pr!.title;
+    const seedBody = pr!.body ?? '';
+    const seedPaths = gatherFilePaths(fileRows.map((f) => f.path));
+    const seedCommits = gatherCommitSubjects(commitRows.map((c) => c.message));
+    const issueKey = '';
+    const fingerprint = computeIntentFingerprint({
+      title: seedTitle,
+      body: seedBody,
+      issueKey,
+      urls: [],
+      paths: seedPaths,
+      commits: seedCommits,
+    });
+    const intents = new IntentRepository(db);
+    await intents.upsert(
+      pr!.id,
+      {
+        intent:
+          'Add token-bucket rate limiting on public API endpoints to curb abuse from unauthenticated clients.',
+        in_scope: [
+          'Public API middleware rate limiter',
+          'Apply limits to unauthenticated webhook/public routes',
+          'Config knobs for bucket size / refill',
+        ],
+        out_of_scope: [
+          'Authenticated session auth redesign',
+          'Billing / quota product features',
+        ],
+        confidence: 0.82,
+        synthesis_mode: 'author_stated',
+        risk_areas: ['api', 'abuse', 'middleware'],
+        sources: [
+          { kind: 'title', ref: seedTitle, fetched_ok: null },
+          ...(seedBody.trim()
+            ? [{ kind: 'description' as const, ref: 'body', fetched_ok: null }]
+            : []),
+          ...(seedPaths.length > 0
+            ? [
+                {
+                  kind: 'file_paths' as const,
+                  ref: `${seedPaths.length} paths`,
+                  fetched_ok: null,
+                },
+              ]
+            : []),
+          ...(seedCommits.length > 0
+            ? [
+                {
+                  kind: 'commit_messages' as const,
+                  ref: `${seedCommits.length} commits`,
+                  fetched_ok: null,
+                },
+              ]
+            : []),
+        ],
+        missing_inputs: [],
+      },
+      { inputFingerprint: fingerprint, model: 'seed', computedAt: new Date() },
+    );
   }
 
   // ---- built-in agents (the three starter presets) ----

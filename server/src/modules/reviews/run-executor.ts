@@ -1,5 +1,5 @@
 import type { Container } from '../../platform/container.js';
-import type { Provider, Review, RunTrace, UnifiedDiff } from '@devdigest/shared';
+import type { Intent, Provider, Review, RunTrace, UnifiedDiff } from '@devdigest/shared';
 import { reviewPullRequest, countBlockers } from '@devdigest/reviewer-core';
 import { RunLogger } from '../../platform/run-logger.js';
 import * as schema from '../../db/schema.js';
@@ -8,6 +8,8 @@ import type { ReviewRepository, FindingRow, PullRow, ReviewRow } from './reposit
 import { REVIEW_STRATEGY } from './constants.js';
 import { taskLine } from './helpers.js';
 import { loadDiff } from './diff-loader.js';
+import { IntentService } from '../intent/service.js';
+import { logPromptAssembly } from '../../platform/prompt-log.js';
 
 /** Thrown by a run when the user cancels it mid-flight (between map files). */
 export class RunCancelledError extends Error {
@@ -107,6 +109,17 @@ export class ReviewRunExecutor {
     }
     runLog.info(`Diff ready — ${diff.files.length} changed file(s); starting ${jobs.length} agent run(s)`);
 
+    // Best-effort intent: shared pre-work for every agent. Failure → continue
+    // without an intent section (do not fail the run).
+    const intent = await runLog.step(
+      'Deriving PR intent',
+      () => new IntentService(this.container).loadIntentBestEffort(pull.id, workspaceId, logger),
+      { kind: 'tool' },
+    );
+    if (!intent) {
+      runLog.info('Intent derivation skipped or empty; continuing without intent');
+    }
+
     for (const { agent, runId } of jobs) {
       const agentStart = Date.now();
       logger?.info(
@@ -114,7 +127,7 @@ export class ReviewRunExecutor {
         `review: agent "${agent.name}" started (${agent.provider}/${agent.model})`,
       );
       try {
-        const outcome = await this.runOneAgent(workspaceId, pull, repo, diff, agent, runId, runLog);
+        const outcome = await this.runOneAgent(workspaceId, pull, repo, diff, agent, runId, runLog, intent, logger);
         logger?.info(
           {
             runId,
@@ -146,6 +159,8 @@ export class ReviewRunExecutor {
     agent: AgentRow,
     runId: string,
     parentLog: RunLogger,
+    intent?: Intent,
+    opsLog?: Logger,
   ): Promise<RunOutcome> {
     const start = Date.now();
     // Narrow the fanned-out pre-work logger to THIS run; the shared diff/intent
@@ -216,14 +231,28 @@ export class ReviewRunExecutor {
         // PR author's description/body — untrusted; assemblePrompt wraps +
         // truncates it. Omitted when the PR has no body.
         ...(pull.body ? { prDescription: pull.body } : {}),
+        // Derived PR intent — untrusted; omitted when ensure failed / skipped.
+        ...(intent ? { intent } : {}),
         task,
         sessionId: `${repo.owner}/${repo.name}#${pull.number}:${agent.name}`,
+        correlationId: runId,
         onEvent: (e) => runLog.event(e.kind, e.msg, e.data),
         checkCancelled: () => {
           if (this.container.runBus.isCancelled(runId)) throw new RunCancelledError();
         },
       });
       const { tokensIn, tokensOut, costUsd, grounding } = outcome;
+
+      logPromptAssembly(
+        opsLog ?? { info: () => undefined, warn: () => undefined, error: () => undefined, debug: () => undefined },
+        this.container.config.promptLogMode,
+        {
+          correlationId: runId,
+          model: agent.model,
+          chunk: outcome.mode,
+          log: outcome.promptLog,
+        },
+      );
 
       const keptFindings = outcome.review.findings;
 
@@ -448,7 +477,17 @@ export class ReviewRunExecutor {
         findings: 0,
         grounding,
       },
-      prompt_assembly: { system: agent.systemPrompt, skills: null, memory: null, specs: null, user: '' },
+      prompt_assembly: {
+        system: agent.systemPrompt,
+        skills: null,
+        memory: null,
+        specs: null,
+        callers: null,
+        repo_map: null,
+        pr_description: null,
+        intent: null,
+        user: '',
+      },
       tool_calls: [],
       raw_output: '',
       memory_pulled: [],

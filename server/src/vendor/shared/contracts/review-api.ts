@@ -57,8 +57,27 @@ export const ReviewRunResponse = z.object({
 export type ReviewRunResponse = z.infer<typeof ReviewRunResponse>;
 
 /** Intent persisted for a PR (the Intent plus the pr_id it scopes). */
-export const PrIntentRecord = Intent.extend({ pr_id: z.string() });
+export const PrIntentRecord = Intent.extend({
+  pr_id: z.string(),
+  /** Model id used for the last computation (`heuristic` when offline). */
+  model: z.string().optional(),
+  computed_at: z.string().optional(),
+});
 export type PrIntentRecord = z.infer<typeof PrIntentRecord>;
+
+/** Response of POST /pulls/:id/intent (lazy ensure / regenerate). */
+export const EnsureIntentResponse = z.object({
+  pr_id: z.string(),
+  /**
+   * `cached` = served existing row; `llm` = freshly model-derived;
+   * `heuristic` = freshly offline/fallback (never used for regenerate success).
+   */
+  status: z.enum(['cached', 'llm', 'heuristic']),
+  model: z.string(),
+  computed_at: z.string(),
+  intent: Intent,
+});
+export type EnsureIntentResponse = z.infer<typeof EnsureIntentResponse>;
 
 /** Smart-diff response for a PR (the SmartDiff). */
 export const SmartDiffResponse = SmartDiff;

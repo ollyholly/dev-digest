@@ -1,4 +1,6 @@
 /* LineChart — multi-series line chart on Recharts. */
+"use client";
+
 import React from "react";
 import {
   LineChart as RLineChart,

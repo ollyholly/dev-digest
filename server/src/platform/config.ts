@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { z } from 'zod';
 import { homedir } from 'node:os';
 import { join, isAbsolute, resolve } from 'node:path';
+import { resolvePromptLogMode } from './prompt-log.js';
 
 /**
  * Central, zod-validated environment config. Loaded once at startup.
@@ -36,6 +37,14 @@ const EnvSchema = z.object({
     (v) => (v === '' ? undefined : v),
     z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).optional(),
   ),
+  /**
+   * Prompt-assembly structured logging: off | summary | verbose.
+   * `verbose` is development-only (downgraded otherwise). Empty → off.
+   */
+  DEVDIGEST_PROMPT_LOG: z.preprocess(
+    (v) => (v === '' ? undefined : v),
+    z.string().optional(),
+  ),
 });
 
 export type AppConfig = {
@@ -48,6 +57,11 @@ export type AppConfig = {
   secretsPath: string;
   nodeEnv: 'development' | 'test' | 'production';
   logLevel: string;
+  /**
+   * Prompt-assembly ops log mode (`DEVDIGEST_PROMPT_LOG`). Lengths/sources only;
+   * verbose allowed only in development.
+   */
+  promptLogMode: 'off' | 'summary' | 'verbose';
   /** Allowed CORS origin for the Next.js dev server. */
   webOrigin: string;
   /** Whether memory/RAG embeddings (OpenAI) are enabled. Default false. */
@@ -74,6 +88,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
     secretsPath: join(homedir(), '.devdigest', 'secrets.json'),
     nodeEnv: parsed.NODE_ENV,
     logLevel: parsed.LOG_LEVEL ?? (parsed.NODE_ENV === 'test' ? 'silent' : 'info'),
+    promptLogMode: resolvePromptLogMode(parsed.DEVDIGEST_PROMPT_LOG, parsed.NODE_ENV),
     webOrigin: `http://localhost:${parsed.WEB_PORT}`,
     embeddingsEnabled: parsed.EMBEDDINGS_ENABLED === 'true',
     repoIntelEnabled: parsed.REPO_INTEL_ENABLED !== 'false',
