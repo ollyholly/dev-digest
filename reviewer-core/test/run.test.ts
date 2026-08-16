@@ -69,6 +69,37 @@ describe('reviewPullRequest (engine)', () => {
     expect(events.some((m) => m.includes('Citation grounding'))).toBe(true);
   });
 
+  it('prompt_assembly events carry model + correlation id and no diff body', async () => {
+    const llm = new MockLLMProvider('openai', { structured: fixture });
+    const diff = await new MockGitClient().diff();
+    const payloads: unknown[] = [];
+    await reviewPullRequest({
+      systemPrompt: 'security reviewer',
+      model: 'gpt-4.1',
+      diff,
+      llm,
+      correlationId: 'run-corr-1',
+      specs: ['PRIVATE_SPEC_TEXT'],
+      onEvent: (e) => {
+        if (e.msg === 'Prompt assembly summary') payloads.push(e.data);
+      },
+    });
+    expect(payloads.length).toBeGreaterThan(0);
+    const serialized = JSON.stringify(payloads);
+    expect(serialized).not.toContain('PRIVATE_SPEC_TEXT');
+    expect(serialized).not.toContain(diff.raw);
+    const first = payloads[0] as {
+      event: string;
+      correlation_id: string;
+      model: string;
+      sections: { section: string; source: string; chars: number }[];
+    };
+    expect(first.event).toBe('prompt_assembly');
+    expect(first.correlation_id).toBe('run-corr-1');
+    expect(first.model).toBe('gpt-4.1');
+    expect(first.sections.some((s) => s.source === 'diff' && s.chars > 0)).toBe(true);
+  });
+
   it('score is deterministic from findings: a clean approve scores 100', async () => {
     // Model "approves" but reports a nonsense low score (the cheap-model bug).
     // The engine must ignore that and score the zero findings as a perfect 100.
