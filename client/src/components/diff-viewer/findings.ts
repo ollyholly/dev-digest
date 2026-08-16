@@ -1,4 +1,7 @@
-import { Severity, type SmartDiffFinding } from "@devdigest/shared";
+import type { Severity, SmartDiffFinding } from "@devdigest/shared";
+
+/** Worst-first. Keep in lockstep with `Severity` in `@devdigest/shared`. */
+const SEVERITY_ORDER: readonly Severity[] = ["CRITICAL", "WARNING", "SUGGESTION"];
 
 /** Findings whose `[start_line, end_line]` includes the new-side line. */
 export function findingsCoveringLine(
@@ -13,7 +16,7 @@ export function worstCoveringSeverity(findings: readonly SmartDiffFinding[]): Se
   if (findings.length === 0) return null;
   let worst = findings[0]!;
   for (const f of findings) {
-    if (Severity.options.indexOf(f.severity) < Severity.options.indexOf(worst.severity)) {
+    if (SEVERITY_ORDER.indexOf(f.severity) < SEVERITY_ORDER.indexOf(worst.severity)) {
       worst = f;
     }
   }

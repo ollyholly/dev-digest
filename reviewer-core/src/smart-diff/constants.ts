@@ -9,6 +9,9 @@ import type { SmartDiffRole } from '@devdigest/shared';
 /** Group render order: business logic first, generated last. */
 export const ROLE_ORDER: readonly SmartDiffRole[] = ['core', 'wiring', 'boilerplate'];
 
+/** Worst-first. Keep in lockstep with `Severity` in `@devdigest/shared`. */
+export const SEVERITY_ORDER = ['CRITICAL', 'WARNING', 'SUGGESTION'] as const;
+
 /** Changed-line total at or above which we suggest splitting the PR. */
 export const TOO_BIG_CHANGED_LINES = 400;
 

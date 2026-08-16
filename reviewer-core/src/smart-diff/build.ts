@@ -1,6 +1,6 @@
-import { Severity, type SmartDiff, type SmartDiffFile, type SmartDiffFinding, type SmartDiffRole } from '@devdigest/shared';
+import type { SmartDiff, SmartDiffFile, SmartDiffFinding, SmartDiffRole } from '@devdigest/shared';
 import { classifyFile } from './classify.js';
-import { ROLE_ORDER, SPLIT_NAME_BY_ROLE, TOO_BIG_CHANGED_LINES } from './constants.js';
+import { ROLE_ORDER, SEVERITY_ORDER, SPLIT_NAME_BY_ROLE, TOO_BIG_CHANGED_LINES } from './constants.js';
 
 export interface SmartDiffFileInput {
   path: string;
@@ -31,7 +31,7 @@ function indexFindingsByPath(findings: SmartDiffFindingInput[]): Map<string, Sma
   for (const list of byPath.values()) {
     list.sort(
       (a, b) =>
-        Severity.options.indexOf(a.severity) - Severity.options.indexOf(b.severity) ||
+        SEVERITY_ORDER.indexOf(a.severity) - SEVERITY_ORDER.indexOf(b.severity) ||
         a.start_line - b.start_line,
     );
   }
