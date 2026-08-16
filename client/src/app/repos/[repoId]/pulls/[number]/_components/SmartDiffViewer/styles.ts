@@ -37,8 +37,7 @@ export const s = {
   groupLabel: {
     fontSize: 12,
     fontWeight: 700,
-    letterSpacing: "0.06em",
-    textTransform: "uppercase",
+    letterSpacing: "0.04em",
   } satisfies CSSProperties,
   groupSubtitle: {
     fontSize: 12,

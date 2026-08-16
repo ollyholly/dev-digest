@@ -121,6 +121,7 @@ describe('AI contracts parse fixtures', () => {
           files: [
             {
               path: 'a.ts',
+              pseudocode_summary: null,
               additions: 84,
               deletions: 0,
               finding_lines: [28, 52],
@@ -155,7 +156,15 @@ describe('AI contracts parse fixtures', () => {
       groups: [
         {
           role: 'boilerplate',
-          files: [{ path: 'package-lock.json', additions: 10, deletions: 0, finding_lines: [] }],
+          files: [
+            {
+              path: 'package-lock.json',
+              pseudocode_summary: null,
+              additions: 10,
+              deletions: 0,
+              finding_lines: [],
+            },
+          ],
         },
       ],
       split_suggestion: { too_big: false, total_lines: 10, proposed_splits: [] },

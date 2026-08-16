@@ -80,8 +80,11 @@ export function SmartDiffViewer({
   const t = useTranslations("prReview.smartDiff");
   const { data, isPending, isError } = useSmartDiff(prId);
 
-  if (!prId || isPending || isError || !data) return null;
-  if (data.groups.length === 0) return <div style={s.empty}>{t("groupedByRole")}</div>;
+  if (!prId) return null;
+  if (isPending) return <div style={s.empty}>{t("groupedByRole")}</div>;
+  if (isError || !data || data.groups.length === 0) {
+    return <div style={s.empty}>{t("groupedByRole")}</div>;
+  }
 
   return (
     <div style={s.root}>

@@ -9,7 +9,9 @@
     { "cmd": ["wait", "--load", "networkidle"], "label": "PR detail data settles" },
     { "cmd": ["find", "role", "button", "click", "--name", "Files changed"], "label": "switch to the Files changed tab" },
     { "cmd": ["wait", "--url", "tab=diff"], "label": "diff tab is active in the URL" },
-    { "cmd": ["wait", "--text", "Core"], "label": "Smart Diff Core group label is visible (Smart is default)" },
+    { "cmd": ["wait", "--load", "networkidle"], "label": "smart-diff request settles" },
+    { "cmd": ["wait", "--text", "Smart order"], "label": "Smart order toggle is the default" },
+    { "cmd": ["wait", "--text", "review closely"], "label": "Core group subtitle is visible (Smart is default)" },
     { "cmd": ["wait", "--text", "src/middleware/ratelimit.ts"], "label": "seeded core file renders in Smart order" },
     { "cmd": ["wait", "--text", "src/config.ts"], "label": "a seeded changed file renders in the diff viewer" }
   ]

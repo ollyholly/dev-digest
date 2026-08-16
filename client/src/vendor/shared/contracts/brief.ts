@@ -127,7 +127,8 @@ export type SmartDiffFinding = z.infer<typeof SmartDiffFinding>;
 
 export const SmartDiffFile = z.object({
   path: z.string(),
-  pseudocode_summary: z.string().nullish(),
+  /** Always null this iteration (no LLM summary). Nullable so Fastify's JSON Schema accepts `null`. */
+  pseudocode_summary: z.string().nullable(),
   additions: z.number().int(),
   deletions: z.number().int(),
   finding_lines: z.array(z.number().int()),

@@ -13,6 +13,7 @@
 ## Tool & Library Notes
 
 ## Recurring Errors & Fixes
+- 2026-08-16: Smart Diff group labels must not use CSS `textTransform: uppercase` — e2e `wait --text Core` matches rendered innerText (`CORE` ≠ `Core`) and timed out in CI flow 05. Keep title-case in the i18n string (`coreLabel: "Core"`) and assert the untransformed subtitle if needed (`review closely`).
 - 2026-08-11: IntentCard “## Plan” / “Touch …path” / “Commit: …” with `missing_inputs: ["llm"]` is the **offline heuristic**, not the model — usually because `review_intent` resolved to a provider without a key (stale OpenAI default before openrouter flip) and Regenerate silently rewrote the same heuristic. Plan URLs can still show `fetched_ok: true` while never reaching the LLM. Fix: default openrouter + Regenerate throws on missing key; soft ensure upgrades sticky heuristic once a key appears; IntentCard shows model / sources / missing inputs; response `status` is `cached|llm|heuristic`.
 - 2026-08-05: Conventions empty-state (“No conventions extracted yet”) with a non-zero Proposed scan summary means the extract response’s verified set was empty — only grounded rows are persisted. Create skill stays disabled until `accepted.length > 0`. Prefer diagnosing server grounding (path/snippet mismatch) over treating the empty UI as a client bug.
 
