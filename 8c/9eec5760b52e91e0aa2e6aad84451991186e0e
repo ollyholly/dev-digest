@@ -1,0 +1,35 @@
+.claude/agents/README.md
+  s_4edcee73555b9a::t_6be9368360bb74 7-13,37
+.claude/agents/token-efficiency.md
+  s_4edcee73555b9a::t_652ed002c410c0 1-176
+reviewer-core/INSIGHTS.md
+  s_4edcee73555b9a::t_dca4b24b6661d9 16
+reviewer-core/test/prompt.test.ts
+  s_4edcee73555b9a::t_65c988a332142c 80-93
+reviewer-core/test/run.test.ts
+  s_4edcee73555b9a::t_d5cd0a0af501cd 72-102
+server/INSIGHTS.md
+  s_4edcee73555b9a::t_4be43e16018cbe 34
+server/README.md
+  s_4edcee73555b9a::t_e386d05ec84996 101,135-139
+server/src/platform/prompt-log.ts
+  s_4edcee73555b9a::t_09e2853698320b 86-87,89
+server/test/prompt-log.test.ts
+  s_4edcee73555b9a::t_9b6a8885ff17bd 1-101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "8c9eec5760b52e91e0aa2e6aad84451991186e0e",
+  "prompts": {},
+  "sessions": {
+    "s_4edcee73555b9a": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "42346640-21f9-4791-8bb1-752c504f6cf7",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
