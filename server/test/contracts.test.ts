@@ -118,12 +118,58 @@ describe('AI contracts parse fixtures', () => {
       groups: [
         {
           role: 'core',
-          files: [{ path: 'a.ts', additions: 84, deletions: 0, finding_lines: [28, 52] }],
+          files: [
+            {
+              path: 'a.ts',
+              pseudocode_summary: null,
+              additions: 84,
+              deletions: 0,
+              finding_lines: [28, 52],
+              findings: [
+                {
+                  id: 'f1',
+                  start_line: 28,
+                  end_line: 28,
+                  severity: 'SUGGESTION',
+                  title: 'Prefer named constant',
+                },
+                {
+                  id: 'f2',
+                  start_line: 52,
+                  end_line: 52,
+                  severity: 'WARNING',
+                  title: 'Missing retry',
+                },
+              ],
+            },
+          ],
         },
       ],
       split_suggestion: { too_big: false, total_lines: 285, proposed_splits: [] },
     });
     expect(d.groups[0]!.role).toBe('core');
+    expect(d.groups[0]!.files[0]!.findings).toHaveLength(2);
+  });
+
+  it('SmartDiff findings default to [] when omitted', () => {
+    const d = SmartDiff.parse({
+      groups: [
+        {
+          role: 'boilerplate',
+          files: [
+            {
+              path: 'package-lock.json',
+              pseudocode_summary: null,
+              additions: 10,
+              deletions: 0,
+              finding_lines: [],
+            },
+          ],
+        },
+      ],
+      split_suggestion: { too_big: false, total_lines: 10, proposed_splits: [] },
+    });
+    expect(d.groups[0]!.files[0]!.findings).toEqual([]);
   });
 
   it('Conformance / Onboarding / EvalRun / MemoryItem', () => {

@@ -3,7 +3,10 @@
 "use client";
 
 import React from "react";
+import { SeverityBadge } from "@devdigest/ui";
+import type { SmartDiffFinding } from "@devdigest/shared";
 import { commentTargetFor, type CommentThread, type DiffCommentApi, cs } from "../comments";
+import { findingsCoveringLine, worstCoveringSeverity } from "../findings";
 import { type Line } from "../helpers";
 import { s, lineRowFor, lineSignFor } from "../styles";
 import { CommentThreadView } from "../CommentThreadView";
@@ -14,11 +17,13 @@ export function CodeLine({
   path,
   threads,
   commenting,
+  findings = [],
 }: {
   ln: Line;
   path: string;
   threads: CommentThread[];
   commenting?: DiffCommentApi;
+  findings?: SmartDiffFinding[];
 }) {
   const [hover, setHover] = React.useState(false);
   const [composing, setComposing] = React.useState(false);
@@ -34,14 +39,18 @@ export function CodeLine({
   const sign = ln.kind === "add" ? "+" : ln.kind === "del" ? "−" : "";
   const target = commenting?.canComment ? commentTargetFor(ln) : null;
   const showAdd = hover && !!target && !composing;
+  const covering = ln.newNo != null ? findingsCoveringLine(findings, ln.newNo) : [];
+  const worst = worstCoveringSeverity(covering);
+  const starting = ln.newNo != null ? findings.filter((f) => f.start_line === ln.newNo) : [];
 
   return (
     <div
       style={cs.rowWrap}
+      data-diff-line={ln.newNo != null ? `${path}:${ln.newNo}` : undefined}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      <div style={lineRowFor(ln.kind)}>
+      <div style={lineRowFor(ln.kind, worst)}>
         <span className="mono tnum" style={{ ...s.lineNo, position: "relative" }}>
           {showAdd && target && (
             <button
@@ -62,6 +71,13 @@ export function CodeLine({
         <span className="mono" style={s.lineText}>
           {ln.text || " "}
         </span>
+        {starting.length > 0 && (
+          <span style={s.findingBadges}>
+            {starting.map((f) => (
+              <SeverityBadge key={f.id} severity={f.severity} />
+            ))}
+          </span>
+        )}
       </div>
 
       {commenting &&

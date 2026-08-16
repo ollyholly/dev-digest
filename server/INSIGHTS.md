@@ -7,8 +7,11 @@
 ## Codebase Patterns
 
 - 2026-08-11: Intent Layer lives in `modules/intent/` (not reviews). Persistence is `IntentRepository` only; reviews no longer own `pr_intent` upsert/get. Review path calls `IntentService.ensureIntent` best-effort after diff load — soft-fail continues without intent in the prompt.
+- 2026-08-16: Smart Diff wave selection cannot reuse `listRunsForPull` / `RunSummary` — that DTO has no `head_sha`. `ReviewRepository.listRunHeadShasForPull(prId)` reads `agent_runs` (id, headSha, status); `modules/smart-diff` must not query SQL itself. Matching `status==='done' && headSha===pull.headSha` overlays those reviews only; seed/legacy (`runId==null`) is fallback when no such wave exists — never mix stale-SHA findings into a matching wave (`helpers.ts` `selectWaveFindings`).
 
 ## Tool & Library Notes
+
+- 2026-08-16: Fastify `response: { 200: Schema }` compiles Zod to JSON Schema. `z.string().nullish()` is often an optional string **without** `null` in the schema; Smart Diff always serializes `pseudocode_summary: null`. Use `z.string().nullable()` (required field, value may be null) in both vendor copies of `brief.ts`.
 
 ## Recurring Errors & Fixes
 - 2026-08-10: `skills-in-review.it.test.ts` flaked on CI with `Cannot read properties of undefined (reading 'skills')` because `run-executor` called `completeAgentRun` before `saveRunTrace`. `waitForPrRuns` treats status `done` as ready, so GET `/runs/:id/trace` can 404 and `.json()` has no `prompt_assembly`. Fix: persist the trace first, then flip the run to a terminal status (success + fail/cancel + `failAll` paths).

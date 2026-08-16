@@ -1,0 +1,43 @@
+/**
+ * Pure wave-selection for Smart Diff overlays. No DB / network / Container.
+ *
+ * Matching completed runs (status === 'done' AND headSha === PR head) win.
+ * Seed/legacy reviews (runId == null) are a fallback only when no such wave
+ * exists. Stale-SHA findings are never mixed into a matching wave.
+ */
+import type { SmartDiffFindingInput } from '@devdigest/reviewer-core';
+import type { RunHeadSha } from '../reviews/repository/run.repo.js';
+
+export interface WaveReview {
+  runId: string | null;
+  findings: SmartDiffFindingInput[];
+}
+
+export interface SelectWaveFindingsArgs {
+  pullHeadSha: string;
+  reviews: WaveReview[];
+  runs: RunHeadSha[];
+}
+
+function flatten(reviews: WaveReview[]): SmartDiffFindingInput[] {
+  return reviews.flatMap((review) => review.findings);
+}
+
+export function selectWaveFindings(args: SelectWaveFindingsArgs): SmartDiffFindingInput[] {
+  const { pullHeadSha, reviews, runs } = args;
+
+  const matchingRunIds = new Set(
+    runs.filter((run) => run.status === 'done' && run.headSha === pullHeadSha).map((run) => run.id),
+  );
+
+  if (matchingRunIds.size > 0) {
+    return flatten(reviews.filter((review) => review.runId !== null && matchingRunIds.has(review.runId)));
+  }
+
+  const seedReviews = reviews.filter((review) => review.runId == null);
+  if (seedReviews.length > 0) {
+    return flatten(seedReviews);
+  }
+
+  return [];
+}

@@ -80,6 +80,11 @@ export class ReviewRepository {
     return runRepo.listRunsForPull(this.db, workspaceId, prId);
   }
 
+  /** Run id + head SHA + status for a PR (Smart Diff wave selection). */
+  listRunHeadShasForPull(prId: string): Promise<runRepo.RunHeadSha[]> {
+    return runRepo.listRunHeadShasForPull(this.db, prId);
+  }
+
   /** Delete one agent run (+ its trace via FK cascade). Workspace-scoped. */
   deleteAgentRun(workspaceId: string, runId: string): Promise<boolean> {
     return runRepo.deleteAgentRun(this.db, workspaceId, runId);

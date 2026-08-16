@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { Finding } from './findings.js';
 
 /**
  * PR Brief building blocks: Intent, Blast radius, Risks, PR History,
@@ -115,12 +116,23 @@ export type PrHistory = z.infer<typeof PrHistory>;
 export const SmartDiffRole = z.enum(['core', 'wiring', 'boilerplate']);
 export type SmartDiffRole = z.infer<typeof SmartDiffRole>;
 
+export const SmartDiffFinding = Finding.pick({
+  id: true,
+  start_line: true,
+  end_line: true,
+  severity: true,
+  title: true,
+});
+export type SmartDiffFinding = z.infer<typeof SmartDiffFinding>;
+
 export const SmartDiffFile = z.object({
   path: z.string(),
-  pseudocode_summary: z.string().nullish(),
+  /** Always null this iteration (no LLM summary). Nullable so Fastify's JSON Schema accepts `null`. */
+  pseudocode_summary: z.string().nullable(),
   additions: z.number().int(),
   deletions: z.number().int(),
   finding_lines: z.array(z.number().int()),
+  findings: z.array(SmartDiffFinding).default([]),
 });
 export type SmartDiffFile = z.infer<typeof SmartDiffFile>;
 
