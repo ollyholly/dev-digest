@@ -7,6 +7,7 @@
 ## Codebase Patterns
 
 - 2026-08-11: Intent Layer lives in `modules/intent/` (not reviews). Persistence is `IntentRepository` only; reviews no longer own `pr_intent` upsert/get. Review path calls `IntentService.ensureIntent` best-effort after diff load — soft-fail continues without intent in the prompt.
+- 2026-08-16: Smart Diff wave selection cannot reuse `listRunsForPull` / `RunSummary` — that DTO has no `head_sha`. `ReviewRepository.listRunHeadShasForPull(prId)` reads `agent_runs` (id, headSha, status); `modules/smart-diff` must not query SQL itself. Matching `status==='done' && headSha===pull.headSha` overlays those reviews only; seed/legacy (`runId==null`) is fallback when no such wave exists — never mix stale-SHA findings into a matching wave (`helpers.ts` `selectWaveFindings`).
 
 ## Tool & Library Notes
 

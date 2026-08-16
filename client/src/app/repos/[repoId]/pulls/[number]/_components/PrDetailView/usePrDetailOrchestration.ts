@@ -50,6 +50,9 @@ export function usePrDetailOrchestration(
   const invalidateRunHistory = React.useCallback(() => {
     if (prId) qc.invalidateQueries({ queryKey: ["pr-runs", prId] });
   }, [qc, prId]);
+  const invalidateSmartDiff = React.useCallback(() => {
+    if (prId) qc.invalidateQueries({ queryKey: ["smart-diff", prId] });
+  }, [qc, prId]);
 
   const tab = search.get("tab") ?? "overview";
   const traceRunId = search.get("trace");
@@ -101,6 +104,7 @@ export function usePrDetailOrchestration(
     reviewRunning,
     invalidateActiveRuns,
     invalidateRunHistory,
+    invalidateSmartDiff,
     runs,
     lethalTrifecta,
     findingsCount: allFindings.length,

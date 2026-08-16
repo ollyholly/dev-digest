@@ -35,6 +35,7 @@ export function PrDetailView({ repoId, number, prId, pr, repoFullName, crumb }: 
     reviewRunning,
     invalidateActiveRuns,
     invalidateRunHistory,
+    invalidateSmartDiff,
     runs,
     lethalTrifecta,
     findingsCount,
@@ -75,6 +76,7 @@ export function PrDetailView({ repoId, number, prId, pr, repoFullName, crumb }: 
                 invalidateActiveRuns();
                 invalidateRunHistory();
                 refetchReviews();
+                invalidateSmartDiff();
               }}
             />
           )}

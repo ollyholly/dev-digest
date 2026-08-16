@@ -36,6 +36,21 @@ export async function activeRunsForPull(
   }));
 }
 
+/** Run id + head SHA + status for a PR — Smart Diff wave selection. */
+export async function listRunHeadShasForPull(
+  db: Db,
+  prId: string,
+): Promise<{ id: string; headSha: string | null; status: string | null }[]> {
+  return db
+    .select({
+      id: t.agentRuns.id,
+      headSha: t.agentRuns.headSha,
+      status: t.agentRuns.status,
+    })
+    .from(t.agentRuns)
+    .where(eq(t.agentRuns.prId, prId));
+}
+
 /** All runs for a PR (any status), newest first — the PR run history. */
 export async function listRunsForPull(
   db: Db,

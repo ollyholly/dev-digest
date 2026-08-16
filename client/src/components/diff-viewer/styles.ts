@@ -1,5 +1,12 @@
 import type { CSSProperties } from "react";
+import type { Severity } from "@devdigest/shared";
 import type { Line } from "./helpers";
+
+const FINDING_ROW_BG: Record<Severity, string> = {
+  CRITICAL: "var(--crit-bg)",
+  WARNING: "var(--warn-bg)",
+  SUGGESTION: "var(--sugg-bg)",
+};
 
 /** Co-located styles for the DiffViewer (extracted from inline styles). */
 export const s = {
@@ -64,6 +71,35 @@ export const s = {
     color: "var(--text-primary)",
     paddingRight: 12,
   } satisfies CSSProperties,
+  findingDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 99,
+    background: "var(--crit)",
+    flexShrink: 0,
+  } satisfies CSSProperties,
+  findingsBadge: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 4,
+    padding: "2px 8px",
+    borderRadius: 5,
+    border: "1px solid var(--border)",
+    background: "var(--crit-bg)",
+    color: "var(--crit)",
+    fontSize: 12,
+    fontWeight: 600,
+    cursor: "pointer",
+    lineHeight: 1.4,
+  } satisfies CSSProperties,
+  findingBadges: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 4,
+    paddingRight: 10,
+    flexShrink: 0,
+    alignSelf: "center",
+  } satisfies CSSProperties,
 } as const;
 
 /** Chevron rotates 90deg when the file card is open. */
@@ -76,8 +112,14 @@ export function chevronFor(open: boolean): CSSProperties {
 }
 
 /** Row background per line kind (add/del tinted, others transparent). */
-export function lineRowFor(kind: Line["kind"]): CSSProperties {
-  const background = kind === "add" ? "var(--code-add)" : kind === "del" ? "var(--code-del)" : "transparent";
+export function lineRowFor(kind: Line["kind"], findingSeverity?: Severity | null): CSSProperties {
+  const background = findingSeverity
+    ? FINDING_ROW_BG[findingSeverity]
+    : kind === "add"
+      ? "var(--code-add)"
+      : kind === "del"
+        ? "var(--code-del)"
+        : "transparent";
   return { display: "flex", alignItems: "stretch", fontSize: 13, lineHeight: "20px", background };
 }
 

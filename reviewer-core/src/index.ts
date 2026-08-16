@@ -65,3 +65,17 @@ export {
 // The single OpenAI-compatible structured provider (OpenRouter), shared by the
 // CI runner and the server's openrouter path. Owns session grouping + guards.
 export { OpenRouterProvider, type OpenRouterProviderOptions } from './llm/openrouter.js';
+
+// Deterministic Smart Diff grouping (no LLM).
+export { classifyFile, normalizeRepoPath, pathBasename } from './smart-diff/classify.js';
+export {
+  buildSmartDiff,
+  type SmartDiffFileInput,
+  type SmartDiffFindingInput,
+} from './smart-diff/build.js';
+export {
+  ROLE_ORDER,
+  TOO_BIG_CHANGED_LINES,
+  SPLIT_NAME_BY_ROLE,
+  LOCKFILE_BASENAMES,
+} from './smart-diff/constants.js';
