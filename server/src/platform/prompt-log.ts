@@ -83,8 +83,10 @@ export function logPromptAssembly(
   sink.info(base, 'prompt assembly');
 
   if (mode === 'verbose') {
+    // info (not debug): DEVDIGEST_PROMPT_LOG=verbose must be enough locally
+    // without also raising LOG_LEVEL.
     for (const s of fields.log.sections) {
-      sink.debug(
+      sink.info(
         {
           event: 'prompt_assembly_section',
           correlation_id: fields.correlationId,

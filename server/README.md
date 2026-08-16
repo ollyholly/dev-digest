@@ -98,6 +98,7 @@ flowchart TB
 | `REPO_INTEL_ENABLED` | `true` | repo skeleton + callers in the prompt; `false` → ripgrep-only |
 | `DEVDIGEST_CLONE_DIR` | `./clones` | imported-repo checkouts (git-ignored) |
 | `LOG_LEVEL` | `info` (`silent` in test) | pino level |
+| `DEVDIGEST_PROMPT_LOG` | `off` | Prompt-assembly ops logs: `off` \| `summary` \| `verbose`. Fields: section name, source, chars, approx tokens, model, correlation id (`runId`). Never bodies, diffs, specs, or secrets. `verbose` is **development-only** (downgraded to `summary` in test/production). |
 | `NODE_ENV` | `development` | `test` → silent logs + global rate-limit disabled |
 
 Secrets (API keys, `GITHUB_TOKEN`) are **not** part of `AppConfig` — they go
@@ -131,6 +132,11 @@ What the reviewer actually sends to the model is assembled in
 - **Grounding is mandatory.** Every finding must cite a line that exists in the
   diff or it is dropped (`groundFindings`), and the score is recomputed from the
   surviving findings — the model's self-reported score is ignored.
+- **Prompt-assembly ops logs are metadata-only.** `assemblePrompt` returns a
+  `log` of section name/source/char lengths (no bodies). The API emits that via
+  `logPromptAssembly` (`src/platform/prompt-log.ts`) when
+  `DEVDIGEST_PROMPT_LOG=summary` or `verbose`. Correlation id is the agent run
+  id. Set `verbose` only in local `NODE_ENV=development`.
 
 ## Testing
 
