@@ -4,7 +4,13 @@ Project subagents live here as Markdown + YAML frontmatter. Cursor also loads
 this directory ([subagents docs](https://cursor.com/docs/subagents)). Full
 prompts stay in each `*.md` file — this README is only a map.
 
-**Model:** all agents use `model: inherit` (parent chat model).
+**Orchestration:** keep the same checks with less context — see
+[`token-efficiency.md`](token-efficiency.md) (short handoffs, cheap models for
+checklist/explore, no full-diff dumps, parallel reviewers with disjoint files).
+
+**Model:** agent files default to `model: inherit`. Override on the Task call
+for mechanical stages (explore, plan-verifier); keep inherit/stronger for
+planner, implementer, and architecture-reviewer.
 
 ```text
 researcher  →  evidence reports
@@ -28,7 +34,7 @@ planner     →  Development Plan  →  (user approval)  →  implementer  →  
 | [plan-verifier](plan-verifier.md) | `plan-verifier.md` | cyan | Checklist verification of code vs every plan/requirement item |
 | [doc-writer](doc-writer.md) | `doc-writer.md` | magenta | Durable docs + diagrams into the correct `docs/` sections |
 
-Product reviewer **system prompts** live under [`docs/agent-prompts/`](../../docs/agent-prompts/) — that is a different system from these Claude/Cursor agents.
+Product reviewer **system prompts** live under [`docs/agent-prompts/`](../../docs/agent-prompts/) — that is a different system from these Claude/Cursor agents (product model pick: [`choosing-a-model.md`](../../docs/agent-prompts/choosing-a-model.md)).
 
 ---
 

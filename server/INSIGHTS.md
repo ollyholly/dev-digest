@@ -34,6 +34,7 @@
 - 2026-08-11: Shared contracts must be edited in **both** `server/src/vendor/shared` and `client/src/vendor/shared` (separate trees; client cannot import server runtime values). `reviewer-core` aliases the server copy.
 - 2026-08-11: Intent plan/spec HTTP must use `container.http` (`SafeHttpClient`: allowlist + DNS private-IP check + streamed 64 KiB cap), never module-level `fetch`. `IntentService` uses `container.pullsRepo` (not `new PullsRepository`).
 - 2026-08-11: Soft ensure without an LLM key may persist heuristic; **force regenerate must not** — it throws `ConfigError` so the UI can show the missing key instead of replacing a prior LLM row. Linked-issue extraction requires `closes|fixes|resolves #N` (bare `#N` falsely matched “PR #482” in descriptions). Soft ensure **upgrades sticky heuristic** when a key appears (`decideIntentAction` in `cache-policy.ts`); `EnsureIntentResponse.status` is `cached|llm|heuristic`.
+- 2026-08-16: Prompt-assembly ops logs via `DEVDIGEST_PROMPT_LOG` (`off`\|`summary`\|`verbose`). Logs section name/source/chars/approx_tokens + model + correlation_id only — never bodies/diffs/specs. `verbose` is development-only and emits per-section lines at info (not debug) so it works at default `LOG_LEVEL`.
 
 ## Open Questions
 

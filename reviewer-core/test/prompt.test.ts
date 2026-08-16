@@ -77,4 +77,18 @@ describe('assemblePrompt — ## PR description', () => {
     expect(log.sections.some((s) => s.source === 'pr_description')).toBe(true);
     expect(log.approx_tokens).toBeGreaterThan(0);
   });
+
+  it('omits spec and skill bodies from log metadata', () => {
+    const { log } = assemblePrompt({
+      system: 'sys',
+      diff: 'DIFF',
+      specs: ['PRIVATE_SPEC_CONTRACT'],
+      skills: ['SECRET_SKILL_BODY'],
+    });
+    const serialized = JSON.stringify(log);
+    expect(serialized).not.toContain('PRIVATE_SPEC_CONTRACT');
+    expect(serialized).not.toContain('SECRET_SKILL_BODY');
+    expect(log.sections.some((s) => s.source === 'specs')).toBe(true);
+    expect(log.sections.some((s) => s.source === 'skills')).toBe(true);
+  });
 });
