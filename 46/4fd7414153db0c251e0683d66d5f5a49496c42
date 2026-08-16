@@ -1,0 +1,101 @@
+client/INSIGHTS.md
+  s_015036de4a5839::t_0f56b9ea1a6abf 10-11,26
+client/messages/en/prReview.json
+  s_015036de4a5839::t_d4ddaffa44c982 77-83
+client/messages/en/shell.json
+  s_015036de4a5839::t_e2a571b25b9f0f 43-44
+client/specs/smart-diff.md
+  s_015036de4a5839::t_ea7c7de4eb039f 1-139
+client/src/app/repos/[repoId]/pulls/[number]/_components/DiffTab/DiffTab.test.tsx
+  s_015036de4a5839::t_ee2852dac7257c 1-102
+client/src/app/repos/[repoId]/pulls/[number]/_components/DiffTab/DiffTab.tsx
+  s_015036de4a5839::t_b9404ce7f0b8ff 4-5,10-12,23,28,49-62,68-85,90
+client/src/app/repos/[repoId]/pulls/[number]/_components/PrDetailView/PrDetailView.tsx
+  s_015036de4a5839::t_4d42d7ad944838 38,79
+client/src/app/repos/[repoId]/pulls/[number]/_components/PrDetailView/usePrDetailOrchestration.ts
+  s_015036de4a5839::t_700df652be4aee 53-55,107
+client/src/app/repos/[repoId]/pulls/[number]/_components/SmartDiffViewer/SmartDiffViewer.test.tsx
+  s_015036de4a5839::t_bd6de1bd3894af 1-100
+client/src/app/repos/[repoId]/pulls/[number]/_components/SmartDiffViewer/SmartDiffViewer.tsx
+  s_015036de4a5839::t_52cfa162e12918 1-116
+client/src/app/repos/[repoId]/pulls/[number]/_components/SmartDiffViewer/constants.ts
+  s_015036de4a5839::t_75de42bbc0f99e 1-19
+client/src/app/repos/[repoId]/pulls/[number]/_components/SmartDiffViewer/index.ts
+  s_015036de4a5839::t_6c6bc12b7ad2c7 1
+client/src/app/repos/[repoId]/pulls/[number]/_components/SmartDiffViewer/styles.ts
+  s_015036de4a5839::t_2bc7e9d9c29161 1-54
+client/src/components/diff-viewer/CodeLine/CodeLine.tsx
+  s_015036de4a5839::t_b478fe97b2cf51 6-7,9,20,26,42-44,49,53,74-80
+client/src/components/diff-viewer/FileCard/FileCard.test.tsx
+  s_015036de4a5839::t_b2d48f4cabf9ea 1-44
+client/src/components/diff-viewer/FileCard/FileCard.tsx
+  s_015036de4a5839::t_270ca368efc0c6 8,34-65,68,70,88-101,114-121,143
+client/src/components/diff-viewer/findings.test.ts
+  s_015036de4a5839::t_c8c2d1d5bd084d 1-25
+client/src/components/diff-viewer/findings.ts
+  s_015036de4a5839::t_30cf6a7cfb5360 1-25
+client/src/components/diff-viewer/index.ts
+  s_015036de4a5839::t_446d30eea70597 4
+client/src/components/diff-viewer/styles.ts
+  s_015036de4a5839::t_4f5d180b74d0f4 2,5-10,74-102,115-122
+client/src/lib/hooks/index.ts
+  s_015036de4a5839::t_521ed766ce66e3 11
+client/src/lib/hooks/reviews.ts
+  s_015036de4a5839::t_e365282b5eca72 63,80-83,132
+client/src/lib/hooks/smart-diff.ts
+  s_015036de4a5839::t_aeece0360ca73c 1-14
+client/src/vendor/shared/contracts/brief.ts
+  s_015036de4a5839::t_ffc36bbe4a028d 2,119-127,134
+e2e/specs/05-pr-diff.flow.json
+  s_015036de4a5839::t_018a220a3e3d05 2-3,12-13
+reviewer-core/specs/smart-diff.md
+  s_015036de4a5839::t_3f8c329d016e91 1-84
+reviewer-core/src/index.ts
+  s_015036de4a5839::t_ef9f1a5a021d50 68-81
+reviewer-core/src/smart-diff/build.ts
+  s_015036de4a5839::t_d9da53556a584c 1-123
+reviewer-core/src/smart-diff/classify.ts
+  s_015036de4a5839::t_e43830cd700baf 1-55
+reviewer-core/src/smart-diff/constants.ts
+  s_015036de4a5839::t_6666e63f8f0cda 1-78
+reviewer-core/test/smart-diff.test.ts
+  s_015036de4a5839::t_69ba2049effe75 1-89
+server/INSIGHTS.md
+  s_015036de4a5839::t_ff4f85ee566ad7 10
+server/src/modules/index.ts
+  s_015036de4a5839::t_bec55810542f87 13,40
+server/src/modules/reviews/repository.ts
+  s_015036de4a5839::t_5ad85916d153da 83-89
+server/src/modules/reviews/repository/run.repo.ts
+  s_015036de4a5839::t_7132b22346c80b 39-53
+server/src/modules/smart-diff/helpers.ts
+  s_015036de4a5839::t_d4f38038666a69 1-69
+server/src/modules/smart-diff/routes.ts
+  s_015036de4a5839::t_f25e13b10a78a1 1-24
+server/src/modules/smart-diff/service.ts
+  s_015036de4a5839::t_bd4fe713c59062 1-49
+server/src/vendor/shared/contracts/brief.ts
+  s_015036de4a5839::t_96533ae2e0b35b 2,119-127,134
+server/test/contracts.test.ts
+  s_015036de4a5839::t_acbd15ef1a5379 121-144,150-163
+server/test/smart-diff-helpers.test.ts
+  s_015036de4a5839::t_5c99d16e9a8804 1-119
+server/test/smart-diff.it.test.ts
+  s_015036de4a5839::t_1b7a8206f5bc29 1-140
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "464fd7414153db0c251e0683d66d5f5a49496c42",
+  "prompts": {},
+  "sessions": {
+    "s_015036de4a5839": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "7cf09c96-f942-4931-b8b5-cad92b1c18d1",
+        "model": "default"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
