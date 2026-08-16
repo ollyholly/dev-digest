@@ -1,0 +1,35 @@
+server/INSIGHTS.md
+  s_015036de4a5839::t_154fb0f4b3504f 14-15
+client/INSIGHTS.md
+  s_015036de4a5839::t_88874afc63cc2a 16
+client/src/app/repos/[repoId]/pulls/[number]/_components/SmartDiffViewer/SmartDiffViewer.tsx
+  s_015036de4a5839::t_ad84f9676c5ae2 83-87
+client/src/app/repos/[repoId]/pulls/[number]/_components/SmartDiffViewer/styles.ts
+  s_015036de4a5839::t_b44330197d09f1 40
+client/src/vendor/shared/contracts/brief.ts
+  s_015036de4a5839::t_3a3269df9e7d4a 130-131
+e2e/INSIGHTS.md
+  s_015036de4a5839::t_e1282888f75a45 13-14
+e2e/specs/05-pr-diff.flow.json
+  s_015036de4a5839::t_ae50c143878667 12-14
+server/src/vendor/shared/contracts/brief.ts
+  s_015036de4a5839::t_9ec571f54cfc9a 130-131
+server/test/contracts.test.ts
+  s_015036de4a5839::t_147ea340eeba44 124,159-167
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "ec87567c8f96d422beea23003e831a10ff6f36b1",
+  "prompts": {},
+  "sessions": {
+    "s_015036de4a5839": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "7cf09c96-f942-4931-b8b5-cad92b1c18d1",
+        "model": "default"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
