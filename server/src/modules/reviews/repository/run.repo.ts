@@ -36,12 +36,30 @@ export async function activeRunsForPull(
   }));
 }
 
+export type AgentRunStatus = 'done' | 'failed' | 'running' | 'cancelled';
+
+/** Run id + head SHA + status — Smart Diff wave selection. DB `status` is text. */
+export interface RunHeadSha {
+  id: string;
+  headSha: string | null;
+  status: AgentRunStatus | null;
+}
+
+function asAgentRunStatus(value: string | null): AgentRunStatus | null {
+  switch (value) {
+    case 'done':
+    case 'failed':
+    case 'running':
+    case 'cancelled':
+      return value;
+    default:
+      return null;
+  }
+}
+
 /** Run id + head SHA + status for a PR — Smart Diff wave selection. */
-export async function listRunHeadShasForPull(
-  db: Db,
-  prId: string,
-): Promise<{ id: string; headSha: string | null; status: string | null }[]> {
-  return db
+export async function listRunHeadShasForPull(db: Db, prId: string): Promise<RunHeadSha[]> {
+  const rows = await db
     .select({
       id: t.agentRuns.id,
       headSha: t.agentRuns.headSha,
@@ -49,6 +67,11 @@ export async function listRunHeadShasForPull(
     })
     .from(t.agentRuns)
     .where(eq(t.agentRuns.prId, prId));
+  return rows.map((row) => ({
+    id: row.id,
+    headSha: row.headSha,
+    status: asAgentRunStatus(row.status),
+  }));
 }
 
 /** All runs for a PR (any status), newest first — the PR run history. */

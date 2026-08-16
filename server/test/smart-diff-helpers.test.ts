@@ -1,33 +1,28 @@
 import { describe, expect, it } from 'vitest';
-import {
-  selectWaveFindings,
-  type WaveFinding,
-  type WaveReview,
-  type WaveRun,
-} from '../src/modules/smart-diff/helpers.js';
+import type { SmartDiffFindingInput } from '@devdigest/reviewer-core';
+import type { RunHeadSha } from '../src/modules/reviews/repository/run.repo.js';
+import { selectWaveFindings, type WaveReview } from '../src/modules/smart-diff/helpers.js';
 
 const HEAD = 'abc123';
 const OLD_SHA = 'old999';
 
-function finding(over: Partial<WaveFinding> & Pick<WaveFinding, 'id' | 'title'>): WaveFinding {
+function finding(
+  over: Partial<SmartDiffFindingInput> & Pick<SmartDiffFindingInput, 'id' | 'title'>,
+): SmartDiffFindingInput {
   return {
     file: 'src/core.ts',
-    startLine: 10,
-    endLine: 12,
+    start_line: 10,
+    end_line: 12,
     severity: 'CRITICAL',
     ...over,
   };
 }
 
-function review(
-  id: string,
-  runId: string | null,
-  findings: WaveFinding[],
-): WaveReview {
-  return { id, runId, findings };
+function review(runId: string | null, findings: SmartDiffFindingInput[]): WaveReview {
+  return { runId, findings };
 }
 
-function run(id: string, over: Partial<WaveRun> = {}): WaveRun {
+function run(id: string, over: Partial<RunHeadSha> = {}): RunHeadSha {
   return { id, headSha: HEAD, status: 'done', ...over };
 }
 
@@ -37,10 +32,7 @@ describe('selectWaveFindings', () => {
     const seedFinding = finding({ id: 'seed-f', title: 'seed finding' });
     const result = selectWaveFindings({
       pullHeadSha: HEAD,
-      reviews: [
-        review('r-wave', 'run-wave', [waveFinding]),
-        review('r-seed', null, [seedFinding]),
-      ],
+      reviews: [review('run-wave', [waveFinding]), review(null, [seedFinding])],
       runs: [run('run-wave')],
     });
     expect(result).toEqual([
@@ -60,10 +52,7 @@ describe('selectWaveFindings', () => {
     const staleFinding = finding({ id: 'stale-f', title: 'stale' });
     const result = selectWaveFindings({
       pullHeadSha: HEAD,
-      reviews: [
-        review('r-wave', 'run-wave', [waveFinding]),
-        review('r-stale', 'run-stale', [staleFinding]),
-      ],
+      reviews: [review('run-wave', [waveFinding]), review('run-stale', [staleFinding])],
       runs: [run('run-wave'), run('run-stale', { headSha: OLD_SHA })],
     });
     expect(result.map((f) => f.id)).toEqual(['wave-f']);
@@ -74,10 +63,7 @@ describe('selectWaveFindings', () => {
     const staleFinding = finding({ id: 'stale-f', title: 'stale' });
     const result = selectWaveFindings({
       pullHeadSha: HEAD,
-      reviews: [
-        review('r-seed', null, [seedFinding]),
-        review('r-stale', 'run-stale', [staleFinding]),
-      ],
+      reviews: [review(null, [seedFinding]), review('run-stale', [staleFinding])],
       runs: [run('run-stale', { headSha: OLD_SHA })],
     });
     expect(result.map((f) => f.id)).toEqual(['seed-f']);
@@ -86,7 +72,7 @@ describe('selectWaveFindings', () => {
   it('returns [] when there is no matching wave and no seed reviews', () => {
     const result = selectWaveFindings({
       pullHeadSha: HEAD,
-      reviews: [review('r-stale', 'run-stale', [finding({ id: 'stale-f', title: 'stale' })])],
+      reviews: [review('run-stale', [finding({ id: 'stale-f', title: 'stale' })])],
       runs: [run('run-stale', { headSha: OLD_SHA })],
     });
     expect(result).toEqual([]);
@@ -97,8 +83,8 @@ describe('selectWaveFindings', () => {
     const result = selectWaveFindings({
       pullHeadSha: HEAD,
       reviews: [
-        review('r-seed', null, [seedFinding]),
-        review('r-running', 'run-running', [finding({ id: 'run-f', title: 'in flight' })]),
+        review(null, [seedFinding]),
+        review('run-running', [finding({ id: 'run-f', title: 'in flight' })]),
       ],
       runs: [run('run-running', { status: 'running' })],
     });
@@ -108,10 +94,7 @@ describe('selectWaveFindings', () => {
   it('returns [] for a matching wave even if those reviews have no findings (no seed mix-in)', () => {
     const result = selectWaveFindings({
       pullHeadSha: HEAD,
-      reviews: [
-        review('r-wave', 'run-wave', []),
-        review('r-seed', null, [finding({ id: 'seed-f', title: 'seed' })]),
-      ],
+      reviews: [review('run-wave', []), review(null, [finding({ id: 'seed-f', title: 'seed' })])],
       runs: [run('run-wave')],
     });
     expect(result).toEqual([]);

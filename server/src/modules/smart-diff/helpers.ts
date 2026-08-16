@@ -6,47 +6,21 @@
  * exists. Stale-SHA findings are never mixed into a matching wave.
  */
 import type { SmartDiffFindingInput } from '@devdigest/reviewer-core';
-
-export interface WaveFinding {
-  id: string;
-  file: string;
-  startLine: number;
-  endLine: number;
-  severity: string;
-  title: string;
-}
+import type { RunHeadSha } from '../reviews/repository/run.repo.js';
 
 export interface WaveReview {
-  id: string;
   runId: string | null;
-  findings: WaveFinding[];
-}
-
-export interface WaveRun {
-  id: string;
-  headSha: string | null;
-  status: string | null;
+  findings: SmartDiffFindingInput[];
 }
 
 export interface SelectWaveFindingsArgs {
   pullHeadSha: string;
   reviews: WaveReview[];
-  runs: WaveRun[];
-}
-
-function toFindingInput(finding: WaveFinding): SmartDiffFindingInput {
-  return {
-    id: finding.id,
-    file: finding.file,
-    start_line: finding.startLine,
-    end_line: finding.endLine,
-    severity: finding.severity as SmartDiffFindingInput['severity'],
-    title: finding.title,
-  };
+  runs: RunHeadSha[];
 }
 
 function flatten(reviews: WaveReview[]): SmartDiffFindingInput[] {
-  return reviews.flatMap((review) => review.findings.map(toFindingInput));
+  return reviews.flatMap((review) => review.findings);
 }
 
 export function selectWaveFindings(args: SelectWaveFindingsArgs): SmartDiffFindingInput[] {

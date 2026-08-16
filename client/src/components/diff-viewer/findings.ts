@@ -1,10 +1,4 @@
-import type { Severity, SmartDiffFinding } from "@devdigest/shared";
-
-const SEVERITY_RANK: Record<Severity, number> = {
-  CRITICAL: 3,
-  WARNING: 2,
-  SUGGESTION: 1,
-};
+import { Severity, type SmartDiffFinding } from "@devdigest/shared";
 
 /** Findings whose `[start_line, end_line]` includes the new-side line. */
 export function findingsCoveringLine(
@@ -19,7 +13,9 @@ export function worstCoveringSeverity(findings: readonly SmartDiffFinding[]): Se
   if (findings.length === 0) return null;
   let worst = findings[0]!;
   for (const f of findings) {
-    if (SEVERITY_RANK[f.severity] > SEVERITY_RANK[worst.severity]) worst = f;
+    if (Severity.options.indexOf(f.severity) < Severity.options.indexOf(worst.severity)) {
+      worst = f;
+    }
   }
   return worst.severity;
 }

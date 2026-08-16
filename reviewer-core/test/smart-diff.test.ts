@@ -28,6 +28,11 @@ describe('classifyFile', () => {
   it('classifies business-logic paths as core', () => {
     expect(classifyFile('src/middleware/ratelimit.ts')).toBe('core');
     expect(classifyFile('src/api/public/webhooks.ts')).toBe('core');
+    expect(classifyFile('src/vendor/shared/contracts/brief.ts')).toBe('core');
+  });
+
+  it('classifies a repo-root vendor tree as boilerplate', () => {
+    expect(classifyFile('vendor/github.com/foo/bar.go')).toBe('boilerplate');
   });
 });
 

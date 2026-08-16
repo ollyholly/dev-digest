@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Severity } from './findings.js';
+import { Finding } from './findings.js';
 
 /**
  * PR Brief building blocks: Intent, Blast radius, Risks, PR History,
@@ -116,12 +116,12 @@ export type PrHistory = z.infer<typeof PrHistory>;
 export const SmartDiffRole = z.enum(['core', 'wiring', 'boilerplate']);
 export type SmartDiffRole = z.infer<typeof SmartDiffRole>;
 
-export const SmartDiffFinding = z.object({
-  id: z.string(),
-  start_line: z.number().int(),
-  end_line: z.number().int(),
-  severity: Severity,
-  title: z.string(),
+export const SmartDiffFinding = Finding.pick({
+  id: true,
+  start_line: true,
+  end_line: true,
+  severity: true,
+  title: true,
 });
 export type SmartDiffFinding = z.infer<typeof SmartDiffFinding>;
 

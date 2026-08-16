@@ -1,4 +1,4 @@
-import type { SmartDiff, SmartDiffFile, SmartDiffFinding, SmartDiffRole } from '@devdigest/shared';
+import { Severity, type SmartDiff, type SmartDiffFile, type SmartDiffFinding, type SmartDiffRole } from '@devdigest/shared';
 import { classifyFile } from './classify.js';
 import { ROLE_ORDER, SPLIT_NAME_BY_ROLE, TOO_BIG_CHANGED_LINES } from './constants.js';
 
@@ -8,38 +8,34 @@ export interface SmartDiffFileInput {
   deletions: number;
 }
 
-export interface SmartDiffFindingInput {
-  id: string;
-  file: string;
-  start_line: number;
-  end_line: number;
-  severity: SmartDiffFinding['severity'];
-  title: string;
+export type SmartDiffFindingInput = SmartDiffFinding & { file: string };
+
+function overlayFinding(finding: SmartDiffFindingInput): SmartDiffFinding {
+  return {
+    id: finding.id,
+    start_line: finding.start_line,
+    end_line: finding.end_line,
+    severity: finding.severity,
+    title: finding.title,
+  };
 }
 
-const SEVERITY_RANK: Record<SmartDiffFinding['severity'], number> = {
-  CRITICAL: 0,
-  WARNING: 1,
-  SUGGESTION: 2,
-};
-
-function findingsForPath(
-  path: string,
-  findings: SmartDiffFindingInput[],
-): SmartDiffFinding[] {
-  return findings
-    .filter((f) => f.file === path)
-    .map((f) => ({
-      id: f.id,
-      start_line: f.start_line,
-      end_line: f.end_line,
-      severity: f.severity,
-      title: f.title,
-    }))
-    .sort(
+function indexFindingsByPath(findings: SmartDiffFindingInput[]): Map<string, SmartDiffFinding[]> {
+  const byPath = new Map<string, SmartDiffFinding[]>();
+  for (const finding of findings) {
+    const list = byPath.get(finding.file);
+    const overlay = overlayFinding(finding);
+    if (list) list.push(overlay);
+    else byPath.set(finding.file, [overlay]);
+  }
+  for (const list of byPath.values()) {
+    list.sort(
       (a, b) =>
-        SEVERITY_RANK[a.severity] - SEVERITY_RANK[b.severity] || a.start_line - b.start_line,
+        Severity.options.indexOf(a.severity) - Severity.options.indexOf(b.severity) ||
+        a.start_line - b.start_line,
     );
+  }
+  return byPath;
 }
 
 function uniqueLines(findings: SmartDiffFinding[]): number[] {
@@ -82,10 +78,7 @@ export function buildSmartDiff(
   files: SmartDiffFileInput[],
   findings: SmartDiffFindingInput[] = [],
 ): SmartDiff {
-  const findingsByPath = new Map<string, SmartDiffFinding[]>();
-  for (const file of files) {
-    findingsByPath.set(file.path, findingsForPath(file.path, findings));
-  }
+  const findingsByPath = indexFindingsByPath(findings);
 
   const byRole = new Map<SmartDiffRole, SmartDiffFileInput[]>();
   for (const file of files) {

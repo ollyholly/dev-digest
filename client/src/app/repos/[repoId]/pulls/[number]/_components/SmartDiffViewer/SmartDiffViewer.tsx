@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import type { PrFile, SmartDiffFile, SmartDiffRole } from "@devdigest/shared";
 import { FileCard, type DiffCommentApi } from "@/components/diff-viewer";
@@ -17,7 +18,7 @@ function defaultOpenForSmartFile(
       return false;
     case "core":
     case "wiring":
-      if ((file.findings?.length ?? 0) > 0) return true;
+      if (file.findings.length > 0) return true;
       return file.additions + file.deletions <= AUTO_EXPAND_MAX_LINES;
     default: {
       const _exhaustive: never = role;
@@ -26,41 +27,35 @@ function defaultOpenForSmartFile(
   }
 }
 
-function prFileFor(smartFile: SmartDiffFile, files: PrFile[]): PrFile {
-  const match = files.find((f) => f.path === smartFile.path);
-  return {
-    path: smartFile.path,
-    additions: match?.additions ?? smartFile.additions,
-    deletions: match?.deletions ?? smartFile.deletions,
-    patch: match?.patch,
-  };
-}
-
 function SmartDiffGroup({
   role,
   files,
-  prFiles,
+  byPath,
   commenting,
 }: {
   role: SmartDiffRole;
   files: SmartDiffFile[];
-  prFiles: PrFile[];
+  byPath: Map<string, PrFile>;
   commenting?: DiffCommentApi;
 }) {
   const t = useTranslations("prReview.smartDiff");
+  const present = files.flatMap((sf) => {
+    const prFile = byPath.get(sf.path);
+    return prFile ? [{ sf, prFile }] : [];
+  });
   return (
     <section style={s.group}>
       <header style={s.groupHeader}>
         <span style={{ ...s.groupLabel, color: ROLE_COLOR[role] }}>{t(ROLE_LABEL_KEY[role])}</span>
         <span style={s.groupSubtitle}>{t(ROLE_SUBTITLE_KEY[role])}</span>
-        <span style={s.groupCount}>{t("filesCount", { count: files.length })}</span>
+        <span style={s.groupCount}>{t("filesCount", { count: present.length })}</span>
       </header>
-      {files.map((sf) => (
+      {present.map(({ sf, prFile }) => (
         <FileCard
           key={sf.path}
-          file={prFileFor(sf, prFiles)}
+          file={prFile}
           commenting={commenting}
-          findings={sf.findings ?? []}
+          findings={sf.findings}
           defaultOpen={defaultOpenForSmartFile(role, sf)}
         />
       ))}
@@ -79,12 +74,12 @@ export function SmartDiffViewer({
 }) {
   const t = useTranslations("prReview.smartDiff");
   const { data, isPending, isError } = useSmartDiff(prId);
+  const byPath = useMemo(() => new Map(files.map((f) => [f.path, f])), [files]);
 
   if (!prId) return null;
-  if (isPending) return <div style={s.empty}>{t("groupedByRole")}</div>;
-  if (isError || !data || data.groups.length === 0) {
-    return <div style={s.empty}>{t("groupedByRole")}</div>;
-  }
+  if (isPending) return <div style={s.empty}>{t("loading")}</div>;
+  if (isError) return <div style={s.empty}>{t("loadError")}</div>;
+  if (!data || data.groups.length === 0) return <div style={s.empty}>{t("empty")}</div>;
 
   return (
     <div style={s.root}>
@@ -110,7 +105,7 @@ export function SmartDiffViewer({
           key={group.role}
           role={group.role}
           files={group.files}
-          prFiles={files}
+          byPath={byPath}
           commenting={commenting}
         />
       ))}

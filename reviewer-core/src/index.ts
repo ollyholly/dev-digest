@@ -73,9 +73,3 @@ export {
   type SmartDiffFileInput,
   type SmartDiffFindingInput,
 } from './smart-diff/build.js';
-export {
-  ROLE_ORDER,
-  TOO_BIG_CHANGED_LINES,
-  SPLIT_NAME_BY_ROLE,
-  LOCKFILE_BASENAMES,
-} from './smart-diff/constants.js';

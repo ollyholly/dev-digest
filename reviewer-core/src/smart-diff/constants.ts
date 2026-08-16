@@ -37,12 +37,12 @@ export const LOCKFILE_BASENAMES: ReadonlySet<string> = new Set([
 /** Manifest that is mechanical in review (not business logic). */
 export const BOILERPLATE_BASENAMES: ReadonlySet<string> = new Set(['package.json']);
 
-/** Directory names that mark generated / vendored trees. */
+/** Directory names that mark generated trees (any path segment). `vendor/` is
+ *  root-only — see `isBoilerplate` — so `src/vendor/**` stays reviewable. */
 export const BOILERPLATE_DIR_NAMES: ReadonlySet<string> = new Set([
   'dist',
   'build',
   'coverage',
-  'vendor',
   '__snapshots__',
 ]);
 

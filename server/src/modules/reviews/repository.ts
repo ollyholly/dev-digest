@@ -81,9 +81,7 @@ export class ReviewRepository {
   }
 
   /** Run id + head SHA + status for a PR (Smart Diff wave selection). */
-  listRunHeadShasForPull(
-    prId: string,
-  ): Promise<{ id: string; headSha: string | null; status: string | null }[]> {
+  listRunHeadShasForPull(prId: string): Promise<runRepo.RunHeadSha[]> {
     return runRepo.listRunHeadShasForPull(this.db, prId);
   }
 

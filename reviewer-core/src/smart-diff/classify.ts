@@ -31,6 +31,7 @@ function isBoilerplate(path: string): boolean {
   if (LOCKFILE_BASENAMES.has(base) || BOILERPLATE_BASENAMES.has(base)) return true;
   if (MINIFIED_JS_RE.test(base) || SNAPSHOT_FILE_RE.test(base)) return true;
   if (GENERATED_FILE_RE.test(base) || PROTOBUF_GO_RE.test(base)) return true;
+  if (n === 'vendor' || n.startsWith('vendor/')) return true;
   return n.split('/').some((seg) => BOILERPLATE_DIR_NAMES.has(seg));
 }
 

@@ -7,6 +7,7 @@
 ## Codebase Patterns
 
 - 2026-08-11: Overview IntentCard auto-ensures via `POST /pulls/:id/intent` `{force:false}` on mount (`useEnsureIntent`); Regenerate uses `{force:true}`. Prefer mutation result over GET cache (GET 404s until first ensure/seed).
+- 2026-08-16: Supersedes the SmartDiff/`PrFile` join note above — `SmartDiffViewer` indexes `PrFile[]` by path and passes the real file into `FileCard`. Missing paths are skipped, not synthesized into a patch-less row.
 - 2026-08-16: SmartDiff JSON has path/additions/deletions/findings but not `patch`. Join `files.find(f => f.path === smartFile.path)` from the PR detail payload before passing a `PrFile` to FileCard (`SmartDiffViewer.tsx`).
 - 2026-08-16: FileCard findings badge lives inside the clickable file header. Click must `stopPropagation` then `setOpen(true)` + pending scroll; without it the header toggle fires too and the card stays collapsed. Scroll targets `[data-diff-line="${path}:${start_line}"]` after the body commits (`FileCard.tsx`).
 

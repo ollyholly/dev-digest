@@ -1,11 +1,23 @@
-import { buildSmartDiff } from '@devdigest/reviewer-core';
-import type { SmartDiff } from '@devdigest/shared';
+import { buildSmartDiff, type SmartDiffFindingInput } from '@devdigest/reviewer-core';
+import { Severity, type SmartDiff } from '@devdigest/shared';
+import type { FindingRow } from '../../db/rows.js';
 import type { Container } from '../../platform/container.js';
 import { NotFoundError } from '../../platform/errors.js';
 import { selectWaveFindings } from './helpers.js';
 
 /** Slice of `Container` this service actually depends on. */
 export type SmartDiffServiceDeps = Pick<Container, 'pullsRepo' | 'reviewRepo'>;
+
+function toFindingInput(row: FindingRow): SmartDiffFindingInput {
+  return {
+    id: row.id,
+    file: row.file,
+    start_line: row.startLine,
+    end_line: row.endLine,
+    severity: Severity.parse(row.severity),
+    title: row.title,
+  };
+}
 
 /**
  * Smart Diff use-case: load PR files + wave findings, then classify via
@@ -27,16 +39,8 @@ export class SmartDiffService {
     const findings = selectWaveFindings({
       pullHeadSha: pull.headSha,
       reviews: reviewRows.map(({ review, findings: reviewFindings }) => ({
-        id: review.id,
         runId: review.runId,
-        findings: reviewFindings.map((f) => ({
-          id: f.id,
-          file: f.file,
-          startLine: f.startLine,
-          endLine: f.endLine,
-          severity: f.severity,
-          title: f.title,
-        })),
+        findings: reviewFindings.map(toFindingInput),
       })),
       runs,
     });
