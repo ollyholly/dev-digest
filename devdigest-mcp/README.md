@@ -57,6 +57,7 @@ If something else already owns `:3001` on your machine, start the API on another
 port (e.g. `API_PORT=3011 pnpm dev` in `server/`) and set
 `DEVDIGEST_API_BASE=http://localhost:3011` in [`.mcp.json`](../.mcp.json) or
 your shell — do not commit a machine-specific port.
+
 ### 3. Choose how to run MCP
 
 #### Option A — Cursor / Claude Code (usual day-to-day)
