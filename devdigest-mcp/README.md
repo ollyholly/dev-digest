@@ -53,6 +53,10 @@ Confirm:
 curl -s http://localhost:3001/health
 ```
 
+If something else already owns `:3001` on your machine, start the API on another
+port (e.g. `API_PORT=3011 pnpm dev` in `server/`) and set
+`DEVDIGEST_API_BASE=http://localhost:3011` in [`.mcp.json`](../.mcp.json) or
+your shell — do not commit a machine-specific port.
 ### 3. Choose how to run MCP
 
 #### Option A — Cursor / Claude Code (usual day-to-day)
@@ -110,11 +114,11 @@ Open the Inspector URL it prints, then call tools from the UI.
 
 ### 4. Smoke-check the five tools
 
-Against seeded demo data (after `./scripts/dev.sh` with seed):
+Against seeded / imported data (API must be up):
 
 1. `list_agents` — expect General / Security (and any custom agents).
-2. `run_agent_on_pr` — `repo_id` (UUID from the UI or `GET /repos`),
-   `pr_number` **482**, `agent_id` from step 1. Blocks until done or **120s**.
+2. `run_agent_on_pr` — `repo_id` (UUID from UI or `GET /repos`), `pr_number`,
+   `agent_id` from step 1. Blocks until done or **120s**.
 3. `get_findings` — pass the `run_id` from step 2 (or from a timeout payload).
 4. `get_conventions` — same `repo_id` (default status filter: `accepted`).
 5. `get_blast_radius` — stub: `implemented: false`.
@@ -128,6 +132,105 @@ npm run typecheck
 ```
 
 Hermetic Vitest with mocked `fetch` — no Docker, no API.
+
+---
+
+## Worked example: Security Reviewer on PR #19
+
+Real run against imported GitHub PR
+**[#19 DO NOT MERGE: refund lookup by charge reference](https://github.com/ollyholly/dev-digest/pull/19)**
+on repo `ollyholly/dev-digest`, agent **Security Reviewer**.
+
+### Resolve IDs (do not hard-code forever)
+
+UUIDs change if you re-seed or re-import. Discover them each environment:
+
+```sh
+API="${DEVDIGEST_API_BASE:-http://localhost:3001}"
+
+# Agents → pick Security Reviewer id
+curl -s "$API/agents" | jq '.[] | {id,name}'
+
+# Or via MCP
+cd devdigest-mcp
+DEVDIGEST_API_BASE="$API" node scripts/call-mcp-tool.mjs list_agents '{"enabled_only":true}'
+
+# Repos → pick ollyholly/dev-digest id
+curl -s "$API/repos" | jq '.[] | {id,full_name}'
+
+# Confirm PR #19 is imported
+REPO_ID=<uuid-from-above>
+curl -s "$API/repos/$REPO_ID/pulls" | jq '.[] | select(.number==19) | {id,number,title}'
+```
+
+Example values from a local DB after import (yours may differ):
+
+| Field | Example |
+|-------|---------|
+| `repo_id` | `e8acc918-6627-4f5b-a411-80d4d121b47e` (`ollyholly/dev-digest`) |
+| `pr_number` | `19` |
+| `agent_id` | `f1b2f6ed-5019-4772-b318-5593a9285e8c` (Security Reviewer) |
+
+### Call `run_agent_on_pr`
+
+**MCP tool arguments (verbatim shape):**
+
+```json
+{
+  "repo_id": "e8acc918-6627-4f5b-a411-80d4d121b47e",
+  "pr_number": 19,
+  "agent_id": "f1b2f6ed-5019-4772-b318-5593a9285e8c"
+}
+```
+
+**From Cursor / Claude:** enable the `devdigest` server under Settings → MCP,
+open a **new** chat (this agent session only sees MCP servers attached to it —
+often `user-github` etc., not project `devdigest` until you reload + new chat),
+then ask to run Security Reviewer on PR 19 or paste the JSON args above.
+
+**From the CLI helper** (stdio MCP client — same server as `.mcp.json`; useful when
+the IDE agent session has not attached project MCP yet):
+
+```sh
+cd devdigest-mcp
+export DEVDIGEST_API_BASE="${DEVDIGEST_API_BASE:-http://localhost:3001}"
+
+node scripts/call-mcp-tool.mjs run_agent_on_pr \
+  '{"repo_id":"e8acc918-6627-4f5b-a411-80d4d121b47e","pr_number":19,"agent_id":"f1b2f6ed-5019-4772-b318-5593a9285e8c"}'
+```
+
+Blocks until the run finishes or **120s** timeout. On success you get a compact
+verdict (`run_id`, `verdict`, `score`, `severity_counts`, capped `findings`).
+
+### Read findings again later
+
+```sh
+node scripts/call-mcp-tool.mjs get_findings \
+  '{"run_id":"<run_id-from-previous-response>"}'
+```
+
+Example run id from a completed Security pass on this PR:
+`ad286630-bb1a-4500-a8d6-dcb15d81cf3a` (replace with yours).
+
+### Sample verdict (illustrative)
+
+```text
+verdict: request_changes
+score: 6
+CRITICAL 2 · WARNING 2 · SUGGESTION 0
+
+- CRITICAL  SQL injection in refund search query
+            server/src/modules/refunds/repository.ts:10-12
+- CRITICAL  Missing authentication on refund search endpoint
+            server/src/modules/refunds/routes.ts:20-40
+- WARNING   Inverted refund amount check in canIssueRefund
+            server/src/modules/refunds/helpers.ts:5-8
+- WARNING   Hardcoded financial parameters in client hook
+            client/src/lib/hooks/refunds.ts:20-24
+```
+
+Needs a working LLM key in DevDigest Settings (or env) — otherwise the run
+fails with a config / provider error.
 
 ---
 
@@ -157,6 +260,10 @@ npm run typecheck
 npm test                 # vitest, mocked fetch — no Docker / API
 npm start                # stdio MCP (never console.log to stdout)
 npm run dev              # tsx watch
+
+# One-shot tool call (API must be up)
+DEVDIGEST_API_BASE=http://localhost:3001 \
+  node scripts/call-mcp-tool.mjs list_agents '{"enabled_only":true}'
 ```
 
 ## Architecture
