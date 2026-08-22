@@ -1,0 +1,99 @@
+devdigest-mcp/package.json
+  s_cd14d168f667eb::t_1adc65a8ada6ef 1-29
+devdigest-mcp/src/tools/register-tools.ts
+  s_cd14d168f667eb::t_a0ad19b760322d 1-215
+devdigest-mcp/vitest.config.ts
+  s_cd14d168f667eb::t_ab42cdb8d77467 1-9
+scripts/dev.sh
+  s_d57952076a6178::t_832b67f99b7c21 10-12
+.github/workflows/devdigest-mcp.yml
+  s_cd14d168f667eb::t_2053de5a1efe52 1-43
+.mcp.json
+  s_cd14d168f667eb::t_859f718feecb23 1-11
+AGENTS.md
+  s_cd14d168f667eb::t_097dd95b1153f8 11,22,40,64
+README.md
+  s_cd14d168f667eb::t_70d5cf7cbf93a6 18,65-66
+TESTING.md
+  s_cd14d168f667eb::t_e7fad32f6d3306 3,34,60-63,70
+devdigest-mcp/AGENTS.md
+  s_cd14d168f667eb::t_34243c0974cf63 1-47
+devdigest-mcp/CLAUDE.md
+  s_cd14d168f667eb::t_89e8bdb2205781 1-47
+devdigest-mcp/INSIGHTS.md
+  s_cd14d168f667eb::t_8ab78768119517 1-22
+devdigest-mcp/README.md
+  s_cd14d168f667eb::t_5c6f223b9708fb 1-176
+devdigest-mcp/package-lock.json
+  s_cd14d168f667eb::t_944dc2db90f961 1-3144
+devdigest-mcp/specs/README.md
+  s_cd14d168f667eb::t_45f8b0ee454ba4 1-8
+devdigest-mcp/specs/devdigest-mcp.md
+  s_cd14d168f667eb::t_e9a63b764b0af8 1-57
+devdigest-mcp/src/adapter/http-devdigest-client.ts
+  s_cd14d168f667eb::t_814ff0f549164e 1-142
+devdigest-mcp/src/adapter/wire-schemas.ts
+  s_cd14d168f667eb::t_482610be250630 1-106
+devdigest-mcp/src/config.ts
+  s_cd14d168f667eb::t_02c386ef1d2043 1-47
+devdigest-mcp/src/index.ts
+  s_cd14d168f667eb::t_e0ca688643cac5 1-32
+devdigest-mcp/src/port/devdigest-api.ts
+  s_cd14d168f667eb::t_93c0f24ea6baa8 1-37
+devdigest-mcp/src/projections/agents.ts
+  s_cd14d168f667eb::t_82fe933dbefbf8 1-25
+devdigest-mcp/src/projections/conventions.ts
+  s_cd14d168f667eb::t_6fd5cd8715f2cd 1-40
+devdigest-mcp/src/projections/reviews.ts
+  s_cd14d168f667eb::t_635f381c131547 1-92
+devdigest-mcp/src/server.ts
+  s_cd14d168f667eb::t_40a9c11cbbec4b 1-35
+devdigest-mcp/src/services/agents.ts
+  s_cd14d168f667eb::t_c52b30882dccb9 1-12
+devdigest-mcp/src/services/blast-radius.ts
+  s_cd14d168f667eb::t_f20244574a7950 1-20
+devdigest-mcp/src/services/conventions.ts
+  s_cd14d168f667eb::t_dbaf7bf0744a8f 1-13
+devdigest-mcp/src/services/reviews.ts
+  s_cd14d168f667eb::t_90efe7c44cae2b 1-170
+devdigest-mcp/src/tools/schemas.ts
+  s_cd14d168f667eb::t_d27ed6213bb2fa 1-36
+devdigest-mcp/test/http-client.test.ts
+  s_cd14d168f667eb::t_2c4510670f6722 1-97
+devdigest-mcp/test/projections.test.ts
+  s_cd14d168f667eb::t_bff2c92f7ef6f6 1-110
+devdigest-mcp/test/reviews.poll.test.ts
+  s_cd14d168f667eb::t_7c1608428a897e 1-177
+devdigest-mcp/tsconfig.json
+  s_cd14d168f667eb::t_03308998bb26e4 1-27
+docs/mcp/README.md
+  s_cd14d168f667eb::t_d5c76f8ff076a2 1-16
+docs/mcp/best-practices.md
+  s_cd14d168f667eb::t_e860828765b09f 1-261
+server/docs/README.md
+  s_cd14d168f667eb::t_82c4f1ace6853c 11-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "13e1c68d726ea82da32def35d0ed04be0c152235",
+  "prompts": {},
+  "sessions": {
+    "s_cd14d168f667eb": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "2d9d302d-9d02-450e-a7a6-7e12e38729ac",
+        "model": "default"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    },
+    "s_d57952076a6178": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "731f1ba1-a1d0-40f4-8665-5dc8de42c941",
+        "model": "default"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
