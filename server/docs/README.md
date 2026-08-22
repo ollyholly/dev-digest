@@ -8,6 +8,9 @@ architecture notes, and feature-to-code pointers that do not belong in
 [`../README.md`](../README.md) ·
 [`../../docs/agent-prompts/README.md`](../../docs/agent-prompts/README.md).
 
+**Related (not this package):** future `devdigest-mcp` (L04) reference lives
+at [`../../docs/mcp/`](../../docs/mcp/).
+
 **When to read:** before a non-trivial API/schema change, or when promoting a
 stable finding out of [`INSIGHTS.md`](../INSIGHTS.md) (see
 [engineering-insights](../../.claude/skills/engineering-insights/SKILL.md)).

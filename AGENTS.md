@@ -8,7 +8,7 @@ course lessons extend one feature at a time. Full context:
 
 ## Structure — no monorepo tooling
 
-**Not** an Nx/Turborepo/pnpm-workspace repo. Five standalone packages, each
+**Not** an Nx/Turborepo/pnpm-workspace repo. Several standalone packages, each
 with its own `package.json` + lockfile. Cross-package sharing is via
 **tsconfig path aliases**, not published packages — see each module's
 CLAUDE.md before assuming a shared-package convention applies.
@@ -19,6 +19,7 @@ CLAUDE.md before assuming a shared-package convention applies.
 | `client/` | `@devdigest/web` (Next.js 15) | [`client/CLAUDE.md`](client/CLAUDE.md) · [`client/README.md`](client/README.md) |
 | `reviewer-core/` | `@devdigest/reviewer-core` (pure review engine) | [`reviewer-core/CLAUDE.md`](reviewer-core/CLAUDE.md) · [`reviewer-core/README.md`](reviewer-core/README.md) |
 | `e2e/` | `@devdigest/e2e` (browser e2e) | [`e2e/CLAUDE.md`](e2e/CLAUDE.md) · [`e2e/README.md`](e2e/README.md) |
+| `devdigest-mcp/` | `@devdigest/mcp` (local stdio MCP) | [`devdigest-mcp/CLAUDE.md`](devdigest-mcp/CLAUDE.md) · [`devdigest-mcp/README.md`](devdigest-mcp/README.md) |
 
 Only **Postgres** runs in Docker (`docker-compose.yml`). API and web run on
 the host via `pnpm dev`.
@@ -36,6 +37,7 @@ cd server && pnpm test     # unit + integration (see server/CLAUDE.md)
 cd client && pnpm test
 cd reviewer-core && npm test
 cd e2e && ./scripts/e2e.sh # hermetic browser e2e, isolated ports
+cd devdigest-mcp && npm test
 ```
 
 Prereqs: Node ≥ 22, pnpm ≥ 10, Docker (Postgres only).
@@ -59,7 +61,7 @@ Prereqs: Node ≥ 22, pnpm ≥ 10, Docker (Postgres only).
 
 - **Before your first response**, read the `INSIGHTS.md` of whichever
   module(s) the request concerns (`client/`, `server/`, `reviewer-core/`,
-  `e2e/`) and treat its contents as high-confidence guidance unless told
+  `e2e/`, `devdigest-mcp/`) and treat its contents as high-confidence guidance unless told
   otherwise. See [`.claude/skills/engineering-insights/SKILL.md`](.claude/skills/engineering-insights/SKILL.md).
 - **Before opening a PR** (`gh pr create` / push-for-PR), run
   [`pr-self-review`](.claude/skills/pr-self-review/SKILL.md); refuse to open
