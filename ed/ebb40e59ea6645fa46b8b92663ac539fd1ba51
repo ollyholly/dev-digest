@@ -1,0 +1,35 @@
+devdigest-mcp/README.md
+  s_d57952076a6178::t_0bf44414994832 56-59,117,120-121,138-236,263-266
+devdigest-mcp/scripts/smoke-mcp.mjs
+  s_d57952076a6178::t_03559a760e54ed 1-46
+docs/mcp/README.md
+  s_fc824cca0dff64::t_1b214232143959 10,15-28
+.cursor/mcp.json
+  s_d57952076a6178::t_b01191aa612afb 1-10
+devdigest-mcp/scripts/call-mcp-tool.mjs
+  s_d57952076a6178::t_84e5f73d90d6d1 1-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "edebb40e59ea6645fa46b8b92663ac539fd1ba51",
+  "prompts": {},
+  "sessions": {
+    "s_d57952076a6178": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "731f1ba1-a1d0-40f4-8665-5dc8de42c941",
+        "model": "default"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    },
+    "s_fc824cca0dff64": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7d8060f5-6245-499f-b942-b786c2c6a05c",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+devdigest-mcp/README.md
+  s_d57952076a6178::t_4fb9cdb74fef82 60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "316a8794666b12bc0864d7457cbb1d6046da9efc",
+  "prompts": {},
+  "sessions": {
+    "s_d57952076a6178": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "731f1ba1-a1d0-40f4-8665-5dc8de42c941",
+        "model": "unknown"
+      },
+      "human_author": "Olly Holovchenko <olly.holovchenko@gousto.co.uk>"
+    }
+  }
+}
