@@ -7,6 +7,9 @@
 #   ./scripts/dev.sh --no-client  # run only Postgres + API (no Next.js)
 #   ./scripts/dev.sh --db-only    # just Postgres + migrate + seed, then exit
 #
+# Does NOT start the MCP server (devdigest-mcp/). That is opt-in — see
+# devdigest-mcp/README.md ("From zero").
+#
 # Idempotent: re-running installs only what's missing, migrations and seed
 # both upsert. Ctrl-C stops the dev servers and leaves Postgres running.
 
